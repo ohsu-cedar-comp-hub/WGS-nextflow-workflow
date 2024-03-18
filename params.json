@@ -1,0 +1,7 @@
+{
+    "infile" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/DNX230201PS_G_H_50472_B1R1_S1_R1_001.fastq.gz",
+    "outdir" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/my-outputs",
+    "truSeq3SeFile" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/TruSeq3-SE.fa",
+    "ref": "/home/exacloud/gscratch/CEDAR/grieco/nextflow/core_ref_GRCh38_hla_decoy_ebv.tar.gz",
+    "idx": "/home/exacloud/gscratch/CEDAR/grieco/nextflow/bwa_idx_GRCh38_hla_decoy_ebv.tar.gz"
+    }
