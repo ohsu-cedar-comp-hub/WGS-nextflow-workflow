@@ -14,8 +14,8 @@ process fastQC {
     
     script:
     """
-    fastqc ${Read1} -o ${params.outdir}
-    fastqc ${Read2} -o ${params.outdir}
+    fastqc ${Read1} -o ./
+    fastqc ${Read2} -o ./
     """
 }
 
