@@ -1,17 +1,21 @@
 #!/usr/bin/env nextflow
 
 // Define the process for running FastQC
-process qualityControl {
-    publishDir "${params.outdir}"
+process fastQC {
+    publishDir "${params.outdir}", mode: 'copy'
+
     input:
-    path infile
+    file Read1
+    file Read2
 
     output:
-    file("${infile.baseName}_qc_report.html")
-
+    file("${Read1.baseName}_R1_fastqc.html")
+    file("${Read2.baseName}_R2_fastqc.html")
+    
     script:
     """
-    fastqc ${infile} > ${infile.baseName}_qc_report.html 2>&1
+    fastqc ${Read1} -o ${params.outdir}
+    fastqc ${Read2} -o ${params.outdir}
     """
 }
 
@@ -20,7 +24,8 @@ process multiQC {
     publishDir "${params.outdir}/multiqc", mode: 'copy'
 
     input:
-    file('*_qc_report.html') 
+    file("${Read1.baseName}_R1_fastqc.html")
+    file("${Read2.baseName}_R2_fastqc.html")
 
     output:
     file("multiqc_report.html")
@@ -32,9 +37,11 @@ process multiQC {
 }
 
 workflow {
-    // Run FastQC for each specified fastq file
-    input_file=file(params.infile)
-    quality_check_results = qualityControl(input_file)
+// Run FastQC for each specified fastq file
+    Read1=file(params.Read1)
+    Read2=file(params.Read2)
+
+    fastQC(Read1, Read2)
 
     // Run MultiQC on the FastQC output
     multiQC(quality_check_results)
