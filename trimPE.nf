@@ -30,3 +30,24 @@ workflow {
 
     trimmomaticPE(Read1, Read2)
 }
+
+
+
+###Error Message:
+ERROR ~ Error executing process > 'trimmomaticPE'
+
+Caused by:
+  java.lang.reflect.UndeclaredThrowableException
+
+Source block:
+  """
+      trimmomatic PE -phred33 \
+          ${Read1} ${Read2} \
+          ${params.outdir}/${Read1.baseName}_1P.fastq.gz ${params.outdir}/${Read1.baseName}_1U.fastq.gz \
+          ${params.outdir}/${Read2.baseName}_2P.fastq.gz ${params.outdir}/${Read2.baseName}_2U.fastq.gz \
+          ILLUMINACLIP:"/home/exacloud/gscratch/CEDAR/grieco/nextflow/TruSeq3-PE.fa":2:30:10 \
+          LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+      """
+
+Work dir:
+  /home/exacloud/gscratch/CEDAR/grieco/nextflow/work/85/751c306a23fc9fbf22e706566e15a7
