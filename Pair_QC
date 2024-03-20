@@ -5,17 +5,17 @@ process fastQC {
     publishDir "${params.outdir}", mode: 'copy'
 
     input:
-    file Read1
-    file Read2
+    path Read1
+    path Read2
 
     output:
-    file("${Read1.baseName}_R1_fastqc.html")
-    file("${Read2.baseName}_R2_fastqc.html")
+    file("${Read1.baseName}_qc_report.html")
+    file("${Read2.baseName}_qc_report.html")
     
     script:
     """
-    fastqc ${Read1} -o ./
-    fastqc ${Read2} -o ./
+     fastqc ${Read1} > ${Read1.baseName}_qc_report.html 2>&1
+     fastqc ${Read2} > ${Read2.baseName}_qc_report.html 2>&1
     """
 }
 
@@ -23,10 +23,5 @@ workflow {
     Read1=file(params.Read1)
     Read2=file(params.Read2)
 
-    fastQC(Read1, Read2)
+    quality_check_results = fastQC(Read1, Read2)
 }
-###
-ERROR ~ Error executing process > 'fastQC'
-
-Caused by:
-  Missing output file(s) `DNX230201PS_G_H_50472_B1R1_S1_R1_001_fastqc.html ` expected by process `fastQC`
