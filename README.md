@@ -4,7 +4,7 @@ Current workflow design for single and paired FASTQ files:
   2.) Trim with Trimmomatic
   3.) Align with BWA-MEM2
 
-Prerequisits: environment set-up
+Prerequisites: environment set-up
   1.) Conda create -n NAME python=3.11
   2.) Install nextflow (conda install nextflow)
   2.) Install fastqc (conda install fastqc)
