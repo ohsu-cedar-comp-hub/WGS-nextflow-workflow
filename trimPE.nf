@@ -1,8 +1,10 @@
 #!/usr/bin/env nextflow
 
+// Define the process for trimmomatic
 process trimmomaticPE {
     publishDir "${params.outdir}", mode: 'copy'
 
+     // Define input and output
     input:
     path Read1
     path Read2
@@ -14,6 +16,7 @@ process trimmomaticPE {
     file("${Read2.baseName}_2P.fastq.gz")
     file("${Read2.baseName}_2U.fastq.gz")
 
+    // trimmomatic command
     script:
     """
      trimmomatic \
@@ -27,7 +30,7 @@ process trimmomaticPE {
      ILLUMINACLIP:"${truSeq3PeFile}":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:50
     """
 }
-
+// Define the workflow
 workflow {
     Read1=file(params.Read1)
     Read2=file(params.Read2)
