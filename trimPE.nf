@@ -6,48 +6,32 @@ process trimmomaticPE {
     input:
     path Read1
     path Read2
+    path truSeq3PeFile
 
     output:
-    file "${params.outdir}/${Read1.baseName}_1P.fastq.gz"
-    file "${params.outdir}/${Read1.baseName}_1U.fastq.gz"
-    file "${params.outdir}/${Read2.baseName}_2P.fastq.gz"
-    file "${params.outdir}/${Read2.baseName}_2U.fastq.gz"
+    file("${Read1.baseName}_1P.fastq.gz")
+    file("${Read1.baseName}_1U.fastq.gz")
+    file("${Read2.baseName}_2P.fastq.gz")
+    file("${Read2.baseName}_2U.fastq.gz")
 
     script:
     """
-    trimmomatic PE -phred33 \
-        ${Read1} ${Read2} \
-        ${params.outdir}/${Read1.baseName}_1P.fastq.gz ${params.outdir}/${Read1.baseName}_1U.fastq.gz \
-        ${params.outdir}/${Read2.baseName}_2P.fastq.gz ${params.outdir}/${Read2.baseName}_2U.fastq.gz \
-        ILLUMINACLIP:"/home/exacloud/gscratch/CEDAR/grieco/nextflow/TruSeq3-PE.fa":2:30:10 \
-        LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+     trimmomatic \
+     PE -phred33 \
+     ${Read1} \
+     ${Read2} \
+     ${Read1.baseName}_1P.fastq.gz \
+     ${Read1.baseName}_1U.fastq.gz \
+     ${Read2.baseName}_2P.fastq.gz \
+     ${Read2.baseName}_2U.fastq.gz \
+     ILLUMINACLIP:"${truSeq3PeFile}":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:50
     """
 }
 
 workflow {
     Read1=file(params.Read1)
     Read2=file(params.Read2)
+    truSeq3PeFile=file(params.truSeq3PeFile)
 
-    trimmomaticPE(Read1, Read2)
+    trimmomaticPE(Read1, Read2, truSeq3PeFile)
 }
-
-
-
-###Error Message:
-ERROR ~ Error executing process > 'trimmomaticPE'
-
-Caused by:
-  java.lang.reflect.UndeclaredThrowableException
-
-Source block:
-  """
-      trimmomatic PE -phred33 \
-          ${Read1} ${Read2} \
-          ${params.outdir}/${Read1.baseName}_1P.fastq.gz ${params.outdir}/${Read1.baseName}_1U.fastq.gz \
-          ${params.outdir}/${Read2.baseName}_2P.fastq.gz ${params.outdir}/${Read2.baseName}_2U.fastq.gz \
-          ILLUMINACLIP:"/home/exacloud/gscratch/CEDAR/grieco/nextflow/TruSeq3-PE.fa":2:30:10 \
-          LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-      """
-
-Work dir:
-  /home/exacloud/gscratch/CEDAR/grieco/nextflow/work/85/751c306a23fc9fbf22e706566e15a7
