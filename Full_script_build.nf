@@ -40,6 +40,8 @@ process qualityControl {
     """
     fastqc ${infile} > ${infile.baseName}_qc_report.html 2>&1
     """
+    container = "quay.io/ohsu-comp-bio/fastqc-docker"
+
 }
 
 workflow {
