@@ -5,23 +5,23 @@ process fastQC {
     publishDir "${params.outdir}", mode: 'copy'
 
     input:
-    path Read1
-    path Read2
+    path read1
+    path read2
 
     output:
-    file("${Read1.baseName}_qc_report.html")
-    file("${Read2.baseName}_qc_report.html")
+    file("${read1.baseName}_qc_report.html")
+    file("${read2.baseName}_qc_report.html")
     
     script:
     """
-     fastqc ${Read1} > ${Read1.baseName}_qc_report.html 2>&1
-     fastqc ${Read2} > ${Read2.baseName}_qc_report.html 2>&1
+     fastqc ${read1} > ${read1.baseName}_qc_report.html 2>&1
+     fastqc ${read2} > ${read2.baseName}_qc_report.html 2>&1
     """
 }
 
 workflow {
-    Read1=file(params.Read1)
-    Read2=file(params.Read2)
+    read1=file(params.read1)
+    read2=file(params.read2)
 
-    quality_check_results = fastQC(Read1, Read2)
+    quality_check_results = fastQC(read1, read2)
 }
