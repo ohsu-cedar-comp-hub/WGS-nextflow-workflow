@@ -2,7 +2,7 @@
     "read1" : "s3://coh/DNX230201PS_G_H_50472_B1R1_S1_R1_001.fastq.gz",
     "read2" : "s3://coh/DNX230201PS_G_H_50472_B1R1_S1_R2_001.fastq.gz",
     "outdir" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/my-outputs",
-    "truseq3spefile" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/TruSeq3-PE.fa",
+    "truseq3pefile" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/TruSeq3-PE.fa",
     "ref": "/home/exacloud/gscratch/CEDAR/grieco/nextflow/core_ref_GRCh38_hla_decoy_ebv.tar.gz",
     "idx": "/home/exacloud/gscratch/CEDAR/grieco/nextflow/bwa_idx_GRCh38_hla_decoy_ebv.tar.gz"
  }
