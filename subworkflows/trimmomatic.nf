@@ -6,27 +6,27 @@ process trimmomaticPE {
 
      // Define input and output
     input:
-    path Read1
-    path Read2
-    path truSeq3PeFile
+    path read1
+    path read2
+    path truseq3pefile
 
     output:
-    file("${Read1.baseName}_1P.fastq.gz")
-    file("${Read1.baseName}_1U.fastq.gz")
-    file("${Read2.baseName}_2P.fastq.gz")
-    file("${Read2.baseName}_2U.fastq.gz")
+    file("${read1.baseName}_1P.fastq.gz")
+    file("${read1.baseName}_1U.fastq.gz")
+    file("${read2.baseName}_2P.fastq.gz")
+    file("${read2.baseName}_2U.fastq.gz")
 
     // trimmomatic command
     script:
     """
      trimmomatic \
      PE -phred33 \
-     ${Read1} \
-     ${Read2} \
-     ${Read1.baseName}_1P.fastq.gz \
-     ${Read1.baseName}_1U.fastq.gz \
-     ${Read2.baseName}_2P.fastq.gz \
-     ${Read2.baseName}_2U.fastq.gz \
-     ILLUMINACLIP:"${truSeq3PeFile}":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:50
+     ${read1} \
+     ${read2} \
+     ${read1.baseName}_1P.fastq.gz \
+     ${read1.baseName}_1U.fastq.gz \
+     ${read2.baseName}_2P.fastq.gz \
+     ${read2.baseName}_2U.fastq.gz \
+     ILLUMINACLIP:"${truseq3pefile}":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:50
     """
 }
