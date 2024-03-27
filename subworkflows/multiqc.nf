@@ -8,6 +8,6 @@ process multiQC {
 
     script:
     """
-    multiqc ${params.outdir} -o ${params.outdir}/multiqc
+    multiqc ${params.outdir}/fastqc -o ${params.outdir}/multiqc
     """
 }
