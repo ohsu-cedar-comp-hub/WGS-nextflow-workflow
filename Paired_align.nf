@@ -2,31 +2,37 @@
 
 // Define the process for BWA-MEM2 alignment
 process bwaMem2Alignment {
+    // Set maximum memory
+    memory '40 GB'
+
     // Set output directory for alignment results
     publishDir "${params.outdir}/aligned", mode: 'copy'
 
     // Define input and output
     input:
-    path Read1
-    path Read2
+    path read1
+    path read2
+    path idx
+
 
     output:
-    file("${Read1.baseName}.bam")
+    file("${read1.baseName}.bam")
 
     // BWA-MEM2 alignment command
     script:
     """
-    tar -xvf ${params.idx}
-    bwa-mem2 mem -t ${task.cpus} ${params.idx}  ${Read1} ${Read2} | samtools view -Sb - > ${Read1.baseName}.bam
+    bwa-mem2 mem -K 1000000 -t 6 -Y -M -R "@RG\tID:${params.ID}\tLB:no_library\tPL:illumina\tPU:none\tSM:${read1.baseName}" ${params.idx} ${read1} ${read2} | samtools view -Sb -@ 4 > ${read1.baseName}.bam
     """
 }
 
 // Define the workflow
 workflow {
     // Define input parameters
-    Read1=file(params.Read1)
-    Read2=file(params.Read2)
+    read1=file(params.read1)
+    read2=file(params.read2)
+    idx=file(params.idx)
 
     // Run BWA-MEM2 alignment for each read file
-    bwaMem2Alignment(Read1, Read2)
+    bwaMem2Alignment(read1, read2, idx)
 }
+
