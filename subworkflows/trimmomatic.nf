@@ -2,7 +2,7 @@
 
 // Define the process for trimmomatic
 process trimmomaticPE {
-    publishDir "${params.outdir}", mode: 'copy'
+    publishDir "${params.outdir}/trim_reads", mode: 'copy'
 
      // Define input and output
     input:
