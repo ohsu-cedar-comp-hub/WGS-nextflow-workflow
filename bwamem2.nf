@@ -10,28 +10,28 @@ process bwaMem2Alignment {
 
     // Define input and output
     input:
-    path read1
-    path read2
+    path trim_read1
+    path trim_read2
     path idx
 
 
     output:
-    file("${read1.baseName}.bam")
+    file("${trim_read1.baseName}.bam")
 
     // BWA-MEM2 alignment command
     script:
     """
-    bwa-mem2 mem -K 1000000 -t 6 -Y -M ${params.idx} ${read1} ${read2} | samtools view -Sb -@ 4 > ${read1.baseName}.bam
+    bwa-mem2 mem -K 1000000 -t 6 -Y -M -R "@RG\tID:${params.ID}\tLB:no_library\tPL:illumina\tPU:none\tSM:${trim_read1.baseName}" ${params.idx} ${trim_read1} ${trim_read2} | samtools view -Sb -@ 4 > ${trim_read1.baseName}.bam
     """
 }
 
 // Define the workflow
 workflow {
     // Define input parameters
-    read1=file(params.read1)
-    read2=file(params.read2)
+    trim_read1=file(params.trim_read1)
+    trim_read2=file(params.trim_read2)
     idx=file(params.idx)
 
     // Run BWA-MEM2 alignment for each read file
-    bwaMem2Alignment(read1, read2, idx)
+    bwaMem2Alignment(trim_read1, trim_read2, idx)
 }
