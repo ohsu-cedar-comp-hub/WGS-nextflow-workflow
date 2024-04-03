@@ -1,8 +1,13 @@
 Current workflow design for single and paired FASTQ files: 
   1.) QC with Fastqc
-  2.) QC with FastQC and MultiQC
-  2.) Trim with Trimmomatic
-  3.) Align with BWA-MEM2
+  2.) Trim with TrimmomaticPE
+  3.) Fastqc on trimmed reads
+  4.) MultiQC on trimmed reads
+  5.) Alignment with bwa-mem2
+  6.) sort and index with samtools 
+  7.) Mark duplicates with gatk MarkDuplicates
+  8.) somatic variant calling with gatk Mutect2
+  9.) Annotating variants with snpEff
 
 Prerequisites: environment set-up
   1.) Conda create -n NAME python=3.11
@@ -12,4 +17,7 @@ Prerequisites: environment set-up
   4.) Install trimmomatic (conda install trimmomatic) 
   5.) Install bwa-mem2 (conda install bwa-mem2) 
   6.) Install sam-tools (conda install -c bioconda samtools)
+  7.) Install gatk (conda install gatk) or download from gatk github
+  8.) Install snpEff (conda install snpEff) or download from snpEff source page 
+      - download reference genome with snpEff download GRCh38.86 
 
