@@ -2,7 +2,7 @@ Current workflow design for single and paired FASTQ files:
   1.) QC with Fastqc
   2.) Trim with TrimmomaticPE
   3.) Fastqc on trimmed reads
-  4.) MultiQC on trimmed reads
+  4.) MultiQC on all fastqc output files
   5.) Alignment with bwa-mem2
   6.) sort and index with samtools 
   7.) Mark duplicates with gatk MarkDuplicates
