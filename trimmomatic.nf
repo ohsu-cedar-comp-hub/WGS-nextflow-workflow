@@ -1,8 +1,13 @@
 #!/usr/bin/env nextflow
 
 process trimmomaticPE {
+    // Set maximum memory
+    memory '40 GB'
+
+    // Set output directory for trim reads
     publishDir "${params.outdir}/trim_reads", mode: 'copy'
 
+    // define input and output paramaters
     input:
     path read1
     path read2
@@ -14,6 +19,7 @@ process trimmomaticPE {
     file("${read2.baseName}_2P.fastq.gz")
     file("${read2.baseName}_2U.fastq.gz")
 
+    // trimmomatic command
     script:
     """
      trimmomatic \
@@ -28,10 +34,13 @@ process trimmomaticPE {
     """
 }
 
+// define the workflow
 workflow {
+    // define input paramaters 
     read1=file(params.read1)
     read2=file(params.read2)
     truseq3pefile=file(params.truseq3pefile)
 
+    // run trimmomatic on paired reads
     trimmomaticPE(read1, read2, truseq3pefile)
 }
