@@ -1,10 +1,13 @@
 #!/usr/bin/env nextflow
 
-// Define the process for trimmomatic
 process trimmomaticPE {
+    // Set maximum memory
+    memory '40 GB'
+
+    // Set output directory for trim reads
     publishDir "${params.outdir}/trim_reads", mode: 'copy'
 
-     // Define input and output
+    // define input and output paramaters
     input:
     path read1
     path read2
