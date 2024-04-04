@@ -11,7 +11,7 @@ process Annotate_Variants {
 
     script:
     """
-    snpEff GRCh38.86 ${svc_vcf} -Xmx4g > ${svc_vcf.baseName}_annotated_variants.vcf
+    snpEff GRCh38.86 ${svc_vcf} -Xmx8g -cancer > ${svc_vcf.baseName}_annotated_variants.vcf
     """
 
 }
