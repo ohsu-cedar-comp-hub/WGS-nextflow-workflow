@@ -13,7 +13,7 @@ process sortAndIndex {
     script:
     """
     samtools sort ${bam_unsorted} > ${bam_unsorted.baseName}_sorted_indexed.bam
-    samtools index ${bam_unsorted.baseName}_sorted_indexed.bam > ${bam_unsorted.baseName}_sorted_inexed.bam.bai
+    samtools index ${bam_unsorted.baseName}_sorted_indexed.bam > ${bam_unsorted.baseName}_sorted_indexed.bam.bai
     """
 
 }
