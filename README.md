@@ -1,14 +1,14 @@
 Current workflow design for single and paired FASTQ files: 
-  1.) QC with Fastqc
-  2.) Trim with TrimmomaticPE
-  3.) Fastqc on trimmed reads
-  4.) MultiQC on all fastqc output files
-  5.) Alignment with bwa-mem2
-  6.) sort and index with samtools 
-  7.) Mark duplicates with gatk MarkDuplicates
-  8.) somatic variant calling with gatk Mutect2
-  9.) filter variant calls with gatk Mutect2
-  10.) Annotating variants with snpEff
+  - 1.) QC with Fastqc
+  - 2.) Trim with TrimmomaticPE
+  - 3.) Fastqc on trimmed reads
+  - 4.) MultiQC on all fastqc output files
+  - 5.) Alignment with bwa-mem2
+  - 6.) sort and index with samtools 
+  - 7.) Mark duplicates with gatk MarkDuplicates
+  - 8.) somatic variant calling with gatk Mutect2
+  - 9.) filter variant calls with gatk Mutect2
+  - 10.) Annotating variants with snpEff
 
 Prerequisites: environment set-up
   1.) Conda create -n NAME python=3.11
