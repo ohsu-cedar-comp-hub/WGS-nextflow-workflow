@@ -6,22 +6,22 @@ process FilterMutectCalls {
 
     input:
     path unfiltered_vcf
-    path idx
+    path mutect_idx
 
     output:
     path "${unfiltered_vcf.baseName}_filtered.vcf"
 
     script:
     """
-    gatk FilterMutectCalls -R ${idx} -V ${unfiltered_vcf} -O ${unfiltered_vcf.baseName}_filtered.vcf
+    gatk FilterMutectCalls -R ${mutect_idx} -V ${unfiltered_vcf} -O ${unfiltered_vcf.baseName}_filtered.vcf
     """
 }
 // define workflow
 workflow {
     // define input parameters
     unfiltered_vcf = file(params.unfiltered_vcf)
-    idx = file(params.idx)
+    mutect_idx = file(params.mutect_idx)
 
     // run the FilterMutectCalls process
-    FilterMutectCalls(unfiltered_vcf, idx)
+    FilterMutectCalls(unfiltered_vcf, mutect_idx)
 }
