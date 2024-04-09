@@ -13,6 +13,9 @@
     "bam_unsorted" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/my-outputs/aligned/TESTX_H7YRLADXX_S1_L001_R1_001.fastq_1P.fastq.bam",
     "bam_sorted" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/my-outputs/aligned/sort_index/TESTX_H7YRLADXX_S1_L001_R1_001.fastq_1P.fastq_sorted_indexed.bam",
     "mutect_idx" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/references/GRCh38.d1.vd1.fa",
+    "mutect_idx_fai" : "/home/groups/CEDAR/lancasru/nextflow_test/references/GRCh38.d1.vd1.fa.fai",
+    "mutect_dict" : "/home/groups/CEDAR/lancasru/nextflow_test/references/GRCh38.d1.vd1.dict",
+    "vcf_stats" : "/home/groups/CEDAR/lancasru/nextflow_test/output/svc/TESTX_H7YRLADXX_S1_L001_R1_001.fastq_sorted_indexed_svc.vcf.stats",
     "svc_vcf" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/my-outputs/svc/TESTX_H7YRLADXX_S1_L001_R1_001.fastq_1P.fastq_sorted_indexed_svc.vcf"
 
  } 
