@@ -5,27 +5,27 @@ process GetPileupSummaries {
     publishDir "${params.outdir}/summaries", mode: 'copy'
 
     input:
-    path bam_sorted
-    path exac
+    path tumor_bam
+    path exac_vcf
 
     output:
-    file("${bam_sorted.baseName}.getpileupsummaries.table")
+    file("${tumor_bam.baseName}.getpileupsummaries.table")
 
     script:
     """
     gatk GetPileupSummaries \\
-    -I ${params.bam_sorted} \\
-    -V ${params.exac} \\
-    -L ${params.exac} \\
-    -O ${bam_sorted.baseName}.getpileupsummaries.table
+    -I ${params.tumor_bam} \\
+    -V ${params.exac_vcf} \\
+    -L ${params.exac_vcf} \\
+    -O ${tumor_bam.baseName}.pileups.table
     """
 }
 // Define the workflow
 workflow {
     // Define input parameters
-    tumor_bam = file(params.bam_sorted)
-    exac = file(params.exac)
+    tumor_bam = file(params.tumor_bam)
+    exac_vcf = file(params.exac_vcf)
 
     // Run the GetPileupSummaries process
-    GetPileupSummaries(tumor_bam,exac)
+    GetPileupSummaries(tumor_bam,exac_vcf)
 }
