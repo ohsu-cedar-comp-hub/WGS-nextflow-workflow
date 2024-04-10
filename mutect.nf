@@ -9,21 +9,21 @@ process mutect2 {
     // Define input and output
     input:
     path tumor_bam
-    path tumor_normal
+    path normal_bam
     path mutect_idx
     path pon
 
     output:
-    file("${bam_sorted.baseName}_svc.vcf")
+    file("${tumor_bam.baseName}.vcf")
 
     // MuTect2 command
     script:
     """
     gatk Mutect2 \
         -R ${params.mutect_idx} \
-        -I ${params.bam_tumor} \
-        -I ${params.bam_normal}
-        --f1r2-tar-gz f1r2.tar.gz
+        -I ${params.tumor_bam} \
+        -I ${params.normal_bam} \
+        --f1r2-tar-gz f1r2.tar.gz \
         --panel-of-normals ${params.pon} \
         -O ${bam_sorted.baseName}_svc.vcf
     """
@@ -32,8 +32,8 @@ process mutect2 {
 // Define the workflow
 workflow {
     // define input paramaters for Mutect2
-    input_normal_file=file(params.bam_normal)
-    input_tumor_file=file(params.bam_tumor)
+    input_normal_file=file(params.normal_bam)
+    input_tumor_file=file(params.tumor_bam)
     idx=file(params.mutect_idx)
     pon=file(params.pon)
     // Run Mutect2
