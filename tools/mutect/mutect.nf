@@ -23,7 +23,8 @@ process mutect2 {
     """
     gatk Mutect2 \
         -R ${params.mutect_idx} \
-        -I ${params.bam_sorted} \
+        -I ${params.tumor_bam} \
+        -I ${params.normal_bam} \
         --panel-of-normals ${params.pon} \
         -O ${tumor_bam.baseName}_unfiltered.vcf \
         --f1r2-tar-gz ${tumor_bam.baseName}_f1r2.tar.gz
