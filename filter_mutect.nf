@@ -20,10 +20,14 @@ process FilterMutectCalls {
     gatk FilterMutectCalls \
     -R ${mutect_idx} \
     -V ${unfiltered_vcf} \
+    --tumor-segmentation ${params.segmentation_table} \
+    --contamination-table ${params.contamination_table} \
     -O ${unfiltered_vcf.baseName}_filtered.vcf \
     --read-index ${mutect_idx_fai} \
     --sequence-dictionary ${mutect_dict} \
+    --ob-priors read_orientation_model.tar.gz
     --stats ${vcf_stats}
+    
     """
 }
 // define workflow
