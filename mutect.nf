@@ -23,7 +23,7 @@ process mutect2 {
         -R ${params.mutect_idx} \
         -I ${params.tumor_bam} \
         -I ${params.normal_bam} \
-        --f1r2-tar-gz f1r2.tar.gz \
+        --f1r2-tar-gz f1r2_tar_gz \
         --panel-of-normals ${params.pon} \
         -O ${tumor_bam.baseName}_unfiltered.vcf
     """
