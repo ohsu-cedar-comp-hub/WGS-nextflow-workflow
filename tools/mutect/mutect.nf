@@ -12,7 +12,7 @@ process mutect2 {
     path pon
 
     output:
-    file("${tumor_bam.baseName}.vcf")
+    file("${tumor_bam.baseName}_unfiltered.vcf")
 
     // MuTect2 command
     script:
@@ -21,8 +21,8 @@ process mutect2 {
         -R ${params.mutect_idx} \
         -I ${params.tumor_bam} \
         -I ${params.normal_bam} \
-        --f1r2-tar-gz f1r2.tar.gz \
+        --f1r2-tar-gz f1r2_tar_gz \
         --panel-of-normals ${params.pon} \
-        -O ${bam_sorted.baseName}_svc.vcf
+        -O ${tumor_bam.baseName}_unfiltered.vcf
     """
 }
