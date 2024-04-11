@@ -16,11 +16,3 @@ process sortAndIndex {
     samtools index ${bam_unsorted.baseName}_sorted_indexed.bam > ${bam_unsorted.baseName}_sorted_indexed.bam.bai
     """
 }
-
-workflow { 
-    // specify input bam
-    input_file=file(params.bam_unsorted)
-    //run sortAndIndex
-    sortAndIndex (input_file)
-
-}

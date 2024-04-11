@@ -31,6 +31,9 @@ process FilterMutectCalls {
     --ob-priors ${params.read_orientation_model} \
     --stats ${vcf_stats}
     """
+<<<<<<< HEAD:tools/mutect/filter_mutect.nf
+}
+=======
 
 workflow {
     // define input parameters
@@ -44,3 +47,4 @@ workflow {
     // run the FilterMutectCalls process
     FilterMutectCalls(unfiltered_vcf, mutect_idx, mutect_idx_fai, mutect_dict, vcf_stats)
 }
+>>>>>>> main:filter_mutect.nf
