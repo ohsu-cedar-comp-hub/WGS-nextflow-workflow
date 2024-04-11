@@ -9,7 +9,7 @@ process GetPileupSummaries {
     path exac_vcf
 
     output:
-    file("${tumor_bam.baseName}.getpileupsummaries.table")
+    file("${tumor_bam.baseName}.pileupsummaries.table")
 
     script:
     """
@@ -17,7 +17,7 @@ process GetPileupSummaries {
     -I ${params.tumor_bam} \\
     -V ${params.exac_vcf} \\
     -L ${params.exac_vcf} \\
-    -O ${tumor_bam.baseName}.pileups.table
+    -O ${tumor_bam.baseName}_pileups_table
     """
 }
 // Define the workflow
