@@ -11,6 +11,9 @@ process FilterMutectCalls {
     path mutect_idx_fai
     path mutect_dict
     path vcf_stats
+    path read_orientation_model
+    path segmentation_tabel
+    path contamination_table
 
     output:
     file("${unfiltered_vcf.baseName}_filtered.vcf")
@@ -25,18 +28,17 @@ process FilterMutectCalls {
     -O ${unfiltered_vcf.baseName}_filtered.vcf \
     --read-index ${mutect_idx_fai} \
     --sequence-dictionary ${mutect_dict} \
-    --ob-priors read_orientation_model.tar.gz
+    --ob-priors ${params.read_orientation_model} \
     --stats ${vcf_stats}
-    
     """
-}
-// define workflow
+
 workflow {
     // define input parameters
     unfiltered_vcf = file(params.unfiltered_vcf)
     mutect_idx = file(params.mutect_idx)
     mutect_idx_fai = file(params.mutect_idx_fai)
     mutect_dict = file(params.mutect_dict)
+    ob_priors = file(params.read_orientation_model)
     vcf_stats = file(params.vcf_stats)
 
     // run the FilterMutectCalls process
