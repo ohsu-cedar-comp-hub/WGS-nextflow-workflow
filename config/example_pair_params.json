@@ -16,5 +16,6 @@
     "mutect_idx_fai" : "/home/groups/CEDAR/lancasru/nextflow_test/references/GRCh38.d1.vd1.fa.fai",
     "mutect_dict" : "/home/groups/CEDAR/lancasru/nextflow_test/references/GRCh38.d1.vd1.dict",
     "vcf_stats" : "/home/groups/CEDAR/lancasru/nextflow_test/output/svc/TESTX_H7YRLADXX_S1_L001_R1_001.fastq_sorted_indexed_svc.vcf.stats",
-    "svc_vcf" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/my-outputs/svc/TESTX_H7YRLADXX_S1_L001_R1_001.fastq_1P.fastq_sorted_indexed_svc.vcf"
+    "svc_vcf" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/my-outputs/svc/TESTX_H7YRLADXX_S1_L001_R1_001.fastq_1P.fastq_sorted_indexed_svc.vcf",
+    "f1r2_tar_gz" : "/home/groups/CEDAR/lancasru/nextflow_test/output/svc/TESTX_H7YRLADXX_S1_L001_R1_001.fastq_sorted_indexed_f1r2.tar.gz"
  } 
