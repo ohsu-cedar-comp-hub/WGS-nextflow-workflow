@@ -1,3 +1,5 @@
+
+
 process CollectAllelicCounts {
     publishDir "${params.outdir}/allelic_counts", mode: 'copy'
 
@@ -18,14 +20,3 @@ process CollectAllelicCounts {
         -O ${bam_normal_sorted.baseName}_normal.allelicCounts.csv
     """
 }
-workflow {
-
-    // define input parameters
-    bam_normal_sorted = file(params.bam_normal_sorted)
-    idx = file(params.idx)
-    dbsnp = file(params.dbsnp)
-
-    // run CollectAllelicCounts process
-    CollectAllelicCounts(bam_normal_sorted, idx, dbsnp)
-}
-

@@ -33,14 +33,3 @@ process trimmomaticPE {
      ILLUMINACLIP:"${truseq3pefile}":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:50
     """
 }
-
-// define the workflow
-workflow {
-    // define input paramaters 
-    read1=file(params.read1)
-    read2=file(params.read2)
-    truseq3pefile=file(params.truseq3pefile)
-
-    // run trimmomatic on paired reads
-    trimmomaticPE(read1, read2, truseq3pefile)
-}
