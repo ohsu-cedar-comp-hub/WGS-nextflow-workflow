@@ -7,7 +7,6 @@ ENV SAMTOOLS_VERSION=1.19
 
 LABEL \
   version="${SAMTOOLS_VERSION}" \
-  description="Samtools image for use in Workflows"
   
 RUN cd /opt/ \
 	&& wget https://github.com/samtools/samtools/releases/download/${SAMTOOLS_VERSION}/samtools-${SAMTOOLS_VERSION}.tar.bz2 \
