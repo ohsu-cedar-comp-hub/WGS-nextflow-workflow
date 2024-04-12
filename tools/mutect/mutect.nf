@@ -1,5 +1,7 @@
 #!/usr/bin/env nextflow
+nextflow.enable.dsl = 2
 
+// Define the process for running MuTect2
 process mutect2 {
     // Set output directory for MuTect2 results
     publishDir "${params.outdir}/svc", mode: 'copy'
@@ -12,7 +14,9 @@ process mutect2 {
     path pon
 
     output:
-    file("${tumor_bam.baseName}_unfiltered.vcf")
+    path "${tumor_bam.baseName}_unfiltered.vcf"
+    path "${tumor_bam.baseName}_unfiltered.vcf.stats"
+    path "${tumor_bam.baseName}_f1r2.tar.gz"
 
     // MuTect2 command
     script:
@@ -21,8 +25,8 @@ process mutect2 {
         -R ${params.mutect_idx} \
         -I ${params.tumor_bam} \
         -I ${params.normal_bam} \
-        --f1r2-tar-gz f1r2_tar_gz \
         --panel-of-normals ${params.pon} \
-        -O ${tumor_bam.baseName}_unfiltered.vcf
+        -O ${tumor_bam.baseName}_unfiltered.vcf \
+        --f1r2-tar-gz ${tumor_bam.baseName}_f1r2.tar.gz
     """
 }
