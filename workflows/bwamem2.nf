@@ -1,12 +1,9 @@
 #!/usr/bin/env nextflow
 
+include { bwaMem2Alignment } from '../tools/bwa/paired_align.nf'
+
 // Define the workflow
 workflow {
-    // Define input parameters
-    trim_read1=file(params.trim_read1)
-    trim_read2=file(params.trim_read2)
-    idx=file(params.idx)
-
     // Run BWA-MEM2 alignment for each read file
-    bwaMem2Alignment(trim_read1, trim_read2, idx)
+    bwaMem2Alignment(file(params.read1), file(params.read2), file(params.idx), "test")
 }

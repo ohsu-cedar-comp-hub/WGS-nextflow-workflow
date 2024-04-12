@@ -1,8 +1,0 @@
- {
-    "read1" : "s3://coh/DNX230201PS_G_H_50472_B1R1_S1_R1_001.fastq.gz",
-    "read2" : "s3://coh/DNX230201PS_G_H_50472_B1R1_S1_R2_001.fastq.gz",
-    "outdir" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/my-outputs",
-    "truseq3pefile" : "/home/exacloud/gscratch/CEDAR/grieco/nextflow/TruSeq3-PE.fa",
-    "idx": "/home/groups/CEDAR/goldmael/projects/align/resources/bwamem2/GRCh38.bm2.d1"
- }
-
