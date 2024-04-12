@@ -30,14 +30,3 @@ process mutect2 {
         --f1r2-tar-gz ${tumor_bam.baseName}_f1r2.tar.gz
     """
 }
-
-// Define the workflow
-workflow {
-    // define input paramaters for Mutect2
-    tumor_bam=file(params.tumor_bam)
-    normal_bam=file(params.normal_bam)
-    idx=file(params.mutect_idx)
-    pon=file(params.pon)
-    // Run Mutect2
-    mutect2(input_file, idx, pon)
-}
