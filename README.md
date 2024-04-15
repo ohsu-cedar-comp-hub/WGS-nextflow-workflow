@@ -25,4 +25,4 @@ Prerequisites: environment set-up
   8.) Install snpEff (conda install snpEff) or download from snpEff source page 
       - download reference genome with snpEff download GRCh38.86 
 
-foo
+
