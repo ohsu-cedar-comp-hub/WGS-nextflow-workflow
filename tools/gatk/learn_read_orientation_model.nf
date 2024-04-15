@@ -12,14 +12,6 @@ process LearnReadOrientationModel {
 
     script:
     """
-    gatk LearnReadOrientationModel -I ${params.f1r2_tar_gz} -O read_orientation_model.tar.gz
+    gatk LearnReadOrientationModel -I ${f1r2_tar_gz} -O read_orientation_model.tar.gz
     """
-}
-// define workflow
-workflow {
-    // Define input parameters
-    f1r2_tar_gz = file(params.f1r2_tar_gz)
-
-    // run process
-    LearnReadOrientationModel(f1r2_tar_gz)
 }

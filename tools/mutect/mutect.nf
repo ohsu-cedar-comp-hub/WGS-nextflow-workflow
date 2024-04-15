@@ -8,8 +8,8 @@ process mutect2 {
 
     // Define input and output
     input:
-    path tumor_bam
-    path normal_bam
+    path tumor_bam_sorted
+    path normal_bam_sorted
     path mutect_idx
     path pon
 
@@ -22,11 +22,12 @@ process mutect2 {
     script:
     """
     gatk Mutect2 \
-        -R ${params.mutect_idx} \
-        -I ${params.tumor_bam} \
-        -I ${params.normal_bam} \
-        --panel-of-normals ${params.pon} \
-        -O ${tumor_bam.baseName}_unfiltered.vcf \
-        --f1r2-tar-gz ${tumor_bam.baseName}_f1r2.tar.gz
+        -R ${mutect_idx} \
+        -I ${tumor_bam_sorted} \
+        -I ${normal_bam_sorted} \
+        --panel-of-normals ${pon} \
+        -O ${tumor_bam_sorted.baseName}_unfiltered.vcf \
+        --f1r2-tar-gz ${tumor_bam_sorted.baseName}_f1r2.tar.gz \
+        -stats ${tumor_bam.baseName}_unfiltered.vcf.stats
     """
 }
