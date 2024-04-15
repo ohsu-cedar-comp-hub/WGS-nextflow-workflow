@@ -10,12 +10,13 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 | 0 | Read groups | -R flag | Aligned separately then merged << Unsure about this section |
 | 1 | BWA algorithm | bwa-mem2 | bwa-mem |
 | 2 | BAM sort | samtools | picard SortSam |
-| 3 | Mark duplicates | picard MarkDuplicates | picard MarkDuplicates | 
+| 3 | Mark duplicates | picard MarkDuplicates | picard MarkDuplicates |
+| 4 | Co-cleaning workflow | NA | gatk RealignerTargetCreator, IndelRealigner, BaseRecalibrator, PrintReads | 
 
 #### 0. Pre-alignment: quality filtering and trimming
-See https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/issues/12 << Replace me with real readme when completed. After QC, trimmomatic is run in paired-end mode.   
-**File input**: Paired end reads (read 1 and read 2) and a file of sequencing adapters used in the library prep(TruSeq3-PE.fa)  
-**File output**: Paired end reads (trim read 1 and trim read 2), adapters trimmed and quality   filtered  
+See https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/issues/12 << Replace me with real fastqc readme when completed. After QC, trimmomatic is run in paired-end mode.   
+**File input**: Paired end reads (read 1 and read 2) and a file of sequencing adapters used in the library prep (TruSeq3-PE.fa)  
+**File output**: Paired end reads (trim read 1 and trim read 2), adapters trimmed and quality filtered  
 **Call:**  
 
 ```Shell
