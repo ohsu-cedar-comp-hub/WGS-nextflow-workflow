@@ -1,6 +1,9 @@
 #!/usr/bin/env nextflow
 
 process sortAndIndex {
+    // Set maximum memory
+    memory '40 GB'
+
     publishDir "${params.outdir}/aligned/sort_index", mode: 'copy'
 
     input:

@@ -1,17 +1,41 @@
+
+## Nextflow WGS tumor evolution Analysis
+
+
+
+### Example Ceph Bucket Config
+
+```
+aws {
+    accessKey='<KEY>'
+    secretKey='<SECRET>'
+    client {
+        endpoint = 'https://rgw.ohsu.edu'
+        s3PathStyleAccess = true
+    }
+}
+```
+
+### Invoking workflow
+
+```
+nextflow run hello_world.nf -params-file params.json -c my-config.config
+```
+
 Current workflow design for single and paired FASTQ files: 
-  - 1.) QC with Fastqc
-  - 2.) Trim with TrimmomaticPE
-  - 3.) Fastqc on trimmed reads
-  - 4.) MultiQC on all fastqc output files
-  - 5.) Alignment with bwa-mem2
-  - 6.) sort and index with samtools 
-  - 7.) Mark duplicates with gatk MarkDuplicates
-  - 8.) somatic variant calling with gatk Mutect2
-  - 9.) Learn orientation bias model
-  - 10.) Get pileup summaries
-  - 11.) Get segmentation and contamination tables
-  - 12.) Filter variant calls with gatk Mutect2 (using input files from steps 8-11)
-  - 13.) Annotate variants with snpEff
+1. QC with Fastqc
+2. Trim with TrimmomaticPE
+3. Fastqc on trimmed reads
+4. MultiQC on all fastqc output files
+5. Alignment with bwa-mem2
+6. sort and index with samtools 
+7. Mark duplicates with gatk MarkDuplicates
+8. somatic variant calling with gatk Mutect2
+9. Learn orientation bias model
+10. Get pileup summaries
+11. Get segmentation and contamination tables
+12. Filter variant calls with gatk Mutect2 (using input files from steps 8-11)
+13. Annotate variants with snpEff
 
 Prerequisites: environment set-up
   1.) Conda create -n NAME python=3.11

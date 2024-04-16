@@ -2,16 +2,18 @@
 
 process Annotate_Variants {
     publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
+    // Set maximum memory
+    memory '40 GB'
 
     input:
-    path svc_vcf
+    path filtered_vcf
 
     output: 
-    file "${svc_vcf.baseName}_annotated_variants.vcf"
+    file "${filtered_vcf.baseName}_annotated_variants.vcf"
 
     script:
     """
-    snpEff GRCh38.86 ${svc_vcf} -Xmx8g -cancer > ${svc_vcf.baseName}_annotated_variants.vcf
+    snpEff GRCh38.86 ${filtered_vcf} -Xmx8g -cancer > ${filtered_vcf.baseName}_annotated_variants.vcf
     """
 
 }
