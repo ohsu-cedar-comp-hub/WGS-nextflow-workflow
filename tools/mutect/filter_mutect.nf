@@ -3,6 +3,9 @@ nextflow.enable.dsl = 2
 
 // filter Mutect2 calls with GATK
 process FilterMutectCalls {
+    // Set maximum memory
+    memory '40 GB'
+
     publishDir "${params.outdir}/filtered", mode: 'copy'
 
     input:

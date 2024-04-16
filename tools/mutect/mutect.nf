@@ -3,6 +3,9 @@ nextflow.enable.dsl = 2
 
 // Define the process for running MuTect2
 process mutect2 {
+    // Set maximum memory
+    memory '40 GB'
+
     // Set output directory for MuTect2 results
     publishDir "${params.outdir}/svc", mode: 'copy'
 

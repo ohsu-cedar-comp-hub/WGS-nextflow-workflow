@@ -2,6 +2,8 @@
 
 process Annotate_Variants {
     publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
+    // Set maximum memory
+    memory '40 GB'
 
     input:
     path filtered_vcf
