@@ -6,7 +6,7 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 
 |Step | Parameter | COH WGS nextflow pipeline | GDC pipeline |
 | --- | --------- | ------------------------- | ------------ |
-| 0 | Quality filter | trimmomatic | Illumina chastity filter << also unsure about this |
+| 0 | Quality filter | Illumina chastity filter + trimmomatic | Illumina chastity filter |
 | 0 | Trimming adapters | trimmomatic | NA |
 | 0 | Reference genome | GRCh38.d1.vd1 | GRCh38.d1.vd1 |
 | 0 | Read groups | -R flag | Aligned separately then merged << Unsure about this section |
