@@ -1,6 +1,6 @@
 import jinja2
 
-template_path = './normal_params_file_template.json'
+template_path = './tumor_params_file_template.json'
 
 params = {
     "read1": "path/to/fastq_R1.fastq.gz",
@@ -26,8 +26,8 @@ template = env.get_template(template_path)
 
 output = template.render(params)
 
-with open('normal_params_file.json', 'w') as f:
+with open('tumor_params_file.json', 'w') as f:
     f.write(output)
 
-print("Normal params file created successfully.")
+print("Tumor params file created successfully.")
 
