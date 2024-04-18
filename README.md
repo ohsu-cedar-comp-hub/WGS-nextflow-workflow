@@ -97,24 +97,24 @@ _Sort, index, normalize and combine (per sample) the VCF files before filtering 
 
 ###   7B. Sort bgzipped VCFs
 
-``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools sort “${file}.concat.vcf" -Oz -o  "${file%.unf.concat.vcf.gz}.unfiltered.sorted.vcf.gz"```
+``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools sort "${file}.concat.vcf" -Oz -o  "${file%.unf.concat.vcf.gz}.unfiltered.sorted.vcf.gz"```
 
-###   7C. Index files
+### 7C. Index files
 
-``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools index -t “${file}.unfiltered.sorted.vcf.gz" ```
+``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools index -t "${file}.unfiltered.sorted.vcf.gz" ```
 
-### 7D. Normalize somatic valls
+### 7D. Normalize somatic calls
 
-```docker run quay.io//ohsu-comp-bio/bcftools:1.12 normalize -i "${file}.unfiltered.sorted.vcf.gz" -o
-"${file%.unfiltered.sorted.vcf.gz}.unfiltered.normalized.vcf" ``` 
+```docker run quay.io//ohsu-comp-bio/bcftools:1.12 normalize -i "${file}.unfiltered.sorted.vcf.gz" -o "${file%.unfiltered.sorted.vcf.gz}.unfiltered.normalized.vcf"```
 
-**### 8. GATK FilterMutectCalls**
+### 8. GATK FilterMutectCalls
+
 _Apply filters to Mutect2 variant calls_ 
 
-```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk FilterMutectCalls -R reference.fa -V  “${file}.unfiltered.normalized.vcf" --contamination-table contamination.table --orientation-bias-artifact-priors read-orientation-model.tar.gz -O “${file%.unfiltered.normalized.vcf.gz}.filtered.vcf" ```
+```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk FilterMutectCalls -R reference.fa -V  "${file}.unfiltered.normalized.vcf" -contamination-table contamination.table --orientation-bias-artifact-priors read-orientation-model.tar.gz -O "${file%.unfiltered.normalized.vcf.gz}.filtered.vcf" ```
 
 ### **9. SNPEff Annotation**
-_Annotate variants using SNPEff_ [WIP}
+_Annotate variants using SNPEff_ [WIP]
 
 ```docker run quay.io://ohsu-comp-bio/SNPEff:latest -v genome_version <annotated_variants.vcf> | gzip > annotated_variants.vcf.gz```
 
