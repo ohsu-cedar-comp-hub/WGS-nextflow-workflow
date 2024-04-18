@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-include {trimmomaticPE} from '../tools/trimmomatic/trimmomatic.nf'
+include {trimmomaticPE} from '../../tools/trimmomatic/trimmomatic.nf'
 
 // define the workflow for trimmomaticPE
 workflow {
