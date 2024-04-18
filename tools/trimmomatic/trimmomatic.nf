@@ -12,6 +12,7 @@ process trimmomaticPE {
     path read1
     path read2
     path truseq3pefile
+    val id
 
     output:
     file("${read1.baseName}_1P.fastq.gz")
