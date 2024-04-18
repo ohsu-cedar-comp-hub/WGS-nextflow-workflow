@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y \
 ENV BCFTOOLS_INSTALL_DIR=/opt/bcftools
 ENV BCFTOOLS_VERSION=1.12
 
-# Set working directory
 WORKDIR /tmp
 
 RUN wget https://github.com/samtools/bcftools/releases/download/$BCFTOOLS_VERSION/bcftools-$BCFTOOLS_VERSION.tar.bz2 && \
@@ -26,4 +25,3 @@ RUN wget https://github.com/samtools/bcftools/releases/download/$BCFTOOLS_VERSIO
   make install
 
 RUN rm -rf /tmp/bcftools-$BCFTOOLS_VERSION*
-
