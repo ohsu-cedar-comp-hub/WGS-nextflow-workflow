@@ -45,10 +45,10 @@ trimmomatic \
     ILLUMINACLIP:"${truseq3pefile}":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:50
 ```
 
-#### 1. Alignment with Burrows-Wheeler Aligner (BWA) algorithms
+#### 1. Alignment with Burrows-Wheeler Aligner (BWA) algorithm
  
-**File input:** Trimmed, quality filtered, paired-end .fastq files (assigned to variable "read 1" and "read 2" in parameters file), and an indexed reference genome fasta file.   
-**File output:** Aligned .bam file   
+**File input:** Trimmed, quality filtered, paired-end .fastq files, and an indexed reference genome fasta file.   
+**File output:** Aligned, unsorted BAM file   
 **Call:**  
 ```
 nextflow run bwamem2.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
@@ -72,8 +72,7 @@ bwa mem \
     <fastq_1.fq.gz> \
     <fastq_2.fq.gz> |
     samtools view \
-    -Shb
-    -o <output.bam> -
+    -Shb -o <output.bam> -
 ```
 
 #### 2. Sort and index
@@ -103,8 +102,8 @@ java -jar picard.jar SortSam \
 
 #### 3. Mark duplicates
 **File input:** Sorted BAM file   
-**File output:** BAM file of marked duplicates and a metrics txt file
-**Call"**:  
+**File output:** BAM file of marked duplicates and a metrics txt file  
+**Call**:  
 ```
 nextflow run mark_duplicates.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
 ```
