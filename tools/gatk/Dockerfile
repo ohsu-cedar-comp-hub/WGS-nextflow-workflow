@@ -1,6 +1,6 @@
  FROM ubuntu:20.04 AS builder
 
-ENV VERSION=4.2.4.1
+ENV VERSION=4.4.0.0
 
 ENV URL=https://github.com/broadinstitute/gatk/releases/download/${VERSION}/gatk-${VERSION}.zip
 ARG DEBIAN_FRONTEND=noninteractive
