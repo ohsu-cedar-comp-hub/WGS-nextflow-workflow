@@ -11,6 +11,7 @@ process multiQC {
     path fastqc_read2
     path trim_fastqc_read1
     path trim_fastqc_read2
+    val id
 
     output:
     file("${fastqc_read1.baseName}_multiqc_report.html")
