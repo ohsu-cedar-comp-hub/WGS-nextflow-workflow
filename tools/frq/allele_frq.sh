@@ -17,4 +17,4 @@ vcftools --gzvcf $VCF --site-quality --out $OUT
 
 # mean depth per site (creates *.ldepth.mean)
 echo 'Running mean depth per site'
-vcftools --gzvcf $SUBSET_VCF --site-mean-depth --out $OUT
+vcftools --gzvcf $VCF --site-mean-depth --out $OUT
