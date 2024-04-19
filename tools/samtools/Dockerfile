@@ -1,6 +1,9 @@
 FROM ubuntu:20.04
 
 RUN apt-get update -qq \
+  && apt-get install -qq -y libcurl4-openssl-dev
+
+RUN apt-get update -qq \
   && apt-get install -qq bzip2 gcc g++ make zlib1g-dev wget libncurses5-dev liblzma-dev libbz2-dev
 
 ENV SAMTOOLS_VERSION=1.19
