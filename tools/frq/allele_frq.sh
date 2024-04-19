@@ -15,6 +15,6 @@ vcftools --gzvcf $VCF --freq2 --out $OUT --max-alleles 2
 echo 'Running site qual'
 vcftools --gzvcf $VCF --site-quality --out $OUT
 
-# mean depth per site (creates *.ldepth.mean)
+# mean depth per site (creates .ldepth.mean)
 echo 'Running mean depth per site'
 vcftools --gzvcf $VCF --site-mean-depth --out $OUT
