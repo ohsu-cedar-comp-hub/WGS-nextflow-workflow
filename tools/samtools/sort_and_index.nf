@@ -8,6 +8,7 @@ process sortAndIndex {
 
     input:
     path bam_unsorted
+    val ID
 
     output: 
     file("${bam_unsorted.baseName}_sorted_indexed.bam")
