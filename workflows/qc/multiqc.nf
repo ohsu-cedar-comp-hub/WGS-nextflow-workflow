@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-include {multiQC} from '../tools/qc/multiqc.nf'
+include {multiQC} from '../../tools/qc/multiqc.nf'
 
 // Define the workflow for multiqc
 workflow {

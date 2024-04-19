@@ -6,6 +6,7 @@ process MarkDuplicates {
     input:
     path tumor_bam_sorted
     path normal_bam_sorted
+    val ID
 
     output: 
     file "${tumor_bam_sorted.baseName}_marked_duplicates.bam"

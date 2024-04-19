@@ -7,10 +7,11 @@ process fastQC {
     input:
     path trim_read1
     path trim_read2
+    val id
     
     script:
     """
-     fastqc ${trim_read1} -o ${params.outdir}/trimfastqc
-     fastqc ${trim_read2} -o ${params.outdir}/trimfastqc 
+     fastqc -o ${params.outdir}/trimfastqc ${trim_read1}
+     fastqc -o ${params.outdir}/trimfastqc ${trim_read2} 
     """
 }

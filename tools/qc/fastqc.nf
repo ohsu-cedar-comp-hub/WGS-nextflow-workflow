@@ -7,6 +7,7 @@ process fastQC {
     input:
     path read1
     path read2
+    val id
     
     script:
     """

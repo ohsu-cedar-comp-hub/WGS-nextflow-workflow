@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-include {sortAndIndex} from '../tools/samtools/sort_and_index.nf'
+include {sortAndIndex} from '../../tools/samtools/sort_and_index.nf'
 
 // Define the workflow for sort and index
 workflow { 

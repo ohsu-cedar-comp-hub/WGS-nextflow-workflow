@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-include {MarkDuplicates} from '../tools/gatk/mark_duplicates.nf'
+include {MarkDuplicates} from '../../tools/gatk/mark_duplicates.nf'
 
 //Define workflow for marking duplicates
 workflow {
