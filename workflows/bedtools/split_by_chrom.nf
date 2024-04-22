@@ -1,7 +1,6 @@
 #!/usr/bin/env nextflow
 
-include { SplitByChromosome } from 
-'/Users/goldmael/Desktop/githubWork/WGS-nextflow-workflow/tools/bedtools/split_by_chrom.nf'
+include { SplitByChromosome } from '../tools/bedtools/split_by_chrom.nf'
 
 // Define the workflow
 workflow {
