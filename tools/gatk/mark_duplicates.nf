@@ -16,17 +16,16 @@ process MarkDuplicates {
 
     script:
     """
-    gatk MarkDuplicates \
-        -I ${tumor_bam_sorted} \
+    gatk MarkDuplicates -I ${tumor_bam_sorted} \
         -O ${tumor_bam_sorted.baseName}_marked_duplicates.bam \
         -M ${tumor_bam_sorted.baseName}_marked_duplicates_metrics.txt \
         --VALIDATION_STRINGENCY LENIENT
 
-   gatk MarkDuplicates \ 
-        -I ${normal_bam_sorted} \
+   gatk MarkDuplicates -I ${normal_bam_sorted} \
         -O ${normal_bam_sorted.baseName}_marked_duplicates.bam \
         -M ${normal_bam_sorted.baseName}_marked_duplicates_metrics.txt \
         --VALIDATION_STRINGENCY LENIENT
     """
 
 }
+
