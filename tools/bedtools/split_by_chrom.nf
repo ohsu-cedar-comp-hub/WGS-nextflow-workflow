@@ -1,13 +1,9 @@
-// define a channel for input bed file(s)
-Channel
-    .fromPath(params.bed_file)
-    .into { bedfile_ch }
-
+// define process
 process SplitByChromosome {
     publishDir "${params.outdir}/allelic_counts", mode: 'copy'
 
     input:
-    path bed_file from bedfile_ch
+    path bed_file
 
     output:
     path "*.bed"
