@@ -18,14 +18,12 @@ process GetPileupSummaries {
     file("${normal_bam_sorted.baseName}.getpileupsummaries.table")
     script:
     """
-    //script for tumor_bam
     gatk GetPileupSummaries \\
     -I ${tumor_bam_sorted} \\
     -V ${exac} \\
     -L ${exac} \\
     -O ${tumor_bam_sorted.baseName}.getpileupsummaries.table
 
-    //script for normal_bam
     gatk GetPileupSummaries \\
     -I ${normal_bam_sorted} \\
     -V ${exac} \\
