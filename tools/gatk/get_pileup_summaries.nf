@@ -20,14 +20,14 @@ process GetPileupSummaries {
     """
     gatk GetPileupSummaries \\
     -I ${tumor_bam_sorted} \\
-    -V ${exac} \\
-    -L ${exac} \\
+    -V ${params.exac} \\
+    -L ${params.exac} \\
     -O ${tumor_bam_sorted.baseName}.getpileupsummaries.table
 
     gatk GetPileupSummaries \\
     -I ${normal_bam_sorted} \\
-    -V ${exac} \\
-    -L ${exac} \\
+    -V ${params.exac} \\
+    -L ${params.exac} \\
     -O ${normal_bam_sorted.baseName}.getpileupsummaries.table
     """
 }
