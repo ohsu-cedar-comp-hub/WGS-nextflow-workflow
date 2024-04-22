@@ -32,13 +32,13 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 ![align_pipeline](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/assets/136844363/038d08a6-1621-43e1-b8f9-da62a89871f8)
 
 ### Tools 
-Versions are just what I have in my conda env as of now. To be updated for consistency with versions in Singularity
+
 - Nextflow (DSL2)
 - Singularity
-- trimmomatic 0.39
-- bwa-mem2 2.2.1
-- samtools 1.18
-- gatk4 4.3.0.0
+- trimmomatic 0.38
+- bwa-mem2 {VERSION}
+- samtools 1.19
+- gatk4 4.4.0.0
 
 |Step | Parameter | COH WGS nextflow pipeline | GDC pipeline |
 | --- | --------- | ------------------------- | ------------ |
