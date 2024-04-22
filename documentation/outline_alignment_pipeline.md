@@ -2,7 +2,7 @@
 
 Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow) with a comparison to the [GDC pipeline](https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/DNA_Seq_Variant_Calling_Pipeline/).
 
-![Alignment Pipeline Outline](./images/1713219274646-69bf4702-5944-4988-b591-58457af78593_1.jpg)
+![align_pipeline](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/assets/136844363/038d08a6-1621-43e1-b8f9-da62a89871f8)
 
 ### Tools 
 Versions are just what I have in my conda env as of now. To be updated for consistency with versions in Singularity
