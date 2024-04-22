@@ -11,6 +11,7 @@ process GetPileupSummaries {
     path tumor_bam_sorted
     path normal_bam_sorted
     path exac
+    val ID
 
     output:
     file("${tumor_bam_sorted.baseName}.getpileupsummaries.table")
