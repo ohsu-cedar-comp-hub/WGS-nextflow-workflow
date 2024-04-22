@@ -48,10 +48,8 @@ independently assuming the necessary input files exist. A parameter file is pass
   - index
   - normalize
   - merged
-- bedtools2>=2.29.0
 - SNPEff/4.5
-- GNU parallel/20220522
-- htslib/1.10.2
+- htslib/1.10.2 ## 
 
 ## Usage
 ## Run the variant calling and annotation workflow
@@ -68,41 +66,33 @@ independently assuming the necessary input files exist. A parameter file is pass
 *calculate fraction of normal cell contaminants in tumor sample*
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk CalculateContamination -I tumor_pileups.table -matched normal_pileups.table -O contamination.table```
 
-### 3. Split BAM files by chromosome 
-_Split files by chromosome for faster processing_
-```docker build -t quay.io://ohsu-comp-bio/bedtools:2.30.0 ./workdir ## WIP ```
-
-### 4. Run Mutect2
+### 3. Run Mutect2 on per chromosome coding sequence files 
 *Call somatic variants*
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal NORMAL -pon gnomad_panel_of_normals.vcf -germline-resource exac_germline_mutation_data.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
 
-### 5. Aggregate across chromosomes with bedtools 
-```docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools concat -a -f -l listSamplesToCatByChromosome -o "${file%.unf.vcf.gz}.concat.vcf" ```
-
-### 6. GATK LearnReadOrientationModel
+### 4. GATK LearnReadOrientationModel
 _Learn the read orientation model to refine variant calls by removing technical artifacts._ 
 ```docker run quay.io://ohsu-compbio/gatk:4.4.0.0 gatk LearnReadOrientationModel -I f1r2.tar.gz -O read-orientation-model.tar.gz```
 
-### 7. Process VCFs with bcftools
-_Sort, index, normalize and combine (per sample) the VCF files before filtering_
+### 5. Process VCFs 
+_Sort, index, normalize and combine (per sample) the VCF files before filtering_`
+#### Aggregate across chromosomes with bcftools
+```docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools concat -a -f -l listSampleSpecificChromFiles -o "${file%.unf.vcf.gz}.concat.vcf" ```
 
-#### 7a. Combine across chromosomes
-```docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools concat -a -f -l listSamplesToCatByChromosome -o "${file%.unf.vcf.gz}.concat.vcf" ```
-
-####  7b. Sort bgzipped VCFs
+####  5a. Sort bgzipped VCFs
 ``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools sort "${file}.concat.vcf" -Oz -o  "${file%.unf.concat.vcf.gz}.unfiltered.sorted.vcf.gz"```
 
-#### 7c. Index bgzipped VCF files
+##### 5b. Index bgzipped VCF files
 ``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools index -t "${file}.unfiltered.sorted.vcf.gz" ```
 
-#### 7d. Normalize pre-filtering for annotation
+#### 5c. Normalize pre-filtering for annotation
 ```docker run quay.io//ohsu-comp-bio/bcftools:1.12 normalize -i "${file}.unfiltered.sorted.vcf.gz" -o "${file%.unfiltered.sorted.vcf.gz}.unfiltered.normalized.vcf"```
 
-### 8. GATK FilterMutectCalls
+### 6. GATK FilterMutectCalls
 _Apply filters to Mutect2 variant calls_ 
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk FilterMutectCalls -R reference.fa -V  "${file}.unfiltered.normalized.vcf" -contamination-table contamination.table --orientation-bias-artifact-priors read-orientation-model.tar.gz -O "${file%.unfiltered.normalized.vcf.gz}.filtered.vcf" ```
 
-### 9. SNPEff Annotation
+### 7. SNPEff Annotation
 _Annotate variants using SNPEff_
 ```docker run quay.io://ohsu-comp-bio/SNPEff:latest -v genome_version <annotated_variants.vcf> | gzip > annotated_variants.vcf.gz```
 
