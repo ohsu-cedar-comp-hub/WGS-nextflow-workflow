@@ -12,6 +12,7 @@ RUN apt-get update \
                 r-base \
                 unzip \
                 wget \
+                python \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
