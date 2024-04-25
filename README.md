@@ -96,5 +96,6 @@ _Apply filters to Mutect2 variant calls_
 _Annotate variants using SNPEff_
 ```docker run quay.io://ohsu-comp-bio/SNPEff:latest -v genome_version <annotated_variants.vcf> | gzip > annotated_variants.vcf.gz```
 
+## Overview
 
-
+![variantcall_pipeline](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/assets/136844363/1aa03724-3ba7-466d-ab0e-de90ca1d56a3)
