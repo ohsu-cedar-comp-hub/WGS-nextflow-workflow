@@ -19,3 +19,5 @@ RUN wget $URL \
     && unzip Trimmomatic-${VERSION}.zip \
     && ln -s /opt/Trimmomatic-${VERSION}/trimmomatic-${VERSION}.jar /bin/trimmomatic.jar \
     && rm Trimmomatic-${VERSION}.zip
+
+ENV PATH="/usr/bin/:$PATH"
