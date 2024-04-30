@@ -50,7 +50,11 @@ There are currently separate images for each tool. You will need to pull the fol
 - multiqc [wip] << EDIT I did not realize we were missing this one
 - trimmomatic
 - bwa
-- 
+- samtools
+- gatk
+- mutect
+- bcftools
+- snpeff [wip]
 
 
 Example:
@@ -86,33 +90,24 @@ nextflow run <nextflow script>.nf \
 -with-singularity /path/to/<name>.sif
 ```
 
-** Environment Summary **
+**Environment Summary**
 
 Nextflow version 23.10.1  
 Singularity version 3.8.0-1.el7
 
 ## Quick run 
 
+Activate nextflow environment and load singularity
 
+**Pre-alignment QC**   
+1.) QC with fastQC 
 
- 
-
- 
-  
-  
-8.) somatic variant calling with gatk Mutect2  
-9.) Learn orientation bias model  
-10.) Get pileup summaries  
-11.) Get segmentation and contamination tables  
-12.) Filter variant calls with gatk Mutect2 (using input files from steps 8-11)  
-13.) Annotate variants with snpEff  
-
-`conda activate nextflow_env`
-
-** Pre-alignment QC ** 
-1.) QC with fastQC  
-`mkdir output/fastqc`  
-`nextflow run workflows/qc/fastqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif`  
+ ```
+## make output directory for fastqc
+mkdir output/fastqc
+## run nextflow
+nextflow run workflows/qc/fastqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif 
+``` 
   
 add file outputs from fastQC to params file  
   
@@ -129,7 +124,7 @@ add file outputs from fastqc to params file
 4.) MultiQC on all fastQC output files   
 `nextflow run workflows/qc/multiqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif`  
 
-** Alignment **  
+**Alignment**  
 5.) Alignment with bwa-mem2  
 `nextflow run workflows/bwa/bwamem2.nf -params-file <params-file>.json -c nextflow.config -with-singularity bwa.sif`
 
@@ -141,28 +136,43 @@ add unsorted bam output to params file
 add sorted indexed bam output to params file 
 
 7.) Mark duplicates with gatk MarkDuplicates
-`nextflow run mark_duplicates.nf -params-file test_pair_params.json`
+`nextflow run workflows/gatk/mark_duplicates.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`
 
-`nextflow run mutect.nf -params-file test_pair_params.json`
-(note this takes a bit about ~ 15 min)
+**Somatic Variant Calling**  
+8.) Somatic variant calling with gatk Mutect2   
+`nextflow run workflows/mutect/mutect2.nf -params-file <params-file>.json -c nextflow.config -with-singularity mutect.sif`  
+<< EDIT not sure why we have separate mutect and gatk images?
 
-add tar.gz file to params file
+add f1r2 file to params file
 add unfiltered vcf (svc vcf output from mutect) to params file
 
-`nextflow run learn_read_orientation_model.nf -params-file test_pair_params.json`
+9.) Get segmentation and contamination tables  
+`nextflow run workflows/gatk/calculate_contamination.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`  
 
-`nextflow run get_pileup_summaries.nf -params-file test_pair_params.json`
+*split by chromosome with bash script here* 
 
-`nextflow run calculate_contamination.nf -params-file test_pair_params.json`
+10.) Learn orientation bias model  
+`nextflow run workflows/gatk/learn_read_orientation_model.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`
+add output to params file
 
-`nextflow run filter_mutect.nf -params-file test_pair_params.json`
+11.) Get pileup summaries  
+`nextflow run workflows/gatk/get_pileup_summaries.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`  
+add output file to params file  
 
+12.) Sort, index, normalize with bcftools  
+`nextflow run workflows/bcftools/vcf_sort_index_normalize.nf -params-file <params-file>.json -c nextflow.config -with-singularity bcftools.sif`  
+add output to params file
+
+13.) Filter variant calls with gatk Mutect2  
+`nextflow run workflows/mutect/filter_mutect.nf -params-file <params-file>.json -c nextflow.config -with-singularity mutect.sif`  
 add filtered vcf to params file 
 
-`nextflow run annotate_variants.nf -params-file test_pair_params.json`
+14.) Annotate variants with snpEff   
+`nextflow run workflows/snpeff/annotate_variants.nf -params-file <params-file>.json -c nextflow.config -with-singularity snpeff.sif`  
 
+## Workflow description
 
-## Alignment workflow [WIP]
+### Alignment workflow [WIP]
 
 Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow) with a comparison to the [GDC pipeline](https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/DNA_Seq_Variant_Calling_Pipeline/).
 
@@ -223,7 +233,7 @@ trimmomatic \
     ILLUMINACLIP:"${truseq3pefile}":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:50
 ```
 
-#### 1. Alignment with Burrows-Wheeler Aligner (BWA) algorithm
+#### 1. Alignment with Burrows-Wheeler Aligner (BWA)
  
 **File input:** Trimmed, quality filtered, paired-end .fastq files, and an indexed reference genome fasta file.   
 **File output:** Aligned, unsorted BAM file   
@@ -305,16 +315,16 @@ java -jar picard.jar MarkDuplicates \
 
 
 
-## Variant Calling Workflow and Annotation Workflow [WIP] 
+### Variant Calling Workflow and Annotation Workflow [WIP] 
 
 This variant calling worfklow uses Nextflow and is using Singularity. Submodules of the workflow are described below and can be run
 independently assuming the necessary input files exist. A parameter file is passed as input using -params-file <my-params.json>, which can begenerated using the templating script. In the example below, parameters are passed as command line argument for to easily demonstrate usage.
 
-## Overview
+#### Overview
 
 ![variantcall_pipeline](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/assets/136844363/1aa03724-3ba7-466d-ab0e-de90ca1d56a3)
 
-## Tools
+#### Tools
 - Nextflow (DSL2)
 - Singularity 
 - bcftools/1.10.2
@@ -330,48 +340,48 @@ independently assuming the necessary input files exist. A parameter file is pass
 - SNPEff/4.5
 - htslib/1.10.2 ## 
 
-## Usage
-## Run the variant calling and annotation workflow
+#### Usage
+#### Run the variant calling and annotation workflow
 ```nextflow run WGS-variant-call-annotate-nextflow-pipeline.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>```
 
-### 1. GetPileupSummaries
+#### 1. GetPileupSummaries
 *Generate read counts for estimating of contamination in the tumor tissue using GATK.*
 
 ```docker run quay:io//ohsu-comp-bio/gatk:4.4.0.0 gatk GetPileupSummaries -I tumor.bam -V gnomad.vcf -L intervals.list -O tumor_pileups.table```
 
 ```docker run quay:io//ohsu-comp-bio/gatk:4.4.0.0 gatk GetPileupSummaries -I normal.bam -V gnomad.vcf -L intervals.list -O normal_pileups.table```
 
-### 2. Calculate Contamination
+#### 2. Calculate Contamination
 *calculate fraction of normal cell contaminants in tumor sample*
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk CalculateContamination -I tumor_pileups.table -matched normal_pileups.table -O contamination.table```
 
-### 3. Run Mutect2 on per chromosome coding sequence files 
+#### 3. Run Mutect2 on per chromosome coding sequence files 
 *Call somatic variants*
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal NORMAL -pon gnomad_panel_of_normals.vcf -germline-resource exac_germline_mutation_data.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
 
-### 4. GATK LearnReadOrientationModel
+#### 4. GATK LearnReadOrientationModel
 _Learn the read orientation model to refine variant calls by removing technical artifacts._ 
 ```docker run quay.io://ohsu-compbio/gatk:4.4.0.0 gatk LearnReadOrientationModel -I f1r2.tar.gz -O read-orientation-model.tar.gz```
 
-### 5. Process VCFs 
+#### 5. Process VCFs 
 _Sort, index, normalize and combine (per sample) the VCF files before filtering_`
-#### Aggregate across chromosomes with bcftools
+##### Aggregate across chromosomes with bcftools
 ```docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools concat -a -f -l listSampleSpecificChromFiles -o "${file%.unf.vcf.gz}.concat.vcf" ```
 
-####  5a. Sort bgzipped VCFs
+#####  5a. Sort bgzipped VCFs
 ``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools sort "${file}.concat.vcf" -Oz -o  "${file%.unf.concat.vcf.gz}.unfiltered.sorted.vcf.gz"```
 
-##### 5b. Index bgzipped VCF files
+###### 5b. Index bgzipped VCF files
 ``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools index -t "${file}.unfiltered.sorted.vcf.gz" ```
 
-#### 5c. Normalize pre-filtering for annotation
+##### 5c. Normalize pre-filtering for annotation
 ```docker run quay.io//ohsu-comp-bio/bcftools:1.12 normalize -i "${file}.unfiltered.sorted.vcf.gz" -o "${file%.unfiltered.sorted.vcf.gz}.unfiltered.normalized.vcf"```
 
-### 6. GATK FilterMutectCalls
+#### 6. GATK FilterMutectCalls
 _Apply filters to Mutect2 variant calls_ 
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk FilterMutectCalls -R reference.fa -V  "${file}.unfiltered.normalized.vcf" -contamination-table contamination.table --orientation-bias-artifact-priors read-orientation-model.tar.gz -O "${file%.unfiltered.normalized.vcf.gz}.filtered.vcf" ```
 
-### 7. SNPEff Annotation
+#### 7. SNPEff Annotation
 _Annotate variants using SNPEff_
 ```docker run quay.io://ohsu-comp-bio/SNPEff:latest -v genome_version <annotated_variants.vcf> | gzip > annotated_variants.vcf.gz```
 
