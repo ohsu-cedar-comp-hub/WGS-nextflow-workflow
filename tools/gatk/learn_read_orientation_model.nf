@@ -9,6 +9,7 @@ process LearnReadOrientationModel {
 
     input: // if multiple tumor samples are being processed, only a single f1r2_tar_gz output is necessary, which will contain info for all included samples
     path f1r2_tar_gz
+    val ID
 
     output:
     path "read_orientation_model.tar.gz"

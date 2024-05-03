@@ -12,16 +12,19 @@ process CalculateContamination {
     input:
     path tumor_pileups_table
     path normal_pileups_table
+    val ID
 
     output:
-    path("${tumor_pileups_table.baseName"}_contamination_table)
-    path("${tumor_pileups_table.baseName"}_segmentation_table)
+    path("${tumor_pileups_table.baseName}_contamination_table")
+    path("${tumor_pileups_table.baseName}_segmentation_table")
 
   // calculatContamination command
     script:
     """
-        gatk4 CalculateContamination \\
+        gatk CalculateContamination \\
         -I ${tumor_pileups_table} \\
         --matched ${normal_pileups_table} \\
         -O ${tumor_pileups_table.baseName}_contamination_table \\
         -tumor-segmentation ${tumor_pileups_table.baseName}_segmentation_table
+    """
+}

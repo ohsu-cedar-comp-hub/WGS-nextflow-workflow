@@ -11,24 +11,23 @@ process GetPileupSummaries {
     path tumor_bam_sorted
     path normal_bam_sorted
     path exac
+    val ID
 
     output:
     file("${tumor_bam_sorted.baseName}.getpileupsummaries.table")
     file("${normal_bam_sorted.baseName}.getpileupsummaries.table")
     script:
     """
-    //script for tumor_bam
     gatk GetPileupSummaries \\
     -I ${tumor_bam_sorted} \\
-    -V ${exac} \\
-    -L ${exac} \\
+    -V ${params.exac} \\
+    -L ${params.exac} \\
     -O ${tumor_bam_sorted.baseName}.getpileupsummaries.table
 
-    //script for normal_bam
     gatk GetPileupSummaries \\
     -I ${normal_bam_sorted} \\
-    -V ${exac} \\
-    -L ${exac} \\
+    -V ${params.exac} \\
+    -L ${params.exac} \\
     -O ${normal_bam_sorted.baseName}.getpileupsummaries.table
     """
 }
