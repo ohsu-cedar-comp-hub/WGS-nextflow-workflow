@@ -47,7 +47,6 @@ singularity pull <name>.sif docker://quay.io/ohsu-comp-bio/<name>
   
 There are currently separate images for each tool. You will need to pull the following from quay.io/ohsu-comp-bio:
 - fastqc [wip]
-- multiqc [wip] << EDIT I did not realize we were missing this one
 - trimmomatic
 - bwa
 - samtools
@@ -167,8 +166,12 @@ add output to params file
 `nextflow run workflows/mutect/filter_mutect.nf -params-file <params-file>.json -c nextflow.config -with-singularity mutect.sif`  
 add filtered vcf to params file 
 
+**Annotation**
+
 14.) Annotate variants with snpEff   
 `nextflow run workflows/snpeff/annotate_variants.nf -params-file <params-file>.json -c nextflow.config -with-singularity snpeff.sif`  
+
+15.) Calculate allele frequencies (?)
 
 ## Workflow description
 
@@ -355,23 +358,51 @@ independently assuming the necessary input files exist. A parameter file is pass
 - SNPEff/4.5
 - htslib/1.10.2 ## 
 
-#### Usage
-#### Run the variant calling and annotation workflow
+### Usage
+### Run the variant calling and annotation workflow
 ```nextflow run WGS-variant-call-annotate-nextflow-pipeline.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>```
 
-#### 1. GetPileupSummaries
+### 1. GetPileupSummaries
 *Generate read counts for estimating of contamination in the tumor tissue using GATK.*
+**File input**: Duplicate-marked BAM files of tumor and matched normal and common germline variants VCF (exac file)
+**File output**: Pileup summary table of alt counts and allele frequencies at each position
 
-```docker run quay:io//ohsu-comp-bio/gatk:4.4.0.0 gatk GetPileupSummaries -I tumor.bam -V gnomad.vcf -L intervals.list -O tumor_pileups.table```
+```
+nextflow run get_pileup_summaries.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
+```
 
-```docker run quay:io//ohsu-comp-bio/gatk:4.4.0.0 gatk GetPileupSummaries -I normal.bam -V gnomad.vcf -L intervals.list -O normal_pileups.table```
+### 2. Calculate Contamination
+*Calculate fraction of normal cell contaminants in tumor sample*
+**File input**: Tumor and normal pileup summary tables
+**File output**: Contamination table and tumor segmentation table
 
-#### 2. Calculate Contamination
-*calculate fraction of normal cell contaminants in tumor sample*
-```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk CalculateContamination -I tumor_pileups.table -matched normal_pileups.table -O contamination.table```
+```
+nextflow run calculate_contamination.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
+```
 
-#### 3. Run Mutect2 on per chromosome coding sequence files (example given for chrom1 but mutect2 will accept multiple intervals, i.e., all 23 chromosomes as intervals per file)
+
+### 3. Run Mutect2 on per chromosome coding sequence files (example given for chrom1 but mutect2 will accept multiple intervals, i.e., all 23 chromosomes as intervals per file)
 *Call somatic variants*
+**File input**:
+**File output**:
+
+
+```
+nextflow run calculate_contamination.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
+```
+
+Script in nextflow:  
+```
+gatk Mutect2 \
+    -R ${mutect_idx} \
+    -I ${tumor_bam_sorted} \
+    -I ${normal_bam_sorted} \
+    --panel-of-normals ${pon} \
+    -O ${tumor_bam_sorted.baseName}_unfiltered.vcf \
+    --f1r2-tar-gz ${tumor_bam_sorted.baseName}_f1r2.tar.gz \
+    -stats ${tumor_bam.baseName}_unfiltered.vcf.stats
+```
+
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal NORMAL --intervals chr1 -pon gnomad_panel_of_normals.vcf -germline-resource exac_germline_mutation_data.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
 
 #### 4. GATK LearnReadOrientationModel
