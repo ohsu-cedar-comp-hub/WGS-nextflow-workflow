@@ -78,7 +78,7 @@ singularity {
 Run Nextflow with Singularity  
 When running Nextflow, you will need:
 - the script `(workflows/<step>/<script name>.nf)`
-- the parameters file (an example of the params file is available in this repo here: `/config/example_pair_params.json`) /* EDIT: this is currently not merged with main and is on branch "params-template"
+- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`) /* EDIT: this is currently not merged with main and is on branch "params-template *EDIT [EAG]: will merge and reference this files from that branch"
 - the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)
 - the path to your singularity image (.sif file)  
 <br>
