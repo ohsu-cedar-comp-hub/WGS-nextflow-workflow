@@ -78,7 +78,7 @@ singularity {
 Run Nextflow with Singularity  
 When running Nextflow, you will need:
 - the script `(workflows/<step>/<script name>.nf)`
-- the parameters file (an example of the params file is available in this repo here: `/config/example_pair_params.json`) /* EDIT: this is currently not merged with main and is on branch "params-template"
+- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`) /* EDIT: this is currently not merged with main and is on branch "params-template *EDIT [EAG]: will merge and reference this files from that branch"
 - the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)
 - the path to your singularity image (.sif file)  
 <br>
@@ -370,9 +370,9 @@ independently assuming the necessary input files exist. A parameter file is pass
 *calculate fraction of normal cell contaminants in tumor sample*
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk CalculateContamination -I tumor_pileups.table -matched normal_pileups.table -O contamination.table```
 
-#### 3. Run Mutect2 on per chromosome coding sequence files 
+#### 3. Run Mutect2 on per chromosome coding sequence files (example given for chrom1 but mutect2 will accept multiple intervals, i.e., all 23 chromosomes as intervals per file)
 *Call somatic variants*
-```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal NORMAL -pon gnomad_panel_of_normals.vcf -germline-resource exac_germline_mutation_data.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
+```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal NORMAL --intervals chr1 -pon gnomad_panel_of_normals.vcf -germline-resource exac_germline_mutation_data.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
 
 #### 4. GATK LearnReadOrientationModel
 _Learn the read orientation model to refine variant calls by removing technical artifacts._ 
