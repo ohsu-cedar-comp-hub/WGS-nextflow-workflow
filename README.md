@@ -363,7 +363,7 @@ independently assuming the necessary input files exist. A parameter file is pass
 ### 1. GetPileupSummaries
 *Generate read counts for estimating of contamination in the tumor tissue using GATK.*  
 **File input**: Duplicate-marked BAM files of tumor and matched normal and common germline variants VCF (exac file)  
-**File output**: Pileup summary table of alt counts and allele frequencies at each position
+**File output**: Pileup summary table of ref and alt counts, and allele frequencies at each position
 
 ```
 nextflow run get_pileup_summaries.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
@@ -381,12 +381,12 @@ nextflow run calculate_contamination.nf —params-file <my-params.json> -c <my-n
 
 ### 3. Run Mutect2 on per chromosome coding sequence files (example given for chrom1 but mutect2 will accept multiple intervals, i.e., all 23 chromosomes as intervals per file)
 *Call somatic variants*  
-**File input**: Duplicate-marked BAM files of tumor and matched normal, genome reference fasta, germline resource VCF (exac), panel of normals (PoN) VCF, and genomic interval over which to operate 
+**File input**: Duplicate-marked BAM files of tumor and matched normal, genome reference fasta, germline resource VCF (exac), panel of normals (PoN) VCF, and genomic interval over which to operate  
 **File output**: f1r2 .tar.gz file, unfiltered tumor VCF, and VCF stats file
 
 
 ```
-nextflow run calculate_contamination.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
+nextflow run mutect2.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
 ```
 
 Script in nextflow:  
@@ -403,13 +403,22 @@ gatk Mutect2 \
 
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal NORMAL --intervals chr1 -pon gnomad_panel_of_normals.vcf -germline-resource exac_germline_mutation_data.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
 
-#### 4. GATK LearnReadOrientationModel
+### 4. GATK LearnReadOrientationModel
 _Learn the read orientation model to refine variant calls by removing technical artifacts._ 
-```docker run quay.io://ohsu-compbio/gatk:4.4.0.0 gatk LearnReadOrientationModel -I f1r2.tar.gz -O read-orientation-model.tar.gz```
+**File input**: f1r2 file from mutect2  
+**File output**: Read orientation model .tar.gz file  
 
-#### 5. Process VCFs 
+```
+nextflow run learn_read_orientation.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
+```
+
+### 5. Process VCFs 
 _Sort, index, normalize and combine (per sample) the VCF files before filtering_`
-##### Aggregate across chromosomes with bcftools
+
+#### Aggregate across chromosomes with bcftools
+**File input**:
+**File output**: 
+
 ```docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools concat -a -f -l listSampleSpecificChromFiles -o "${file%.unf.vcf.gz}.concat.vcf" ```
 
 #####  5a. Sort bgzipped VCFs
