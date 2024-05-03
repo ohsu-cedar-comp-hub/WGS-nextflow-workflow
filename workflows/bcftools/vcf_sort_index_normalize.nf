@@ -5,5 +5,5 @@ include {vcfSortIndexNormalize} from '../../tools/bcftools/vcf_sort_index_normal
 // Define the workflow
 workflow {
     // Run vcfSortIndexNormalize 
-    bwaMem2Alignment(file(params.unfiltered_vcf), "test")
+    vcfSortIndexNormalize(file(params.unfiltered_vcf), "test")
 }

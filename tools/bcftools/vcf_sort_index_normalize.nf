@@ -7,6 +7,7 @@ process vcfSortIndexNormalize {
     // define input and output paramaters
     input: 
     path unfiltered_vcf
+    val ID
  
 
     output: 
@@ -15,11 +16,8 @@ process vcfSortIndexNormalize {
 
     script: 
     """
-    // sort  command
     bcftools sort ${unfiltered_vcf} -Oz -o ${unfiltered_vcf.baseName}_sorted.vcf.gz
-    // index command
     bcftools index -t ${unfiltered_vcf.baseName}_sorted.vcf.gz
-    // normalize command
     bcftools norm -m -any ${unfiltered_vcf.baseName}_sorted.vcf.gz -o ${unfiltered_vcf.baseName}_normalize.vcf.gz
     """
 }
