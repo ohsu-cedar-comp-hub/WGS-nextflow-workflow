@@ -22,6 +22,7 @@ process mutect2 {
     output:
     file("${id}_${bed_files}.f1r2.tar.gz")
     file("${id}_${bed_files}.vcf")
+    file("${id}_${bed_files}.vcf.stats")
 
     // MuTect2 command
     script:
@@ -36,6 +37,7 @@ process mutect2 {
         -L "${bed_files}.bed" \
         --germline-resource "${germline_resource}" \
         --panel-of-normals ${pon} \
+        -stats ${id}_${bed_files}.vcf.stats
         -O ${id}_${chrom}.vcf \
     """
 }
