@@ -74,6 +74,15 @@ singularity {
         }
 ```
 
+Add environmental paths to your config file
+
+for fastqc:
+```
+env {
+    PATH = "$PATH:/usr/local/FastQC/"
+}
+```
+
 Run Nextflow with Singularity  
 When running Nextflow, you will need:
 - the script `(workflows/<step>/<script name>.nf)`
@@ -206,8 +215,16 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 **Run fastQC**  
 **File input**: Raw paired end reads in fastq file format  
 **File output**: .html and .zip fastQC analysis files
-fastQC requires a directory to be made before running. Make a directory in the same output path as specified in the parameters file.
+fastQC requires a directory to be made before running. Make a directory in the same output path as specified in the parameters file.  
 
+Ensure your path is updated in the nextflow config file. 
+
+```
+env {
+    PATH = "$PATH:/usr/local/FastQC/"
+}
+```
+  
 ```
 ## make output directory for fastqc
 mkdir output/fastqc
