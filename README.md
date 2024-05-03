@@ -331,8 +331,6 @@ java -jar picard.jar MarkDuplicates \
     VALIDATION_STRINGENCY=STRICT
 ```
 
-
-
 ## Variant Calling Workflow and Annotation Workflow [WIP] 
 
 This variant calling worfklow uses Nextflow and is using Singularity. Submodules of the workflow are described below and can be run
@@ -363,8 +361,8 @@ independently assuming the necessary input files exist. A parameter file is pass
 ```nextflow run WGS-variant-call-annotate-nextflow-pipeline.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>```
 
 ### 1. GetPileupSummaries
-*Generate read counts for estimating of contamination in the tumor tissue using GATK.*
-**File input**: Duplicate-marked BAM files of tumor and matched normal and common germline variants VCF (exac file)
+*Generate read counts for estimating of contamination in the tumor tissue using GATK.*  
+**File input**: Duplicate-marked BAM files of tumor and matched normal and common germline variants VCF (exac file)  
 **File output**: Pileup summary table of alt counts and allele frequencies at each position
 
 ```
@@ -372,8 +370,8 @@ nextflow run get_pileup_summaries.nf —params-file <my-params.json> -c <my-next
 ```
 
 ### 2. Calculate Contamination
-*Calculate fraction of normal cell contaminants in tumor sample*
-**File input**: Tumor and normal pileup summary tables
+*Calculate fraction of normal cell contaminants in tumor sample*  
+**File input**: Tumor and normal pileup summary tables  
 **File output**: Contamination table and tumor segmentation table
 
 ```
@@ -382,9 +380,9 @@ nextflow run calculate_contamination.nf —params-file <my-params.json> -c <my-n
 
 
 ### 3. Run Mutect2 on per chromosome coding sequence files (example given for chrom1 but mutect2 will accept multiple intervals, i.e., all 23 chromosomes as intervals per file)
-*Call somatic variants*
-**File input**:
-**File output**:
+*Call somatic variants*  
+**File input**: Duplicate-marked BAM files of tumor and matched normal, genome reference fasta, germline resource VCF (exac), panel of normals (PoN) VCF, and genomic interval over which to operate 
+**File output**: f1r2 .tar.gz file, unfiltered tumor VCF, and VCF stats file
 
 
 ```
