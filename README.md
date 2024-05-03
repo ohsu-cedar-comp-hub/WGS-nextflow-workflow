@@ -130,20 +130,20 @@ add file outputs from fastqc to params file
 
 add unsorted bam output to params file
 
-6.) Sort and index with samtools
-`nextflow run workflows/samtools/sort_and_index.nf -params-file <params-file>.json -c nextflow.config -with-singularity samtools.sif`
+6.) Sort and index with samtools  
+`nextflow run workflows/samtools/sort_and_index.nf -params-file <params-file>.json -c nextflow.config -with-singularity samtools.sif`  
 
-add sorted indexed bam output to params file 
+add sorted indexed bam output to params file  
 
-7.) Mark duplicates with gatk MarkDuplicates
-`nextflow run workflows/gatk/mark_duplicates.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`
-
+7.) Mark duplicates with gatk MarkDuplicates  
+`nextflow run workflows/gatk/mark_duplicates.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`  
+  
 **Somatic Variant Calling**  
 8.) Somatic variant calling with gatk Mutect2   
 `nextflow run workflows/mutect/mutect2.nf -params-file <params-file>.json -c nextflow.config -with-singularity mutect.sif`  
 << EDIT not sure why we have separate mutect and gatk images?
 
-add f1r2 file to params file
+add f1r2 file to params file  
 add unfiltered vcf (svc vcf output from mutect) to params file
 
 9.) Get segmentation and contamination tables  
@@ -198,31 +198,31 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 
 ## Usage  
 
-#### 0. Pre-alignment: quality filtering and trimming  
+### 0. Pre-alignment: quality filtering and trimming  
 
-**Run fastQC**
-
+**Run fastQC**  
+**File input**: Raw paired end reads in fastq file format  
+**File output**: .html and .zip fastQC analysis files
 fastQC requires a directory to be made before running. Make a directory in the same output path as specified in the parameters file.
 
 ```
-## make directory
-mkdir <output path>/fastqc
-
-## run fastQC
-
+## make output directory for fastqc
+mkdir output/fastqc
+## run nextflow
+nextflow run workflows/qc/fastqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif 
 ```
 
+**Trimmomatic**  
+After QC, trimmomatic is run in paired-end mode.   
+**File input**: Raw paired end reads in fastq format and a file of sequencing adapters used in the library prep (TruSeq3-PE.fa)  
+**File output**: Two fastq files of quality filtered, adapter-trimmed paired end reads (trim read 1 and trim read 2), and two fastq files of unpaired reads.
 
- After QC, trimmomatic is run in paired-end mode.   
-**File input**: Paired end reads (read 1 and read 2) and a file of sequencing adapters used in the library prep (TruSeq3-PE.fa)  
-**File output**: Paired end reads (trim read 1 and trim read 2), adapters trimmed and quality filtered  
-**Call:**  
 ```
 nextflow run trimmomatic.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
 ```
 **Script in nextflow:**
 ```Shell
-trimmomatic \
+java -jar /bin/trimmomatic.jar \
     PE -phred33 \
     ${read1} \
     ${read2} \
@@ -232,12 +232,28 @@ trimmomatic \
     ${read2.baseName}_2U.fastq.gz \
     ILLUMINACLIP:"${truseq3pefile}":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:50
 ```
+  
+**fastQC on trimmed reads**  
+After running trimmomatic, run fastQC again on trimmed reads.  
+**File input**: Trimmed, quality filtered fastq files of paired end reads (output from trimmomatic)  
+**File output**: .html and .zip files of fastQC analysis
 
-#### 1. Alignment with Burrows-Wheeler Aligner (BWA)
+```
+nextflow run workflows/qc/trim_fastqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif 
+```
+
+**MultiQC**  
+**File input**: fastQC results from raw reads and trimmed reads    
+**File output**: .html multiQC report
+```
+nextflow run workflows/qc/multiqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif 
+```
+
+### 1. Alignment with Burrows-Wheeler Aligner (BWA)
  
 **File input:** Trimmed, quality filtered, paired-end .fastq files, and an indexed reference genome fasta file.   
 **File output:** Aligned, unsorted BAM file   
-**Call:**  
+ 
 ```
 nextflow run bwamem2.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
 ```
@@ -246,9 +262,9 @@ nextflow run bwamem2.nf —params-file <my-params.json> -c <my-nextflow.config> 
 ``` Shell
 bwa-mem2 mem \
     -K 100000000 -t 6 -Y -M \
-    -R "@RG\tID:${params.ID}\tLB:no_library\tPL:illumina\tPU:none\tSM:${trim_read1.baseName}" \
+    -R "@RG\\tID:${params.ID}\\tLB:no_library\\tPL:illumina\\tPU:none\\tSM:${trim_read1.simpleName}" \
     ${params.idx} ${trim_read1} ${trim_read2} |
-    samtools view -Sb -@ 4 > ${trim_read1.baseName}.bam
+    samtools view -Sb -@ 4 > ${trim_read1.simpleName}.bam
 ```
 **Comparison GDC script**:  
 ```Shell
@@ -263,10 +279,9 @@ bwa mem \
     -Shb -o <output.bam> -
 ```
 
-#### 2. Sort and index
+### 2. Sort and index
 **File input**: Unsorted BAM file  
 **File output**: Sorted and indexed BAM file (.bam file and .bam.bai file)  
-**Call**:
 
 ```
 nextflow run sort_and_index.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
@@ -288,10 +303,10 @@ java -jar picard.jar SortSam \
     VALIDATION_STRINGENCY=STRICT
 ```
 
-#### 3. Mark duplicates
+### 3. Mark duplicates
 **File input:** Sorted BAM file   
 **File output:** BAM file of marked duplicates and a metrics txt file  
-**Call**:  
+ 
 ```
 nextflow run mark_duplicates.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
 ```
@@ -315,16 +330,16 @@ java -jar picard.jar MarkDuplicates \
 
 
 
-### Variant Calling Workflow and Annotation Workflow [WIP] 
+## Variant Calling Workflow and Annotation Workflow [WIP] 
 
 This variant calling worfklow uses Nextflow and is using Singularity. Submodules of the workflow are described below and can be run
 independently assuming the necessary input files exist. A parameter file is passed as input using -params-file <my-params.json>, which can begenerated using the templating script. In the example below, parameters are passed as command line argument for to easily demonstrate usage.
 
-#### Overview
+### Overview
 
 ![variantcall_pipeline](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/assets/136844363/1aa03724-3ba7-466d-ab0e-de90ca1d56a3)
 
-#### Tools
+### Tools
 - Nextflow (DSL2)
 - Singularity 
 - bcftools/1.10.2
