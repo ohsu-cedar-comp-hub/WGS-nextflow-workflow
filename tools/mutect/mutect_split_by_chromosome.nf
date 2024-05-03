@@ -1,5 +1,8 @@
+#!/usr/bin/env nextflow
+
+
 // Define the process for running MuTect2
-process MutectSplitByChromosome {
+process mutect2 {
     // Set maximum memory
     memory '80 G'
 
@@ -10,16 +13,16 @@ process MutectSplitByChromosome {
     input:
     path normal_bam_sorted
     path tumor_bam_sorted
-    path chrom
+    path bed_files
     path mutect_idx
     path pon
     path id
     path germline_resource
 
     output:
-    file("${sample_id}_${chrom}.f1r2.tar.gz")
-    file("${sample_id}_${chrom}.vcf")
-    file("${sample_id}_${chrom}.vcf.stats"
+    file("${id}_${bed_files}.f1r2.tar.gz")
+    file("${id}_${bed_files}.vcf")
+
     // MuTect2 command
     script:
     """
@@ -27,14 +30,12 @@ process MutectSplitByChromosome {
         -R ${params.mutect_idx} \
         -I ${params.normal_bam_sorted} \
         -I ${params.tumor_bam_sorted} \
-        -normal "G_${sample_id}" \
-        --f1r2-tar-gz "${sample_id}_${chrom}.f1r2.tar.gz" \
+        -normal "G_${id}" \
+        --f1r2-tar-gz "${id}_${bed_files}.f1r2.tar.gz" \
         --native-pair-hmm-threads 8 \
-        -L "${chrom}.bed" \
+        -L "${bed_files}.bed" \
         --germline-resource "${germline_resource}" \
-        --panel-of-normals ${params.pon} \
-        -stats ${sample_id}_${chrom}.vcf.stats \
-        -O ${sample_id}_${chrom}.vcf \
+        --panel-of-normals ${pon} \
+        -O ${id}_${chrom}.vcf \
     """
 }
-
