@@ -23,7 +23,7 @@ process trimmomaticPE {
     // trimmomatic command
     script:
     """
-     trimmomatic \
+     java -jar /bin/trimmomatic.jar \
      PE -phred33 \
      ${read1} \
      ${read2} \
