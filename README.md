@@ -74,12 +74,12 @@ singularity {
         }
 ```
 
-Add environmental paths to your config file
+Add environmental path to your config file (necessary for fastQC process)
 
-for fastqc:
+for fastQC:
 ```
-env {
-    PATH = "$PATH:/usr/local/FastQC/"
+process {
+    withName: fastQC { env { PATH = "$PATH:/usr/local/FastQC/" } }
 }
 ```
 
