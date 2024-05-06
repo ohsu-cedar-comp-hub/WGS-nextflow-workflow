@@ -7,6 +7,7 @@ process Annotate_Variants {
 
     input:
     path filtered_vcf
+    val ID
 
     output: 
     file "${filtered_vcf.baseName}_annotated_variants.vcf"
