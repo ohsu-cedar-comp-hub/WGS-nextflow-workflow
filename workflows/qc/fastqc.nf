@@ -6,5 +6,5 @@ include {fastQC} from '../../tools/qc/fastqc.nf'
 
 workflow {
 
-    fastQC(file(params.read1), file(params.read2), "test")
+    fastQC(file(params.read1), file(params.read2), params.ID)
 }
