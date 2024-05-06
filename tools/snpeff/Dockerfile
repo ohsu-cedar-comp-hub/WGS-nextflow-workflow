@@ -12,7 +12,7 @@ RUN wget http://sourceforge.net/projects/snpeff/files/snpEff_latest_core.zip && 
     rm snpEff_latest_core.zip
 
 # assuming snpeff looks for data in /usr/src/app/snpEff/data (instead maybe we download at runtime and mount as a volume?)
-# RUN java -jar snpEff.jar download -v GRCh38.86
+RUN java -jar snpEff/snpEff.jar download -v GRCh38.86
 ENV _JAVA_OPTIONS=-Xmx8g
 
-ENTRYPOINT ["java", "-jar", "/tmp/snpEff/snpEff.jar"]
+ENTRYPOINT ["java", "-jar", "snpEff/snpEff.jar"]
