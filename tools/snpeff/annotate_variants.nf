@@ -14,7 +14,7 @@ process Annotate_Variants {
 
     script:
     """
-    snpEff GRCh38.86 ${filtered_vcf} -Xmx8g -cancer > ${filtered_vcf.baseName}_annotated_variants.vcf
+    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${filtered_vcf.baseName}_annotated_variants.vcf
     """
 
 }
