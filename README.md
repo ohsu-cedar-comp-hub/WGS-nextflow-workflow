@@ -86,7 +86,7 @@ env {
 Run Nextflow with Singularity  
 When running Nextflow, you will need:
 - the script `(workflows/<step>/<script name>.nf)`
-- the parameter file (an example of the parameter file and a python script that can be used to generate one's own unique parameter file are available in this repo at WGS-nextflow-workflow/example/normal_params_file_template.json and WGS-nextflow-workflow/example/render_normal_params.py)
+- the parameter file (an example of the parameter file and a python script that can be used to generate one's own unique parameter file are available in this repo at `WGS-nextflow-workflow/example/normal_params_file_template.json` and `WGS-nextflow-workflow/example/render_normal_params.py`)
 - the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)
 - the path to your singularity image (.sif file)  
 <br>
