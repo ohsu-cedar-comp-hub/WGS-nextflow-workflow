@@ -46,7 +46,7 @@ singularity pull <name>.sif docker://quay.io/ohsu-comp-bio/<name>
 ```
   
 There are currently separate images for each tool. You will need to pull the following from quay.io/ohsu-comp-bio:
-- fastqc [wip]
+- fastqc 
 - trimmomatic
 - bwa
 - samtools
