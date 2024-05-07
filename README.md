@@ -53,7 +53,7 @@ There are currently separate images for each tool. You will need to pull the fol
 - gatk
 - mutect
 - bcftools
-- snpeff [wip]
+- snpeff
 
 
 Example:
