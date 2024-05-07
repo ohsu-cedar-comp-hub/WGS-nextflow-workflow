@@ -197,6 +197,7 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 - bwa-mem2 {VERSION} << we are cloning the bwa-mem2 repo for this, for some reason I can't find the command to run to check version
 - samtools 1.19
 - gatk4 4.4.0.0
+  - Picard MarkDuplicates
 
 |Step | Parameter | COH WGS nextflow pipeline | GDC pipeline |
 | --- | --------- | ------------------------- | ------------ |
@@ -360,17 +361,16 @@ independently assuming the necessary input files exist. A parameter file is pass
 - Nextflow (DSL2)
 - Singularity 
 - bcftools/1.10.2
+  - concat
+  - normalize
+  - merge
 - GATK:4.4.0.0
   - GeneratePileUpSummaries
-  - CalculateContamination 
+  - CalculateContamination
+  - LearnReadOrientation 
   - Mutect2
-  - concat
-  - sort
-  - index
-  - normalize
-  - merged
 - SNPEff/4.3t
-- htslib/1.10.2 ## 
+- htslib/1.10.2
 
 ### Usage
 ### Run the variant calling and annotation workflow
@@ -446,11 +446,38 @@ _Sort, index, normalize and combine (per sample) the VCF files before filtering_
 ##### 5c. Normalize pre-filtering for annotation
 ```docker run quay.io//ohsu-comp-bio/bcftools:1.12 normalize -i "${file}.unfiltered.sorted.vcf.gz" -o "${file%.unfiltered.sorted.vcf.gz}.unfiltered.normalized.vcf"```
 
-#### 6. GATK FilterMutectCalls
-_Apply filters to Mutect2 variant calls_ 
+### 6. GATK FilterMutectCalls
+_Apply filters to Mutect2 variant calls_  
+**File input**: Unfiltered, normalized VCF and VCF stats file, genome reference (including index & dict), f1r2 read orientation model, segmentation table, and contamination table.  
+**File output**: Filtered VCF   
+
+```
+nextflow run annotate_variants.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
+```
+Script in nextflow:   
+
+```
+    gatk FilterMutectCalls \
+    -R ${mutect_idx} \
+    -V ${unfiltered_vcf} \
+    --tumor-segmentation ${segmentation_table} \
+    --contamination-table ${contamination_table} \
+    -O ${unfiltered_vcf.baseName}_filtered.vcf \
+    --read-index ${mutect_idx_fai} \
+    --sequence-dictionary ${mutect_dict} \
+    --ob-priors ${read_orientation_model} \
+    --stats ${vcf_stats}
+```
+
 ```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk FilterMutectCalls -R reference.fa -V  "${file}.unfiltered.normalized.vcf" -contamination-table contamination.table --orientation-bias-artifact-priors read-orientation-model.tar.gz -O "${file%.unfiltered.normalized.vcf.gz}.filtered.vcf" ```
 
-#### 7. SNPEff Annotation
+### 7. SNPEff Annotation
 _Annotate variants using SNPEff_
-```docker run quay.io://ohsu-comp-bio/SNPEff:latest -v genome_version <annotated_variants.vcf> | gzip > annotated_variants.vcf.gz```
+**File input**: Filtered VCF and genome version GRCh38.86 from snpEff pre-built database
+**File output**: Annotated variants VCF
+
+```
+nextflow run annotate_variants.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
+```
+
 
