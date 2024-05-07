@@ -71,15 +71,7 @@ singularity {
     enabled = true
     autoMounts = true
     cacheDir = '<your cache dir>'
-    container = ‘file://path/to/<name>.sif'
         }
-```
-
-Add environmental path to your config file when running fastQC *EDIT: change nf script to have absolute directory instead of doing this? process-specific environment would be the ideal solution but does not work 
-
-for fastQC:
-```
-env { PATH = "$PATH:/usr/local/FastQC/" }
 ```
 
 Run Nextflow with Singularity  
@@ -369,7 +361,7 @@ independently assuming the necessary input files exist. A parameter file is pass
   - CalculateContamination
   - LearnReadOrientation 
   - Mutect2
-- SNPEff/4.3t
+- SNPEff/5.2c
 - htslib/1.10.2
 
 ### Usage
