@@ -209,14 +209,7 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 **File output**: .html and .zip fastQC analysis files
 fastQC requires a directory to be made before running. Make a directory in the same output path as specified in the parameters file.  
 
-Ensure your path is updated in the nextflow config file. 
 
-```
-env {
-    PATH = "$PATH:/usr/local/FastQC/"
-}
-```
-  
 ```
 ## make output directory for fastqc
 mkdir output/fastqc
