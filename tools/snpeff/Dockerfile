@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-slim
+FROM openjdk:17-jdk-slim
 
 WORKDIR /usr/src/app
 
@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN wget http://sourceforge.net/projects/snpeff/files/snpEff_latest_core.zip && \
+RUN wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip && \
     unzip snpEff_latest_core.zip && \
     rm snpEff_latest_core.zip
 
