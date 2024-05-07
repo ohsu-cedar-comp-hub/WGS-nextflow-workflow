@@ -13,6 +13,7 @@ process bwaMem2Alignment {
     path trim_read1
     path trim_read2
     path idx
+    val ID
 
     output:
     file("${trim_read1.simpleName}.bam")
