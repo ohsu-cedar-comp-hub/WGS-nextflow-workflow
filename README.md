@@ -47,6 +47,7 @@ singularity pull <name>.sif docker://quay.io/ohsu-comp-bio/<name>
   
 There are currently separate images for each tool. You will need to pull the following from quay.io/ohsu-comp-bio:
 - fastqc 
+- multiqc [wip]
 - trimmomatic
 - bwa
 - samtools
@@ -74,19 +75,17 @@ singularity {
         }
 ```
 
-Add environmental path to your config file (necessary for fastQC process)
+Add environmental path to your config file when running fastQC *EDIT: change nf script to have absolute directory instead of doing this? process-specific environment would be the ideal solution but does not work 
 
 for fastQC:
 ```
-process {
-    withName: fastQC { env { PATH = "$PATH:/usr/local/FastQC/" } }
-}
+env { PATH = "$PATH:/usr/local/FastQC/" }
 ```
 
 Run Nextflow with Singularity  
 When running Nextflow, you will need:
 - the script `(workflows/<step>/<script name>.nf)`
-- the parameter file (an example of the parameter file and a python script that can be used to generate one's own unique parameter file are available in this repo at `WGS-nextflow-workflow/example/normal_params_file_template.json` and `WGS-nextflow-workflow/example/render_normal_params.py`)
+- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`) /* EDIT: this is currently not merged with main and is on branch "params-template *EDIT [EAG]: will merge and reference this files from that branch"
 - the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)
 - the path to your singularity image (.sif file)  
 <br>
@@ -370,7 +369,7 @@ independently assuming the necessary input files exist. A parameter file is pass
   - index
   - normalize
   - merged
-- SNPEff/4.5
+- SNPEff/4.3t
 - htslib/1.10.2 ## 
 
 ### Usage
