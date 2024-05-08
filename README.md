@@ -195,7 +195,7 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 |Step | Parameter | COH WGS nextflow pipeline | GDC pipeline |
 | --- | --------- | ------------------------- | ------------ |
 | 0 | Reference genome | GRCh38.d1.vd1 | GRCh38.d1.vd1 |
-| 0 | Read groups | -R flag | Aligned separately then merged << Unsure about this section |
+| 0 | Read groups | One read group per individual sample | Multiple read groups per individual sample |
 | 1 | BWA algorithm | bwa-mem2 | bwa-mem |
 | 2 | BAM sort | samtools | picard SortSam |
 | 3 | Mark duplicates | picard MarkDuplicates | picard MarkDuplicates |
