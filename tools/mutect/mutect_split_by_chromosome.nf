@@ -10,34 +10,29 @@ process mutect2 {
     publishDir "${params.outdir}/svc", mode: 'copy'
 
     // Define input and output
-    input:
-    path normal_bam_sorted
-    path tumor_bam_sorted
-    path bed_files
-    path mutect_idx
-    path pon
+   input:
     path id
-    path germline_resource
+    path mutect_idx
+    path chrom
+    path tumor_bam_sorted
+    path normal_bam_sorted
 
     output:
-    file("${id}_${bed_files}.f1r2.tar.gz")
-    file("${id}_${bed_files}.vcf")
-    file("${id}_${bed_files}.vcf.stats")
+    file "${id}_${chrom}_unfiltered.vcf"
+    file "${id}_${chrom}_f1r2.tar.gz"
+    file "${id}_${chrom}_unfiltered.vcf.stats"
 
-    // MuTect2 command
     script:
     """
-    gatk Mutect2 \
-        -R ${params.mutect_idx} \
-        -I ${params.normal_bam_sorted} \
-        -I ${params.tumor_bam_sorted} \
-        -normal "G_${id}" \
-        --f1r2-tar-gz "${id}_${bed_files}.f1r2.tar.gz" \
-        --native-pair-hmm-threads 8 \
-        -L "${bed_files}.bed" \
-        --germline-resource "${germline_resource}" \
-        --panel-of-normals ${pon} \
-        -stats ${id}_${bed_files}.vcf.stats
-        -O ${id}_${chrom}.vcf \
+    gatk mutect2 \\
+        -R ${mutect_idx} \\
+        -I ${tumor_bam_sorted} \\
+        -I ${normal_bam_sorted} \\
+        --panel-of-normals ${pon} \\
+        -normal ${normal_bam.baseName} \\
+        -L ${chrom} \\
+        -O ${id}_${chrom}_unfiltered.vcf \\
+        --f1r2-tar-gz ${id}_${chrom}_f1r2.tar.gz \\
+        -stats ${id}_${chrom}_unfiltered.vcf.stats
     """
 }
