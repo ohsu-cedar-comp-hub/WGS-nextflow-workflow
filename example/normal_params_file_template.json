@@ -1,19 +1,24 @@
  {
-    "read1" : "path/to/fastq_R1/.fastq.gz",
-    "read2" : "path/to/fastq_R2.fastq.gz",
-    "fastqc_read1" : "path/to/fastqc_R1_report/fastqc.zip",
-    "fastqc_read2" : "path/to/fastqc_R2_report/fastqc.zip",
-    "trim_read1" : "path/to/trim_read1/1P.fastq.gz",
-    "trim_read2" : "path/to/trim_read2/2P.fastq.gz",
-    "trim_fastqc_read1" : "path/to/fastqc_trim_read1_report/1P_fastqc.zip",
-    "trim_fastqc_read2" : "/path/to/fastqc_trim_read2_report/2P_fastqc.zip",
-    "outdir" : "path/to/output/directory",
-    "truseq3pefile" : "path/to/TruSeq3-PE.fa",
-    "idx": "path/to//bwa_mem2_idx/GRCh38.bm2.d1",
+    "read1": "path/to/fastq_R1/test_R1.fastq.gz",
+    "read2": "path/to/fastq_R2/test_R2.fastq.gz",
+    "fastqc_read1": "path/to/fastqc_R1_report/fastqc.zip",
+    "fastqc_read2": "path/to/fastqc_R2_report/fastqc.zip",
+    "trim_read1": "path/to/trim_read1/1P.fastq.gz",
+    "trim_read2": "path/to/trim_read2/2P.fastq.gz",
+    "trim_fastqc_read1": "path/to/fastqc_trim_read1_report/1P_fastqc.zip",
+    "trim_fastqc_read2": "path/to/fastqc_trim_read2_report/2P_fastqc.zip",
+    "outdir": "path/to/output/directory",
+    "truseq3pefile": "path/to/TruSeq3-PE.fa",
+    "idx": "path/to/bwa_mem2_idx/GRCh38.bm2.d1",
     "pon": "path/to/pon.vcf",
-    "id" : "unique/str/id",
-    "normal_bam_unsorted" : "path/to/normal_unsorted_bam/.bam",
-    "normal_bam_sorted" : "path/to/normal_bam_sorted_bam/.bam",
-    "exac" : "path/to/exac/.exac"
-
- } 
+    "id": "unique/str/id",
+    "germline_resource": "af-only.gnomad.hg38.vcf.gz",
+    "normal_bam_unsorted": "path/to/normal_unsorted_bam/normal_unsorted.bam",
+    "normal_bam_sorted": "path/to/normal_bam_sorted_bam/normal_sorted.bam",
+    "exac": "path/to/exac/variants.exac.vcf.gz",
+    "chromosomes": [
+        "chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10",
+        "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20",
+        "chr21", "chr22", "chrX"
+    ]
+}
