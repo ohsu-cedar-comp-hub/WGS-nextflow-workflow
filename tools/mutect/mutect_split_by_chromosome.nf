@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 
-// Define the process for running MuTect2
+// Define the process for running Mutect2
 process mutect2 {
     // Set maximum memory
     memory '80 G'
@@ -24,7 +24,7 @@ process mutect2 {
 
     script:
     """
-    gatk mutect2 \\
+    gatk Mutect2 \\
         -R ${mutect_idx} \\
         -I ${tumor_bam_sorted} \\
         -I ${normal_bam_sorted} \\
