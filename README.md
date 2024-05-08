@@ -171,7 +171,6 @@ add filtered vcf to params file
 14.) Annotate variants with snpEff   
 `nextflow run workflows/snpeff/annotate_variants.nf -params-file <params-file>.json -c nextflow.config -with-singularity snpeff.sif`  
 
-15.) Calculate allele frequencies (?)
 
 ## Workflow description
 
@@ -310,7 +309,7 @@ java -jar picard.jar SortSam \
 
 ### 3. Mark duplicates
 **File input:** Sorted BAM file   
-**File output:** BAM file of marked duplicates and a metrics txt file  
+**File output:** Unsorted BAM file of marked duplicates and a metrics txt file  
  
 ```
 nextflow run mark_duplicates.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
@@ -331,6 +330,26 @@ java -jar picard.jar MarkDuplicates \
     CREATE_INDEX=true \
     INPUT=<input.bam> \
     VALIDATION_STRINGENCY=STRICT
+```
+ 
+### 4. Sort 
+**File input**: Unsorted duplicate-marked BAM file  
+**File output**: Sorted duplicate-marked BAM file
+
+```
+nextflow run sort_marked_duplicates.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
+```
+
+Script in Nextflow:
+```Shell
+samtools sort ${bam_duplicates_unsorted} > ${bam_duplicates_sorted.baseName}_sorted.bam
+```
+Comparison GDC script:
+```Shell
+java -jar picard.jar SortSam \
+    I=input.bam \
+    O=sorted.bam \
+    SORT_ORDER=coordinate
 ```
 
 ## Variant Calling Workflow and Annotation Workflow [WIP] 
