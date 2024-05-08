@@ -11,7 +11,7 @@ process fastQC {
     
     script:
     """
-     fastqc -o ${params.outdir}/trimfastqc ${trim_read1}
-     fastqc -o ${params.outdir}/trimfastqc ${trim_read2} 
+     /usr/local/FastQC/fastqc -o ${params.outdir}/trimfastqc ${trim_read1}
+     /usr/local/FastQC/fastqc -o ${params.outdir}/trimfastqc ${trim_read2} 
     """
 }
