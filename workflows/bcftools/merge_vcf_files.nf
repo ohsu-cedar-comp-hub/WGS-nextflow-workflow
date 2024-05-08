@@ -1,10 +1,10 @@
 #!/usr/bin/env nextflow
 
-include {MergeFiles} from '../../tools/bcftools/merge_vcf_files.nf
-
+include {processVCFs} from '../../tools/bcftools/processVCFs.nf
+ filesChannel = Channel.fromPath("/path/to/files.vcf")
 
 workflow {
-   MergeFiles(file(params.outdir/svc).collect(), val(params.id))
+   processVCFs(filesChannel)
 
 
 }
