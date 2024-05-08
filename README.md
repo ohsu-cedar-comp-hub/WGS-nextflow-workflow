@@ -85,7 +85,7 @@ env { PATH = "$PATH:/usr/local/FastQC/" }
 Run Nextflow with Singularity  
 When running Nextflow, you will need:
 - the script `(workflows/<step>/<script name>.nf)`
-- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`) /* EDIT: this is currently not merged with main and is on branch "params-template *EDIT [EAG]: will merge and reference this files from that branch"
+- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`) /"
 - the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)
 - the path to your singularity image (.sif file)  
 <br>
@@ -351,7 +351,7 @@ java -jar picard.jar MarkDuplicates \
 ## Variant Calling Workflow and Annotation Workflow [WIP] 
 
 This variant calling worfklow uses Nextflow and is using Singularity. Submodules of the workflow are described below and can be run
-independently assuming the necessary input files exist. A parameter file is passed as input using -params-file <my-params.json>, which can begenerated using the templating script. In the example below, parameters are passed as command line argument for to easily demonstrate usage.
+independently assuming the necessary input files exist. A parameter file is passed as input using -params-file <my-params.json>, which can be generated using the templating script. 
 
 ### Overview
 
@@ -388,67 +388,52 @@ nextflow run get_pileup_summaries.nf —params-file <my-params.json> -c <my-next
 ### 2. Calculate Contamination
 *Calculate fraction of normal cell contaminants in tumor sample*  
 **File input**: Tumor and normal pileup summary tables  
-**File output**: Contamination table and tumor segmentation table
+**File output**: Contamination table
 
 ```
 nextflow run calculate_contamination.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
 ```
 
-
-### 3. Run Mutect2 on per chromosome coding sequence files (example given for chrom1 but mutect2 will accept multiple intervals, i.e., all 23 chromosomes as intervals per file)
+### 3. Run Mutect2 
 *Call somatic variants*  
-**File input**: Duplicate-marked BAM files of tumor and matched normal, genome reference fasta, germline resource VCF (exac), panel of normals (PoN) VCF, and genomic interval over which to operate  
-**File output**: f1r2 .tar.gz file, unfiltered tumor VCF, and VCF stats file
-
+**File input**: Duplicate-marked BAM files of tumor and matched normal, reference genome, germline resource VCF (exac), panel of normals (PoN) VCF  
+**File output**: 23 f1r2.tar.gz files (1 per chromosomes 1 -22 and X), 23 unfiltered tumor VCFs, and 23 VCF stats files
 
 ```
 nextflow run mutect2.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
 ```
-
 Script in nextflow:  
 ```
-gatk Mutect2 \
-    -R ${mutect_idx} \
-    -I ${tumor_bam_sorted} \
-    -I ${normal_bam_sorted} \
-    --panel-of-normals ${pon} \
-    -O ${tumor_bam_sorted.baseName}_unfiltered.vcf \
-    --f1r2-tar-gz ${tumor_bam_sorted.baseName}_f1r2.tar.gz \
-    -stats ${tumor_bam.baseName}_unfiltered.vcf.stats
+gatk Mutect2 \\
+    -R ${mutect_idx} \\ << EDIT: change name of this parameter to "reference"
+    -I ${tumor_bam_sorted} \\
+    -I ${normal_bam_sorted} \\
+    -normal ${normal_bam_sorted.baseName} \\
+    --panel-of-normals ${pon} \\
+    --germline-resource ${germline_resource} \\
+    -L ${chrom} \\ filesChannel() containing array of chromsomes, chr1 ... chrX 
+    -O ${tumor_bam_sorted.baseName}_${chrom}_unfiltered.vcf \\
+    --f1r2-tar-gz ${tumor_bam_sorted.baseName}_${chrom}_f1r2.tar.gz \\
+    -stats ${tumor_bam.baseName}_${chrom}_unfiltered.vcf.stats
 ```
 
-```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal NORMAL --intervals chr1 -pon gnomad_panel_of_normals.vcf -germline-resource exac_germline_mutation_data.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
+```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal normal_name --intervals chrom -pon gnomad_panel_of_normals.vcf -germline-resource af-only_exac.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
 
-### 4. GATK LearnReadOrientationModel
+4. ### Process Mutect2 output 
+#### A. bgzip each of the 23 files 
+#### B. concatenate 23 chromosome-specific bgzipped files into one VCF file
+#### C. normalize VCF file
+#### D. merge 23 chromosome-specific stats files into one stats file
+#### E. combine 23 chromosome-specific f1r2.tar.gz files into one file
+
+### 5. GATK LearnReadOrientationModel
 _Learn the read orientation model to refine variant calls by removing technical artifacts._ 
-**File input**: f1r2 file from mutect2  
-**File output**: Read orientation model .tar.gz file  
-
-```
-nextflow run learn_read_orientation.nf —params-file <my-params.json> -c <my-nextflow.config> -with-singularity <image.sif>
-```
-
-### 5. Process VCFs 
-_Sort, index, normalize and combine (per sample) the VCF files before filtering_`
-
-#### Aggregate across chromosomes with bcftools
-**File input**:
-**File output**: 
-
-```docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools concat -a -f -l listSampleSpecificChromFiles -o "${file%.unf.vcf.gz}.concat.vcf" ```
-
-#####  5a. Sort bgzipped VCFs
-``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools sort "${file}.concat.vcf" -Oz -o  "${file%.unf.concat.vcf.gz}.unfiltered.sorted.vcf.gz"```
-
-###### 5b. Index bgzipped VCF files
-``` docker run quay.io//ohsu-comp-bio/bcftools:1.12 bcftools index -t "${file}.unfiltered.sorted.vcf.gz" ```
-
-##### 5c. Normalize pre-filtering for annotation
-```docker run quay.io//ohsu-comp-bio/bcftools:1.12 normalize -i "${file}.unfiltered.sorted.vcf.gz" -o "${file%.unfiltered.sorted.vcf.gz}.unfiltered.normalized.vcf"```
+**File input**: f1r2 file, containing the combined (per-chromosome) outputs from Mutect2
+**File output**: artifacts-priors.tar.gz file  
 
 ### 6. GATK FilterMutectCalls
 _Apply filters to Mutect2 variant calls_  
-**File input**: Unfiltered, normalized VCF and VCF stats file, genome reference (including index & dict), f1r2 read orientation model, segmentation table, and contamination table.  
+**File input**: Unfiltered, combined across chromosomes normalized VCF and VCF stats file, genome reference (including index & dict), f1r2 read orientation model and contamination table.  
 **File output**: Filtered VCF   
 
 ```
@@ -460,12 +445,11 @@ Script in nextflow:
     gatk FilterMutectCalls \
     -R ${mutect_idx} \
     -V ${unfiltered_vcf} \
-    --tumor-segmentation ${segmentation_table} \
     --contamination-table ${contamination_table} \
     -O ${unfiltered_vcf.baseName}_filtered.vcf \
     --read-index ${mutect_idx_fai} \
     --sequence-dictionary ${mutect_dict} \
-    --ob-priors ${read_orientation_model} \
+    --ob-priors ${prior-artifacts.tar.gz} \
     --stats ${vcf_stats}
 ```
 
