@@ -5,6 +5,7 @@ FROM python:3.11-slim
 LABEL base_author="Phil Ewels" \
       base_description="MultiQC" \
       base_maintainer="phil.ewels@seqera.io" \
+      base_link="https://github.com/MultiQC/MultiQC/blob/main/Dockerfile" \
       edited_by="lancasru@ohsu.edu"
 
 # Add the MultiQC source files to the container
