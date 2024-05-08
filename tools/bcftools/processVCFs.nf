@@ -1,4 +1,4 @@
-process ConcatenateVCFs {
+process processVCFs {
 
     input:
     path(file)
