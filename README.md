@@ -184,8 +184,10 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 
 - Nextflow (DSL2)
 - Singularity
+- fastqc v0.11.7
+- multiqc v1.21
 - trimmomatic 0.38
-- bwa-mem2 {VERSION} << we are cloning the bwa-mem2 repo for this, for some reason I can't find the command to run to check version
+- bwa-mem2 v2.2.1
 - samtools 1.19
 - gatk4 4.4.0.0
   - Picard MarkDuplicates
