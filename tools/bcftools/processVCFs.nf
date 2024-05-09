@@ -1,6 +1,5 @@
 #!/usr/bin/env nextflow
 
-// Define the process to prepare VCFs
 process prepareVCFs {
     // Set output directory
     publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
