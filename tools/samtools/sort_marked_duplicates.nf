@@ -5,6 +5,7 @@ process SortMarkedDuplicates {
 
     input:
     path bam_duplicates_unsorted
+    val ID
 
     output: 
     file("${bam_duplicates_unsorted.baseName}_sorted.bam")
@@ -12,6 +13,6 @@ process SortMarkedDuplicates {
 
     script:
     """
-    samtools sort ${bam_duplicates_unsorted} > ${bam_duplicates_sorted.baseName}_sorted.bam
+    samtools sort ${bam_duplicates_unsorted} > ${bam_duplicates_unsorted.baseName}_sorted.bam
     """
 }
