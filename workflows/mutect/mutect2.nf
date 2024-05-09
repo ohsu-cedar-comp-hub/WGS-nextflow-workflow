@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-include {mutect2} from '../tools/mutect/mutect2.nf'
+include {mutect2} from '../../tools/mutect/mutect.nf'
 
 workflow {
     // Run Mutect2
