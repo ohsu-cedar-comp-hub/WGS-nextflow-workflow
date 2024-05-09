@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-include {fastQC} from '../../tools/qc/trim_fastqc.nf'	
+include {fastQC} from '../../tools/qc/fastqc/trim_fastqc.nf'	
 
 // Define the workflow for fastqc
 
