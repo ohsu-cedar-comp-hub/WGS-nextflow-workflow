@@ -4,8 +4,8 @@ process processVCFs {
     path(file)
 
     output:
-    path("${file}_unfiltered_all.bgz")
-    path("${file}_unfiltered_all.bgz.tbi")
+    path("${file}_unfiltered_all.vcf.bgz")
+    path("${file}_unfiltered_all.vcf.bgz.tbi")
 
     script:
     """
@@ -14,8 +14,8 @@ process processVCFs {
         files_to_concat+=" ${file}_chr\${chr}_unfiltered.vcf.bgz"
     done
 
-    bcftools concat -a \$files_to_concat -o ${file}_unfiltered_all.vcf
-    bcftools view ${file}_unfiltered_all.vcf -Oz -o ${file}_unfiltered_all.bgz
-    bcftools index -t ${file}_unfiltered_all.bgz
+    bcftools view ${file}_unfiltered_all.vcf -Oz -o ${file}_unfiltered_all.vcf.bgz
+    bcftools concat -a \$files_to_concat -o ${file}_unfiltered_all.vcf.bgz
+    bcftools index -t ${file}_unfiltered_all.vcf.bgz
     """
 }
