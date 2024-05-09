@@ -29,8 +29,8 @@ process mutect2 {
         -R ${params.mutect_idx} \
         -I ${tumor_bam} \
         -I ${normal_bam} \
-        --panel-of-normals ${pon} \
-        --germline-resource ${gnomad} \
+        --panel-of-normals ${params.pon} \
+        --germline-resource ${params.gnomad} \
         -O ${tumor_bam.simpleName}_unfiltered.vcf \
         --f1r2-tar-gz ${tumor_bam.simpleName}_f1r2.tar.gz
     """
