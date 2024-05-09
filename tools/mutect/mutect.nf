@@ -15,6 +15,7 @@ process mutect2 {
     path mutect_idx
     path pon
     path gnomad
+    val ID
 
     output:
     path "${tumor_bam.simpleName}_unfiltered.vcf"
@@ -25,13 +26,12 @@ process mutect2 {
     script:
     """
     gatk Mutect2 \
-        -R ${idx} \
-        -I ${tumor_bam_sorted} \
-        -I ${normal_bam_sorted} \
+        -R ${params.mutect_idx} \
+        -I ${tumor_bam} \
+        -I ${normal_bam} \
         --panel-of-normals ${pon} \
         --germline-resource ${gnomad} \
-        -O ${tumor_bam_sorted.simpleName}_unfiltered.vcf \
-        --f1r2-tar-gz ${tumor_bam_sorted.simpleName}_f1r2.tar.gz \
-        -stats ${tumor_bam.simpleName}_unfiltered.vcf.stats
+        -O ${tumor_bam.simpleName}_unfiltered.vcf \
+        --f1r2-tar-gz ${tumor_bam.simpleName}_f1r2.tar.gz
     """
 }
