@@ -263,7 +263,7 @@ nextflow run workflows/qc/multiqc.nf \
 -with-singularity multiqc.sif 
 ```
 
-### 1. Alignment with BWA-MEM
+### 1. Alignment with BWA-MEM2
  
 **File input:** Trimmed, quality filtered, paired-end .fastq files, and an indexed reference genome fasta file.   
 **File output:** Aligned, unsorted BAM file   
@@ -434,7 +434,7 @@ nextflow run mutect2.nf \
 Script in nextflow:  
 ```
 gatk Mutect2 \\
-    -R ${mutect_idx} \\ << EDIT: change name of this parameter to "reference"
+    -R ${mutect_idx} \\
     -I ${tumor_bam_sorted} \\
     -I ${normal_bam_sorted} \\
     -normal ${normal_bam_sorted.baseName} \\
@@ -450,6 +450,7 @@ gatk Mutect2 \\
 
 ### 4. Process Mutect2 output 
 #### A. bgzip each of the 23 files 
+
 #### B. concatenate 23 chromosome-specific bgzipped files into one VCF file
 #### C. normalize VCF file
 #### D. merge 23 chromosome-specific stats files into one stats file
