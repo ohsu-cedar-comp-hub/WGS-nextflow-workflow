@@ -1,87 +1,93 @@
 # WGS Nextflow Workflow
 
-This Nextflow workflow aligns, performs somatic variant calls, and annotates variants using whole genome sequencing matched tumor-normal data. This pipeline can be run with conda or Docker/Singularity, but we recommend the containerized approach using Singularity. Submodules of the workflow are described below and can be run independently assuming the necessary input files exist. A parameter file is passed as input using -params-file <my-params.json>, which can be generated using the templating script.
+This Nextflow workflow aligns, performs somatic variant calls, and annotates variants on whole genome sequencing matched tumor-normal data. The pipeline can be run with conda or Docker/Singularity, but it is recommended to use the containerized approach with Singularity. Submodules of the workflow are described below and can be run independently assuming the necessary input files exist. A parameter file is passed as input using -params-file <my-params.json>, which can be generated using the templating script.
 
 ## Getting Started
 
-This pipeline requires Nextflow and Singularity. 
-Install [Nextflow](https://www.nextflow.io/docs/latest/install.html) and [Singularity](https://sylabs.io/docs/).
+### Running with Anaconda
+Requires install of [Anaconda](https://docs.anaconda.com/free/anaconda/install/index.html)
 
-Dockerfiles are provided in the repo for each tool in the pipeline:
+Create conda environment
+```
+conda create -n wgs python=3.11
+```
+
+Activate conda environment
+```
+conda activate wgs
+```
+
+Install dependencies
+```
+conda install -c bioconda nextflow fastqc trimmomatic bwa-mem2 samtools gatk snpEff --yes
+pip install multiqc
+```
+
+Download reference genome file with snpEff download GRCh38.86
+
+Check that Java version is 11 through 21. Nextflow has been checked to run with Java 11-21. Otherwise install Java 17 via SDKMAN shown [here](https://www.nextflow.io/docs/latest/install.html)  
+
+```
+java -version
+```
+
+Test Nexflow is successfully installed
+```
+nextflow info
+```
+
+Invoke workflow  
+
+When running Nextflow, you will need:  
+- the script `(workflows/<step>/<script name>.nf)`  
+- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`) 
+- the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)  
+  
+```
+nextflow run <nextflow script>.nf \
+-params-file <parameters>.json \
+-c nextflow.config
+```
+
+### Running with Docker/Singularity
+
+Requires install of [Singularity](https://sylabs.io/docs/) or [Docker](https://www.docker.com/get-started/).
+
+Check that Java version is 11 through 21. Nextflow has been checked to run with Java 11-21. Otherwise install Java 17 via SDKMAN shown [here](https://www.nextflow.io/docs/latest/install.html).  
+
+```
+java -version
+```
+
+Install [Nextflow](https://www.nextflow.io/docs/latest/install.html).
+
+```
+# Install Nextflow
+curl -s https://get.nextflow.io | bash
+
+# Make Nextflow executable
+chmod +x nextflow
+
+# Move Nextflow into an executable path:
+sudo mv nextflow /usr/local/bin
+
+# Confirm install:
+nextflow info
+
+# Update to latest Nextflow version
+nextflow self-update
+```
+
+Dockerfiles for building images are provided for each tool in the pipeline in the tool directory, `tools/<tool name>/Dockerfile`:
 - fastqc 
 - multiqc
 - trimmomatic
 - bwa
 - samtools
 - gatk
-- mutect
+- mutect *[RL] EDIT: redundant with gatk?
 - bcftools
 - snpeff
-
-These Dockerfiles can be used to build Singularity images.
-
-
-### Running on Exacloud [internal]
-
-This workflow was built to run on the [Exacloud HPC](https://wiki.ohsu.edu/display/ACC/Exacloud) and installations or module loading for the prerequisites are specific to this environment.
-
-**Nextflow setup**
-
-```
-## Create conda environment and install python
-conda create -n nextflow_env python=3.11
-## activate environment
-conda activate nextflow_env
-## install nextflow
-conda install nextflow 
-## self update nextflow to newest release
-nextflow self-update
-```
-
-**Singularity setup**  
-See more on running Singularity on Exacloud [here](https://wiki.ohsu.edu/display/ACC/Exacloud%3A+Singularity).
-
-```
-## Load singularity module 
-module load /etc/modulefiles/singularity/current
-
-## singularity cache directory on gscratch
-export SINGULARITY_CACHEDIR=/home/exacloud/gscratch/<group>/<username>/singularity
-
-## remote login to quay
-singularity remote login --username myuser docker://quay.io
-
-## set temporary directory
-export TMPDIR=`pwd`/tmp
-```
-
-Pull Singularity images
-
-```
-cd <directory where your .sif files will live>
-singularity pull <name>.sif docker://quay.io/ohsu-comp-bio/<name>
-```
-  
-There are currently separate images for each tool. You will need to build the following containers using the Dockerfile associated with each tool and convert them to Singularity image files if working on a HPCC:
-- FastQC 
-- MultiQC
-- trimmomatic
-- bwa
-- samtools
-- GATK4
-- Mutect2
-- bcftools
-- snpeff
-
-
-Example:
-
-```
-cd config_files
-singularity pull bwa.sif docker://quay.io/ohsu-comp-bio/bwa
-```
-
-### Setup 
 
 Add Singularity to your Nextflow config file
 
@@ -92,11 +98,11 @@ singularity {
     cacheDir = '<your cache dir>'
         }
 ```
+Invoke Workflow   
 
-Run Nextflow with Singularity  
 When running Nextflow, you will need:
 - the script `(workflows/<step>/<script name>.nf)`
-- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`) /"
+- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`)
 - the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)
 - the path to your singularity image (.sif file)  
 <br>
@@ -108,10 +114,91 @@ nextflow run <nextflow script>.nf \
 -with-singularity /path/to/<name>.sif
 ```
 
-**Environment Summary**
 
-Nextflow version 23.10.1  
-Singularity version 3.8.0-1.el7
+---
+[RL] EDIT **Move exacloud-specific steps to github submodule**
+
+    ### Running on Exacloud [internal]
+
+    This workflow was built to run on the [Exacloud HPC](https://wiki.ohsu.edu/display/ACC/Exacloud) and installations or module loading for the prerequisites are specific to this environment.
+
+    **Nextflow setup**
+
+    ```
+    ## Create conda environment and install python
+    conda create -n nextflow_env python=3.11
+    ## activate environment
+    conda activate nextflow_env
+    ## install nextflow
+    conda install nextflow 
+    ## self update nextflow to newest release
+    nextflow self-update
+    ```
+
+    **Singularity setup**  
+    See more on running Singularity on Exacloud [here](https://wiki.ohsu.edu/display/ACC/Exacloud%3A+Singularity).
+
+    ```
+    ## Load singularity module 
+    module load /etc/modulefiles/singularity/current
+
+    ## singularity cache directory on gscratch
+    export SINGULARITY_CACHEDIR=/home/exacloud/gscratch/<group>/<username>/singularity
+
+    ## remote login to quay
+    singularity remote login --username myuser docker://quay.io
+
+    ## set temporary directory
+    export TMPDIR=`pwd`/tmp
+    ```
+
+    Pull Singularity images
+
+    ```
+    cd <directory where your .sif files will live>
+    singularity pull <name>.sif docker://quay.io/ohsu-comp-bio/<name>
+    ```
+    
+    There are currently separate images for each tool. You will need to build the following containers using the Dockerfile associated with each tool and convert them to Singularity image files if working on a HPCC:
+    - FastQC 
+    - MultiQC
+    - trimmomatic
+    - bwa
+    - samtools
+    - GATK4
+    - Mutect2
+    - bcftools
+    - snpeff
+
+
+    Example:
+
+    ```
+    cd config_files
+    singularity pull bwa.sif docker://quay.io/ohsu-comp-bio/bwa
+    ```
+
+    **environment summary** 
+    Nextflow version 23.10.1  
+    Singularity version 3.8.0-1.el7
+
+    **End of section to put into submodule**
+---
+
+### Data setup (rename?)
+
+Example Ceph Bucket Config
+
+```
+aws {
+    accessKey='<KEY>'
+    secretKey='<SECRET>'
+    client {
+        endpoint = 'https://rgw.ohsu.edu'
+        s3PathStyleAccess = true
+    }
+}
+```
 
 ## Quick run [on the command line? Using conda environments?] 
 
