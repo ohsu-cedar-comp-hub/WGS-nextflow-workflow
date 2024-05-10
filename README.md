@@ -85,7 +85,6 @@ Dockerfiles for building images are provided for each tool in the pipeline in th
 - bwa
 - samtools
 - gatk
-- mutect *[RL] EDIT: redundant with gatk?
 - bcftools
 - snpeff
 
