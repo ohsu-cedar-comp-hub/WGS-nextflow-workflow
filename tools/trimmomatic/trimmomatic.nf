@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-process trimmomaticPE {
+process TrimmomaticPE {
     // Set maximum memory
     memory '40 GB'
 

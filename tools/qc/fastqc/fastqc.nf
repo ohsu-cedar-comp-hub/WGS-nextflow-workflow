@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 // Define the process for running FastQC
-process fastQC {
+process FastQC {
     publishDir "${params.outdir}/fastqc", mode: 'copy'
 
     input:

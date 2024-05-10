@@ -17,6 +17,7 @@ process FilterMutectCalls {
     path read_orientation_model
     path segmentation_table
     path contamination_table
+    val ID
 
     output:
     file("${unfiltered_vcf.baseName}_filtered.vcf")
