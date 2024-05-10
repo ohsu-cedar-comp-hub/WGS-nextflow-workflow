@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-process vcfSortIndexNormalize {
+process VcfSortIndexNormalize {
     // Set output directory
     publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
 

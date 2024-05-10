@@ -14,20 +14,20 @@ process GetPileupSummaries {
     val ID
 
     output:
-    file("${tumor_bam_sorted.baseName}.getpileupsummaries.table")
-    file("${normal_bam_sorted.baseName}.getpileupsummaries.table")
+    file("${tumor_bam_sorted.simpleName}.getpileupsummaries.table")
+    file("${normal_bam_sorted.simpleName}.getpileupsummaries.table")
     script:
     """
     gatk GetPileupSummaries \\
     -I ${tumor_bam_sorted} \\
     -V ${params.exac} \\
     -L ${params.exac} \\
-    -O ${tumor_bam_sorted.baseName}.getpileupsummaries.table
+    -O ${tumor_bam_sorted.simpleName}.getpileupsummaries.table
 
     gatk GetPileupSummaries \\
     -I ${normal_bam_sorted} \\
     -V ${params.exac} \\
     -L ${params.exac} \\
-    -O ${normal_bam_sorted.baseName}.getpileupsummaries.table
+    -O ${normal_bam_sorted.simpleName}.getpileupsummaries.table
     """
 }

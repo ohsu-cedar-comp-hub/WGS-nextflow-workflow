@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-process Annotate_Variants {
+process AnnotateVariants {
     publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
     // Set maximum memory
     memory '40 GB'

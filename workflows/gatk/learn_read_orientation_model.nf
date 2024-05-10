@@ -6,6 +6,6 @@ include {LearnReadOrientationModel} from '../../tools/gatk/learn_read_orientatio
 
 workflow { 
 
-	LearnReadOrientationModel (file(params.f1r2_tar_gz), "test")
+	LearnReadOrientationModel (file(params.f1r2_tar_gz), params.ID)
 
   }
