@@ -66,14 +66,14 @@ cd <directory where your .sif files will live>
 singularity pull <name>.sif docker://quay.io/ohsu-comp-bio/<name>
 ```
   
-There are currently separate images for each tool. You will need to pull the following from quay.io/ohsu-comp-bio:
-- fastqc 
-- multiqc
+There are currently separate images for each tool. You will need to build the following containers using the Dockerfile associated with each tool and convert them to Singularity image files if working on a HPCC:
+- FastQC 
+- MultiQC
 - trimmomatic
 - bwa
 - samtools
-- gatk
-- mutect
+- GATK4
+- Mutect2
 - bcftools
 - snpeff
 
@@ -117,12 +117,12 @@ nextflow run <nextflow script>.nf \
 Nextflow version 23.10.1  
 Singularity version 3.8.0-1.el7
 
-## Quick run 
+## Quick run [on the command line? Using conda environments?] 
 
 Activate nextflow environment and load singularity
 
 **Pre-alignment QC**   
-1.) QC with fastQC 
+1.) Initial QC with FastQC 
 
  ```
 ## make output directory for fastqc
@@ -286,7 +286,7 @@ nextflow run workflows/qc/multiqc.nf \
 -with-singularity multiqc.sif 
 ```
 
-### 1. Alignment with BWA-MEM
+### 1. Alignment with BWA-MEM2
  
 **File input:** Trimmed, quality filtered, paired-end .fastq files, and an indexed reference genome fasta file.   
 **File output:** Aligned, unsorted BAM file   
@@ -457,7 +457,7 @@ nextflow run mutect2.nf \
 Script in nextflow:  
 ```
 gatk Mutect2 \\
-    -R ${mutect_idx} \\ << EDIT: change name of this parameter to "reference"
+    -R ${mutect_idx} \\
     -I ${tumor_bam_sorted} \\
     -I ${normal_bam_sorted} \\
     -normal ${normal_bam_sorted.baseName} \\
@@ -473,6 +473,7 @@ gatk Mutect2 \\
 
 ### 4. Process Mutect2 output 
 #### A. bgzip each of the 23 files 
+
 #### B. concatenate 23 chromosome-specific bgzipped files into one VCF file
 #### C. normalize VCF file
 #### D. merge 23 chromosome-specific stats files into one stats file
