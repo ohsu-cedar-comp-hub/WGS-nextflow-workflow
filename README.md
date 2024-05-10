@@ -200,79 +200,40 @@ aws {
 }
 ```
 
-## Quick run [on the command line? Using conda environments?] 
+## Workflow design
 
-Activate nextflow environment and load singularity
+**Pre-alignment QC**
 
-**Pre-alignment QC**   
-1.) Initial QC with FastQC 
-
- ```
-## make output directory for fastqc
-mkdir output/fastqc
-## run nextflow
-nextflow run workflows/qc/fastqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif 
-``` 
-  
-add file outputs from fastQC to params file  
-  
-2.) Trim with TrimmomaticPE  
-`nextflow run trimmomatic.nf -params-file <params-file>.json -c nextflow.config -with-singularity trimmomatic.sif`  
-  
-add file outputs from trimmomatic to params file  
-  
-3.) fastQC on trimmed reads   
-`nextflow run workflows/qc/trim_fastqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif`  
-  
-add file outputs from fastqc to params file  
-  
-4.) MultiQC on all fastQC output files   
-`nextflow run workflows/qc/multiqc.nf -params-file <params-file>.json -c nextflow.config -with-singularity fastqc.sif`  
+1. Initial QC with FastQC   
+2. Trim with Trimmomatic  
+3. fastQC on trimmed reads  
+4. MultiQC on all fastQC output files  
 
 **Alignment**  
-5.) Alignment with bwa-mem2  
-`nextflow run workflows/bwa/bwamem2.nf -params-file <params-file>.json -c nextflow.config -with-singularity bwa.sif`
 
-add unsorted bam output to params file
+5. Alignment with bwa-mem2  
+6. Sort and index with samtools  
+7. Mark duplicates with gatk MarkDuplicates  
+8. Sort and index with samtools * EDIT [RL]: is it possible to condense these 2 sorting and indexing steps?  
 
-6.) Sort and index with samtools  
-`nextflow run workflows/samtools/sort_and_index.nf -params-file <params-file>.json -c nextflow.config -with-singularity samtools.sif`  
-
-add sorted indexed bam output to params file  
-
-7.) Mark duplicates with gatk MarkDuplicates  
-`nextflow run workflows/gatk/mark_duplicates.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`  
-  
 **Somatic Variant Calling**  
-8.) Somatic variant calling with gatk Mutect2   
-`nextflow run workflows/mutect/mutect2.nf -params-file <params-file>.json -c nextflow.config -with-singularity mutect.sif`  << [RL] note: update to gatk.sif once tested
 
-add f1r2 file to params file  
-add unfiltered vcf (svc vcf output from mutect) to params file
+9. Get pileup summaries with gatk GetPileupSummaries
+10. Calculate contamination with gatk CalculateContamination
+11. Somatic variant calling with gatk Mutect2, parallelized per chromosome
+12. Process Mutect2 output  
+    12a. bgzip each of the file outputs  
+    12b. Concatenate into single VCF with bcftools concat  
+    12c. Normalize VCF with bcftools normalize  
+    12d. Merge stats files  
+    12e. Merge f1r2 files  
+13. Learn technical artifact prior probability with gatk LearnReadOrientationModel
+14. Filter variant calls with gatk Mutect2
 
-9.) Get segmentation and contamination tables  
-`nextflow run workflows/gatk/calculate_contamination.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`  
 
-10.) Learn orientation bias model  
-`nextflow run workflows/gatk/learn_read_orientation_model.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`
-add output to params file
+**Annotation**  
 
-11.) Get pileup summaries  
-`nextflow run workflows/gatk/get_pileup_summaries.nf -params-file <params-file>.json -c nextflow.config -with-singularity gatk.sif`  
-add output file to params file  
-
-12.) Sort, index, normalize with bcftools  
-`nextflow run workflows/bcftools/vcf_sort_index_normalize.nf -params-file <params-file>.json -c nextflow.config -with-singularity bcftools.sif`  
-add output to params file
-
-13.) Filter variant calls with gatk Mutect2  
-`nextflow run workflows/mutect/filter_mutect.nf -params-file <params-file>.json -c nextflow.config -with-singularity mutect.sif`  
-add filtered vcf to params file 
-
-**Annotation**
-
-14.) Annotate variants with snpEff   
-`nextflow run workflows/snpeff/annotate_variants.nf -params-file <params-file>.json -c nextflow.config -with-singularity snpeff.sif`  
+15. Annotate variants with snpEff   
 
 
 ## Alignment workflow [WIP]
