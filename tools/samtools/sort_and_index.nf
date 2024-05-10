@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-process sortAndIndex {
+process SortAndIndex {
     // Set maximum memory
     memory '40 GB'
 

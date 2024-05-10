@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 //Define process for multiQC
-process multiQC {
+process MultiQC {
     // Set output directory for multiQC results
     publishDir "${params.outdir}/multiqc", mode: 'copy'
 

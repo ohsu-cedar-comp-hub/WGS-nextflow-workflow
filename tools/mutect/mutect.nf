@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 // Define the process for running MuTect2
-process mutect2 {
+process Mutect2 {
     // Set maximum memory
     memory '40 GB'
 
