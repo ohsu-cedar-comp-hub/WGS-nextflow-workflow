@@ -45,14 +45,14 @@ cd <directory where your .sif files will live>
 singularity pull <name>.sif docker://quay.io/ohsu-comp-bio/<name>
 ```
   
-There are currently separate images for each tool. You will need to pull the following from quay.io/ohsu-comp-bio:
-- fastqc 
-- multiqc
+There are currently separate images for each tool. You will need to build the following containers using the Dockerfile associated with each tool and convert them to Singularity image files if working on a HPCC:
+- FastQC 
+- MultiQC
 - trimmomatic
 - bwa
 - samtools
-- gatk
-- mutect
+- GATK4
+- Mutect2
 - bcftools
 - snpeff
 
@@ -94,12 +94,12 @@ nextflow run <nextflow script>.nf \
 Nextflow version 23.10.1  
 Singularity version 3.8.0-1.el7
 
-## Quick run 
+## Quick run [on the command line? Using conda environments?] 
 
 Activate nextflow environment and load singularity
 
 **Pre-alignment QC**   
-1.) QC with fastQC 
+1.) Initial QC with FastQC 
 
  ```
 ## make output directory for fastqc
