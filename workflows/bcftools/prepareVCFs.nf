@@ -3,7 +3,7 @@
 workflow {
     include { prepareVCFs } from '../../tools/bcftools/prepareVCFs.nf'
     Channel
-        .fromPath("{params.outdir}*.vcf") // unknown if this will work as desired
+        .fromPath("{params.outdir}*unfiltered.vcf")
         .set { unfiltered_vcfs }
         
     unfiltered_vcfs

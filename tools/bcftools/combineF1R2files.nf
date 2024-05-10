@@ -10,6 +10,7 @@ process readOrientationModel {
 
     script:
     """
+    
     all_f1r2_input=""
     for chromosome in ${chromosomes}; do
         all_f1r2_input+=" -I \${chromosome}.f1r2.tar.gz"
