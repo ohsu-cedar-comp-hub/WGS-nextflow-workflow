@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-include {FilterMutectCalls} from '../tools/mutect/filter_mutect.nf
+include {FilterMutectCalls} from '../../tools/gatk/filter_mutect.nf'
 
 // define workflow
 workflow {
