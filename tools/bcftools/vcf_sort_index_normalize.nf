@@ -1,4 +1,4 @@
-#!/usr/bin/env nextflow
+#!/usr/bin/env nextflow << NOTE: This script can be used when input are not splitting by chromosome 
 
 process vcfSortIndexNormalize {
     // Set output directory
