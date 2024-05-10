@@ -1,7 +1,9 @@
 process readOrientationModel {
+    publishDir "${params.outdir}/svc/f1r2files/", mode: 'copy'
+    
     input:
     val chromosomes
-    path f1r2files
+    path f1r2file
 
     output:
     path 'read-orientation-model.tar.gz'

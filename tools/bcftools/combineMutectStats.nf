@@ -1,6 +1,8 @@
 #!/usr/bin/env nextflow
 
 process combineStatsFiles {
+    ${params.outdir}/stats/
+    
     input:
     val chromosome
     path stats_file
