@@ -14,7 +14,7 @@ process SiftVariants {
 
     script:
     """
-    cat variants.vcf | java -jar SnpSift.jar filter "( na FILTER ) | (FILTER = 'PASS')" > ${filtered_vcf.baseName}_passed.vcf
+    cat ${filtered_vcf} | java -Xmx8g -jar /usr/src/app/snpEff/SnpSift.jar filter "( na FILTER ) | (FILTER = 'PASS')" > ${filtered_vcf.baseName}_passed.vcf
     """
 
 }
