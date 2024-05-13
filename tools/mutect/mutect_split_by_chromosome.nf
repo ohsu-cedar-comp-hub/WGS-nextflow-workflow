@@ -13,7 +13,7 @@ process mutect2 {
    input:
     path id
     path mutect_idx
-    path chrom
+    val chrom
     path tumor_bam_sorted
     path normal_bam_sorted
 
@@ -30,7 +30,7 @@ process mutect2 {
         -I ${normal_bam_sorted} \\
         --panel-of-normals ${pon} \\
         -normal ${normal_bam.baseName} \\
-        -L ${chrom} \\
+        -L !{chrom} \\
         -O ${id}_${chrom}_unfiltered.vcf \\
         --f1r2-tar-gz ${id}_${chrom}_f1r2.tar.gz \\
         -stats ${id}_${chrom}_unfiltered.vcf.stats
