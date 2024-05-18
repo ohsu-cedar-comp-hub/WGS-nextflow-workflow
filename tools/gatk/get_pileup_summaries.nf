@@ -2,21 +2,32 @@
 
 // Process for getting pileup summaries
 process GetPileupSummaries {
+    // Set maximum memory
+    memory '40 GB'
+
     publishDir "${params.outdir}/summaries", mode: 'copy'
 
     input:
-    path bam_sorted
+    path tumor_bam_sorted
+    path normal_bam_sorted
     path exac
+    val ID
 
     output:
-    file("${bam_sorted.baseName}.getpileupsummaries.table")
-
+    file("${tumor_bam_sorted.simpleName}.getpileupsummaries.table")
+    file("${normal_bam_sorted.simpleName}.getpileupsummaries.table")
     script:
     """
     gatk GetPileupSummaries \\
-    -I ${params.bam_sorted} \\
+    -I ${tumor_bam_sorted} \\
     -V ${params.exac} \\
     -L ${params.exac} \\
-    -O ${bam_sorted.baseName}.getpileupsummaries.table
+    -O ${tumor_bam_sorted.simpleName}.getpileupsummaries.table
+
+    gatk GetPileupSummaries \\
+    -I ${normal_bam_sorted} \\
+    -V ${params.exac} \\
+    -L ${params.exac} \\
+    -O ${normal_bam_sorted.simpleName}.getpileupsummaries.table
     """
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-process trimmomaticPE {
+process TrimmomaticPE {
     // Set maximum memory
     memory '40 GB'
 
@@ -12,6 +12,7 @@ process trimmomaticPE {
     path read1
     path read2
     path truseq3pefile
+    val id
 
     output:
     file("${read1.baseName}_1P.fastq.gz")
@@ -22,7 +23,7 @@ process trimmomaticPE {
     // trimmomatic command
     script:
     """
-     trimmomatic \
+     java -jar /bin/trimmomatic.jar \
      PE -phred33 \
      ${read1} \
      ${read2} \

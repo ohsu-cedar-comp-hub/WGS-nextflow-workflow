@@ -8,10 +8,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
         && apt-get install -y \
                 build-essential \
-                openjdk-8-jre-headless \
+                openjdk-17-jre-headless \
                 r-base \
                 unzip \
                 wget \
+                python \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 

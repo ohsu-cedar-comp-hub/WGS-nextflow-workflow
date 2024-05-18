@@ -5,6 +5,7 @@ This Nextflow workflow aligns, performs somatic variant calls, and annotates var
 ## Getting Started
 
 ### Running with Anaconda
+
 Requires install of [Anaconda](https://docs.anaconda.com/free/anaconda/install/index.html)
 
 Create conda environment
@@ -25,13 +26,14 @@ pip install multiqc
 
 Download reference genome file with snpEff download GRCh38.86
 
-Check that Java version is 11 through 21. Nextflow has been checked to run with Java 11-21. Otherwise install Java 17 via SDKMAN shown [here](https://www.nextflow.io/docs/latest/install.html)  
+Check that Java version is 11 through 21. Nextflow has been checked to run with Java 11-21. Otherwise install Java 17 via SDKMAN shown [here](https://www.nextflow.io/docs/latest/install.html)
 
 ```
 java -version
 ```
 
-Test Nexflow is successfully installed
+Test Nexflow successfully installed
+
 ```
 nextflow info
 ```
@@ -129,6 +131,7 @@ aws {
     }
 }
 ```
+
 
 ## Workflow design
 
@@ -490,5 +493,3 @@ nextflow run annotate_variants.nf \
 -c nextflow.config \
 -with-singularity snpeff.sif
 ```
-
-
