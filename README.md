@@ -115,7 +115,7 @@ nextflow run <nextflow script>.nf \
 
 
 
-### Data setup (rename?)
+### Data setup
 
 Example Ceph Bucket Config
 
