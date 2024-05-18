@@ -438,11 +438,8 @@ gatk Mutect2 \\
     --germline-resource ${germline_resource} \\
     -L ${chrom} \\ filesChannel() containing array of chromsomes, chr1 ... chrX 
     -O ${tumor_bam_sorted.baseName}_${chrom}_unfiltered.vcf \\
-    --f1r2-tar-gz ${tumor_bam_sorted.baseName}_${chrom}_f1r2.tar.gz \\
-    -stats ${tumor_bam.baseName}_${chrom}_unfiltered.vcf.stats
+    --f1r2-tar-gz ${tumor_bam_sorted.baseName}_${chrom}_f1r2.tar.gz
 ```
-
-```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk Mutect2 -R reference.fa -I tumor.bam -I normal.bam -normal normal_name --intervals chrom -pon gnomad_panel_of_normals.vcf -germline-resource af-only_exac.vcf --f1r2-tar-gz "${file%.bam}.f1r2.tar.gz -O "${file%.bam}.unfiltered.vcf"```
 
 ### 4. Process Mutect2 output 
 #### A. bgzip each of the 23 files 
@@ -453,9 +450,9 @@ gatk Mutect2 \\
 #### E. combine 23 chromosome-specific f1r2.tar.gz files into one file
 
 ### 5. GATK LearnReadOrientationModel
-_Learn the read orientation model to refine variant calls by removing technical artifacts._ 
-**File input**: f1r2 file, containing the combined (per-chromosome) outputs from Mutect2
-**File output**: artifacts-priors.tar.gz file  
+_Learn the read orientation model to refine variant calls by removing technical artifacts._   
+**File input**: f1r2 file, containing the combined (per-chromosome) outputs from Mutect2  
+**File output**: artifacts-priors.tar.gz file    
 
 ### 6. GATK FilterMutectCalls
 _Apply filters to Mutect2 variant calls_  
@@ -482,12 +479,10 @@ Script in nextflow:
     --stats ${vcf_stats}
 ```
 
-```docker run quay.io://ohsu-comp-bio/gatk:4.4.0.0 gatk FilterMutectCalls -R reference.fa -V  "${file}.unfiltered.normalized.vcf" -contamination-table contamination.table --orientation-bias-artifact-priors read-orientation-model.tar.gz -O "${file%.unfiltered.normalized.vcf.gz}.filtered.vcf" ```
-
 ### 7. SNPEff Annotation
-_Annotate variants using SNPEff_
-**File input**: Filtered VCF and genome version GRCh38.86 from snpEff pre-built database
-**File output**: Annotated variants VCF
+_Annotate variants using SNPEff_  
+**File input**: Filtered VCF and genome version GRCh38.86 from snpEff pre-built database  
+**File output**: Annotated variants VC  F
 
 ```
 nextflow run annotate_variants.nf \
