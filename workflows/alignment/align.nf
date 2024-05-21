@@ -22,7 +22,7 @@ workflow {
     MultiQC(file(params.fastqc_read1), file(params.fastqc_read2), file(params.trim_fastqc_read1), file(params.trim_fastqc_read2), params.ID)
     BwaMem2Alignment(params.trim_read1, params.trim_read2, params.idx, params.ID)
     SortAndIndex(params.bam_unsorted, params.ID)
-    MarkDuplicates(params.tumor_bam_sorted, params.normal_bam_sorted, params.ID)
-    // SortMarkedDuplicates(params.bam_duplicates_unsorted, params.ID)
+    MarkDuplicates(params.bam_sorted, params.ID)
+    SortMarkedDuplicates(params.bam_duplicates_unsorted, params.ID)
 }
 
