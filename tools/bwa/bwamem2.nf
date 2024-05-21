@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 // Define the process for BWA-MEM2 alignment
-process bwaMem2Alignment {
+process BwaMem2Alignment {
     // Set maximum memory
     memory '40 GB'
 
