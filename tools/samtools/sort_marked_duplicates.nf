@@ -1,6 +1,9 @@
 #!/usr/bin/env nextflow
 
 process SortMarkedDuplicates {
+    // Set maximum memory
+    memory '40 GB'
+    
     publishDir "${params.outdir}/aligned/markduplicates/sorted", mode: 'copy'
 
     input:

@@ -18,8 +18,8 @@ include {SortMarkedDuplicates} from '../../tools/samtools/sort_marked_duplicates
 workflow {
     FastQCRaw(params.read1, params.read2, params.ID)
     TrimmomaticPE(params.read1, params.read2, params.truseq3pefile, params.ID)
-    FastQCTrim(file(params.trim_read1), file(params.trim_read2), params.ID)
-    MultiQC(file(params.fastqc_read1), file(params.fastqc_read2), file(params.trim_fastqc_read1), file(params.trim_fastqc_read2), params.ID)
+    FastQCTrim(params.trim_read1, params.trim_read2, params.ID)
+    MultiQC(params.fastqc_read1, params.fastqc_read2, params.trim_fastqc_read1, params.trim_fastqc_read2, params.ID)
     BwaMem2Alignment(params.trim_read1, params.trim_read2, params.idx, params.ID)
     SortAndIndex(params.bam_unsorted, params.ID)
     MarkDuplicates(params.bam_sorted, params.ID)
