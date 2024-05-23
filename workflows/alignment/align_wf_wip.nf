@@ -10,9 +10,6 @@ params.truseq3pefile = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/ref
 
 // Create Channels 
 
-// Used for FASTQC
-all_ch = Channel.fromPath(params.all_reads)
-
 // Used for TRIMMOMATICPE
 all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
 
@@ -21,12 +18,14 @@ tumor_ch = Channel.fromFilePairs(params.tumor_reads)
 
 // import modules 
 
-include { FASTQC } from '../../tools/qc/fastqc/fastqc.nf'
+include { FASTQC as FASTQCRAW} from '../../tools/qc/fastqc/fastqc.nf'
+include { FASTQC as FASTQCTRIM } from '../../tools/qc/fastqc/fastqc.nf'
 include { TRIMMOMATICPE } from '../../tools/trimmomatic/trimmomatic.nf'
+
 // workflow 
 
-
 workflow {
-    FASTQC(all_ch, params.outdir)
-    TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
+    trim_reads = TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
+    FASTQC(all_pairs_ch, params.outdir)
+    FASTQCTRIM(trim_reads, params.outdir)
 }

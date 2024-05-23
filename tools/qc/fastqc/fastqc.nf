@@ -8,7 +8,7 @@ process FASTQC {
     publishDir "${params.outdir}/fastqc", mode: 'copy'
 
     input:
-    path reads
+    tuple val(sample_id), val(reads)
     path outdir
 
     output:
@@ -24,8 +24,8 @@ process FASTQC {
         mkdir $outdir/fastqc
     fi 
     
-    # run fastqc
-    /usr/local/FastQC/fastqc $reads
+    # run fastqc on pair of files
+    /usr/local/FastQC/fastqc ${reads[0]} ${reads[1]}
     """
 }
 

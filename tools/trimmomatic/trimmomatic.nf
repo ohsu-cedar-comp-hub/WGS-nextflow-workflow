@@ -2,7 +2,7 @@
 
 process TRIMMOMATICPE {
     // Set maximum memory
-    memory '40 GB'
+    // memory '40 GB'
 
     publishDir "${params.outdir}/trim_reads", mode: 'copy'
 
@@ -12,7 +12,7 @@ process TRIMMOMATICPE {
     path outdir
 
     output:
-    path("*P.fastq.gz"), emit: trim_reads
+    tuple val(sample_id), path("*P.fastq.gz"), emit: trim_reads
     path("*U.fastq.gz"), optional:true, emit: unpaired_reads
 
     script:
