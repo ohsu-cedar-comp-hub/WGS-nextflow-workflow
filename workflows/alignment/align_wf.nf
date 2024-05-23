@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 
 // Create Channel 
+// all_pairs_ch is a read pairs channel structured like [id, [r1.fq, r2.fq]]
 all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
 
 // import modules 
@@ -12,8 +13,6 @@ include { BWAMEM2 } from '../../tools/bwa/bwamem2.nf'
 
 // workflow 
 workflow {
-    // all_pairs_ch is a read pairs channel structured like [id, [r1.fq, r2.fq]]
-
     // trimmomatic
     TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
 
