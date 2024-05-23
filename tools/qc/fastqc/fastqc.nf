@@ -3,18 +3,19 @@
 // Define the process for running FastQC
 
 process FASTQC {
-    // debug true
-    
+    debug true
+
     publishDir "${params.outdir}/fastqc", mode: 'copy'
 
     input:
-    tuple val(sample_id), val(reads)
+    tuple val(sample_id), path(reads)
     path outdir
 
     output:
-    path("*.zip"), emit: zip
-    path("*.html"), emit: html
+    path("${sample_id}*_fastqc.zip"), emit: zip
+    path("${sample_id}*_fastqc.html"), emit: html
     
+
     script:
     """
     # fastqc requires a pre-made directory. check it exists. if not, make it.

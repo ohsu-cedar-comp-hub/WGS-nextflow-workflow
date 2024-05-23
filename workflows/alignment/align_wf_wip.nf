@@ -10,13 +10,11 @@ params.truseq3pefile = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/ref
 
 // Create Channels 
 
-normal_ch = Channel.fromFilePairs(params.normal_reads)
-tumor_ch = Channel.fromFilePairs(params.tumor_reads)
+// normal_ch = Channel.fromFilePairs(params.normal_reads)
+// tumor_ch = Channel.fromFilePairs(params.tumor_reads)
 
 // Used in workflow
 all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
-
-
 
 // import modules 
 
@@ -28,7 +26,6 @@ include { TRIMMOMATICPE } from '../../tools/trimmomatic/trimmomatic.nf'
 
 workflow {
     // TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
-    all_pairs_ch.view()
     FASTQCRAW(all_pairs_ch, params.outdir)
     // FASTQCTRIM(TRIMMOMATICPE.out.trim_reads, params.outdir)
     // multi_ch = FASTQCRAW.out.zip
