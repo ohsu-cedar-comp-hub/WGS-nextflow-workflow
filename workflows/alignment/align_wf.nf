@@ -1,12 +1,5 @@
 #!/usr/bin/env nextflow
 
-// Parameters for params file 
-params.all_read_pairs = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*_R{1,2}.fastq.gz"
-params.outdir = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/channel_snippet"
-params.truseq3pefile = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/TruSeq3-PE.fa"
-params.idx = "/home/groups/CEDAR/goldmael/projects/align/resources/bwamem2/GRCh38.bm2.d1"
-params.id = "UUID-UUID-UUID"
-
 // Create Channel 
 all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
 

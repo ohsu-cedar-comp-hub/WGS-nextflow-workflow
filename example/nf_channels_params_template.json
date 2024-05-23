@@ -1,0 +1,7 @@
+{
+"params.all_read_pairs" : "/path/to/rawfastqs/*_R{1,2}.fastq.gz",
+"params.outdir" : "/path/to/output/directory",
+"params.truseq3pefile" : "/path/to/references/TruSeq3-PE.fa",
+"params.idx" : "/path/to/references/GRCh38.bm2.d1",
+"params.id" : "UUID-UUID-UUID"
+}
