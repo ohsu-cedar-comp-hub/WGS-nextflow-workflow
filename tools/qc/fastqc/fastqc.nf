@@ -1,18 +1,31 @@
 #!/usr/bin/env nextflow
 
 // Define the process for running FastQC
-process FastQC {
+
+process FASTQC {
+    // debug true
     
     publishDir "${params.outdir}/fastqc", mode: 'copy'
 
     input:
-    path read1
-    path read2
-    val ID
+    path reads
+    path outdir
+
+    output:
+    path("*.zip"), emit: zip
+    path("*.html"), emit: html
     
     script:
     """
-     /usr/local/FastQC/fastqc -o ${params.outdir}/fastqc ${read1}  
-     /usr/local/FastQC/fastqc -o ${params.outdir}/fastqc ${read2} 
+    # fastqc requires a pre-made directory. check it exists. if not, make it.
+    if [ -d $outdir/fastqc ]; then
+        :
+    else
+        mkdir $outdir/fastqc
+    fi 
+    
+    # run fastqc
+    /usr/local/FastQC/fastqc $reads
     """
 }
+

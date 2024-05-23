@@ -46,7 +46,6 @@ workflow {
     FASTQC(all_ch, params.outdir)
 }
 
-/*
 process TRIMMOMATIC {
     debug true 
 
