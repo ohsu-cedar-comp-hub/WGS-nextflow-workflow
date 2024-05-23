@@ -10,11 +10,13 @@ params.truseq3pefile = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/ref
 
 // Create Channels 
 
-// Used for TRIMMOMATICPE
-all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
-
 normal_ch = Channel.fromFilePairs(params.normal_reads)
 tumor_ch = Channel.fromFilePairs(params.tumor_reads)
+
+// Used in workflow
+all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
+
+
 
 // import modules 
 
