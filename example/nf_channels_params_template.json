@@ -1,7 +1,7 @@
 {
-"params.all_read_pairs" : "/path/to/rawfastqs/*_R{1,2}.fastq.gz",
-"params.outdir" : "/path/to/output/directory",
-"params.truseq3pefile" : "/path/to/references/TruSeq3-PE.fa",
-"params.idx" : "/path/to/references/GRCh38.bm2.d1",
-"params.id" : "UUID-UUID-UUID"
+"all_read_pairs" : "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*_R{1,2}.fastq.gz",
+"outdir" : "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/channel_snippet",
+"truseq3pefile" : "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/TruSeq3-PE.fa",
+"idx" : "/home/groups/CEDAR/goldmael/projects/align/resources/bwamem2/GRCh38.bm2.d1",
+"id" : "UUID-UUID-UUID"
 }
