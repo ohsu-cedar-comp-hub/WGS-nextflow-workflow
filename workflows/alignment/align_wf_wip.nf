@@ -27,7 +27,12 @@ include { TRIMMOMATICPE } from '../../tools/trimmomatic/trimmomatic.nf'
 // workflow 
 
 workflow {
-    trim_reads = TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
-    FASTQC(all_pairs_ch, params.outdir)
-    FASTQCTRIM(trim_reads, params.outdir)
+    // TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
+    all_pairs_ch.view()
+    FASTQCRAW(all_pairs_ch, params.outdir)
+    // FASTQCTRIM(TRIMMOMATICPE.out.trim_reads, params.outdir)
+    // multi_ch = FASTQCRAW.out.zip
+    // multi_ch.mix(FASTQCTRIM.out.zip)
+    // multi_ch.view()
+    // MULTIQC(multi_ch)
 }
