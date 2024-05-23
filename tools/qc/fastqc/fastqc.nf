@@ -2,6 +2,7 @@
 
 // Define the process for running FastQC
 process FastQC {
+    
     publishDir "${params.outdir}/fastqc", mode: 'copy'
 
     input:
