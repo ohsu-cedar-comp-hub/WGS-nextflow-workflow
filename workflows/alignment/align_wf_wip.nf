@@ -1,12 +1,14 @@
 #!/usr/bin/env nextflow
 
 // Parameters 
-params.normal_reads = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*_G_R{1,2}.fastq.gz"
-params.tumor_reads = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*_T_R{1,2}.fastq.gz"
-params.all_reads = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*.fastq.gz"
+// params.normal_reads = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*_G_R{1,2}.fastq.gz"
+// params.tumor_reads = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*_T_R{1,2}.fastq.gz"
+// params.all_reads = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*.fastq.gz"
 params.all_read_pairs = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/sliced_fastqs/*_R{1,2}.fastq.gz"
 params.outdir = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/channel_snippet"
 params.truseq3pefile = "/home/groups/CEDAR/lancasru/WGS_COH_NF/nextflow_test/references/TruSeq3-PE.fa"
+params.idx = "/home/groups/CEDAR/goldmael/projects/align/resources/bwamem2/GRCh38.bm2.d1"
+params.id = "UUID-UUID-UUID"
 
 // Create Channels 
 
@@ -22,6 +24,7 @@ include { FASTQC as FASTQCRAW} from '../../tools/qc/fastqc/fastqc.nf'
 include { FASTQC as FASTQCTRIM } from '../../tools/qc/fastqc/fastqc.nf'
 include { TRIMMOMATICPE } from '../../tools/trimmomatic/trimmomatic.nf'
 include { MULTIQC } from '../../tools/qc/multiqc/multiqc.nf'
+include { BWAMEM2 } from '../../tools/bwa/bwamem2.nf'
 
 // workflow 
 
@@ -39,4 +42,7 @@ workflow {
     multi_ch = FASTQCRAW.out.zip.mix(FASTQCTRIM.out.zip).flatten()
     // pass to multiqc
     MULTIQC(multi_ch)
+
+    // align with bwa-mem2
+    BWAMEM2(TRIMMOMATICPE.out.trim_reads, params.idx, params.id)
 }
