@@ -10,7 +10,6 @@ process MARKDUPLICATES {
     path("${bam_sorted.baseName}_marked_duplicates.bam"), emit: bam
     path("${bam_sorted.baseName}_marked_duplicates_metrics.txt"), emit: metrics
 
-
     script:
     """
     gatk MarkDuplicates -I ${bam_sorted} \

@@ -22,8 +22,8 @@ workflow {
     FASTQCRAW(all_pairs_ch, params.outdir)
     FASTQCTRIM(TRIMMOMATICPE.out.trim_reads, params.outdir)
 
-    // create a channel that is a flat list of all the fastqc zip files
-    multi_ch = FASTQCRAW.out.zip.mix(FASTQCTRIM.out.zip).flatten()
+    // gather all files output from fastqc processes
+    multi_ch = FASTQCRAW.out.zip.mix(FASTQCTRIM.out.zip).collect()
     // pass to multiqc
     MULTIQC(multi_ch)
 
