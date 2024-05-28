@@ -5,6 +5,9 @@
 process FASTQC {
     // debug true
 
+    conda "${params.conda_env}"
+    // container "${params.container_fastqc}"
+
     publishDir "${params.outdir}/fastqc", mode: 'copy'
 
     input:
@@ -26,7 +29,12 @@ process FASTQC {
     fi 
     
     # run fastqc on pair of files
-    /usr/local/FastQC/fastqc ${reads[0]} ${reads[1]}
+    fastqc ${reads[0]} ${reads[1]}
     """
 }
 
+all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
+
+workflow {
+    FASTQC(all_pairs_ch, params.outdir)
+}

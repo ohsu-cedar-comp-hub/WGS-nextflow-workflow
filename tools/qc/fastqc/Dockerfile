@@ -16,3 +16,7 @@ RUN apt-get update \
     && sed -i 's/kmer[[:space:]]\+ignore[[:space:]]\+1/kmer ignore 0/' /usr/local/FastQC/Configuration/limits.txt \
     && sed -i 's/assistive_technologies/#assistive_technologies/' /etc/java-11-openjdk/accessibility.properties \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY /usr/local/FastQC/fastqc /usr/local/bin/
+
+ENV PATH="/usr/local/bin:${PATH}"
