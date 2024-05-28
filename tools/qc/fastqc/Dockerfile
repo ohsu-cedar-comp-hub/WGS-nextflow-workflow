@@ -17,6 +17,4 @@ RUN apt-get update \
     && sed -i 's/assistive_technologies/#assistive_technologies/' /etc/java-11-openjdk/accessibility.properties \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY /usr/local/FastQC/fastqc /usr/local/bin/
-
-ENV PATH="/usr/local/bin:${PATH}"
+ENV PATH /usr/local/FastQC/:$PATH
