@@ -14,6 +14,8 @@ RUN wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip &&
 # assuming snpeff looks for data in /usr/src/app/snpEff/data (instead maybe we download at runtime and mount as a volume?)
 RUN java -jar snpEff/snpEff.jar download -v GRCh38.86
 
-# ENV _JAVA_OPTIONS=-Xmx8g
+# set up entrypoint
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# ENTRYPOINT ["java", "-jar", "snpEff/snpEff.jar"]
+ENTRYPOINT /usr/local/bin/entrypoint.sh && java -jar snpEff
