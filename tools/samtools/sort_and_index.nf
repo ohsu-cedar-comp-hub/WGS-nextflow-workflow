@@ -4,7 +4,7 @@ process SORT {
     // Set maximum memory
     memory '40 GB'
     
-    publishDir "${params.outdir}/aligned/sort_index", mode: 'copy'
+    publishDir "${params.outdir}/aligned/sorted", mode: 'copy'
     
     input:
     path bam_unsorted
