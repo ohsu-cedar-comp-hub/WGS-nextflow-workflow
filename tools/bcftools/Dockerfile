@@ -25,5 +25,3 @@ RUN wget https://github.com/samtools/bcftools/releases/download/$BCFTOOLS_VERSIO
   make install
 
 RUN rm -rf /tmp/bcftools-$BCFTOOLS_VERSION*
-
-ENV PATH="$BCFTOOLS_INSTALL_DIR/bin:$PATH"
