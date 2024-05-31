@@ -1,6 +1,9 @@
 #!/usr/bin/env nextflow
 
 process MARKDUPLICATES {
+    
+    container "${params.container_gatk}"
+    
     publishDir "${params.outdir}/aligned/markduplicates", mode: 'copy'
 
     input:

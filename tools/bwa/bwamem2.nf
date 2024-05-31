@@ -5,6 +5,8 @@ process BWAMEM2 {
     // Set maximum memory
     memory '40 GB'
 
+    container "${params.container_bwa}"
+
     // Set output directory for alignment results
     publishDir "${params.outdir}/aligned", mode: 'copy'
 

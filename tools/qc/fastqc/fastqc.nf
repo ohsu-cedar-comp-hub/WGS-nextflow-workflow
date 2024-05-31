@@ -4,7 +4,6 @@
 
 process FASTQC {
 
-    conda "${params.conda_env}"
     container "${params.container_fastqc}"
 
     publishDir "${params.outdir}/fastqc", mode: 'copy'
