@@ -40,7 +40,7 @@ workflow {
     */
 
     MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
-    out = MUTECT2.out.vcf
-    out.view()
+    
+    
     
 }
