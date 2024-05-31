@@ -1,14 +1,17 @@
 #!/usr/bin/env nextflow
 
-process prepareVCFs {
+process PREPAREVCF {
     publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
     
+    container "${params.container_bcftools}"
+
     input:
-    path unfiltered_vcf
+    path split_vcfs
+    val sample_id
 
     output:
-    path("${unfiltered_vcf.baseName}_unfiltered_all.vcf.bgz")
-    path("${unfiltered_vcf.baseName}_unfiltered_all.vcf.bgz.tbi")
+    path("${sample_id}_unfiltered_all.vcf.bgz")
+    path("${sample_id}_unfiltered_all.vcf.bgz.tbi")
 
     script:
     """
@@ -17,7 +20,7 @@ process prepareVCFs {
         files_to_concat+=" ${unfiltered_vcf.baseName}_chr\${chr}_unfiltered.vcf.bgz"
     done
 
-    bcftools concat -a \$files_to_concat -o ${unfiltered_vcf.baseName}_unfiltered_all.vcf.bgz
-    bcftools index -t ${unfiltered_vcf.baseName}_unfiltered_all.vcf.bgz
+    bcftools concat -a $split_vcfs -o ${sample_id}_unfiltered_all.vcf.bgz
+    bcftools index -t ${sample_id}_unfiltered_all.vcf.bgz
     """
 }

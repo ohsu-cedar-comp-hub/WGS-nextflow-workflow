@@ -18,7 +18,7 @@ sample_id = tumor_ch.map { filePath ->
 sample_id_ch = sample_id.first()
 
 // Define the list of chromosomes + create a channel emitting each chromosome
-chromosomes = (1..22).collect { it.toString() } + ['X']
+chromosomes = (1..2).collect { it.toString() } + ['X']
 chrom_strings = Channel.from(chromosomes)
 chrom_ch = chrom_strings.map { it -> "chr" + it }
 
@@ -26,6 +26,7 @@ chrom_ch = chrom_strings.map { it -> "chr" + it }
 include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
 include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
 include { MUTECT2 } from '../../tools/gatk/mutect.nf'
+include { PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 
 workflow {
     /*
@@ -40,7 +41,8 @@ workflow {
     */
 
     MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
-    
-    
+    vcfs_ch = MUTECT2.out.vcf.collect()
+    vcfs_ch.view()
+    // PREPAREVCF(vcfs_ch)
     
 }

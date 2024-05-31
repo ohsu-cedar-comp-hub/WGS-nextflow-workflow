@@ -6,7 +6,7 @@ process MUTECT2 {
     // memory '40 GB'
 
     // Set output directory for MuTect2 results
-    publishDir "${params.outdir}/svc", mode: 'copy'
+    // publishDir "${params.outdir}/svc", mode: 'copy'  // dont include this only copy the final file to save space. the split vcfs are still available in the work directory.
 
     container "${params.container_gatk}"
 
