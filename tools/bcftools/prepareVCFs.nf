@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 
 process BGZIP {
+    
     container "${params.container_samtools}"
 
     input:
