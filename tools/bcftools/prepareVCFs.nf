@@ -1,5 +1,20 @@
 #!/usr/bin/env nextflow
 
+process BGZIP {
+    container "${params.container_samtools}"
+
+    input:
+    path split_vcf
+
+    output:
+    path ("${split_vcf}.gz"), emit: vcf
+
+    script:
+    """
+    bgzip ${split_vcf}
+    """
+}
+
 process PREPAREVCF {
     publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
     
@@ -10,17 +25,17 @@ process PREPAREVCF {
     val sample_id
 
     output:
-    path("${sample_id}_unfiltered_all.vcf.bgz")
-    path("${sample_id}_unfiltered_all.vcf.bgz.tbi")
+    path("${sample_id}_unfiltered.vcf.gz"), emit: unfiltered
+    path("${sample_id}_unfiltered_sorted.vcf.gz"), emit: sorted
+    path("${sample_id}_unfiltered_sorted.vcf.gz.tbi"), emit: index
+    path("${sample_id}_normalized.vcf.gz"), emit: normalized
 
     script:
     """
-    files_to_concat=""
-    for chr in {1..22} X; do
-        files_to_concat+=" ${unfiltered_vcf.baseName}_chr\${chr}_unfiltered.vcf.bgz"
-    done
-
-    bcftools concat -a $split_vcfs -o ${sample_id}_unfiltered_all.vcf.bgz
-    bcftools index -t ${sample_id}_unfiltered_all.vcf.bgz
+    bcftools concat -a ${split_vcfs.join(' ')} -o ${sample_id}_unfiltered.vcf.gz
+    bcftools sort -Oz -o ${sample_id}_unfiltered_sorted.vcf.gz
+    bcftools index -t ${sample_id}_unfiltered_sorted.vcf.gz
+    bcftools norm -m -any ${sample_id}_unfiltered_sorted.vcf.gz -o ${sample_id}_normalized.vcf.gz
     """
 }
+
