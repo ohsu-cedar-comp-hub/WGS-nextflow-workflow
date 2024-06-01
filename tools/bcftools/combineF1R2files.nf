@@ -1,21 +1,15 @@
-process ReadOrientationModel {
+process LEARNORIENTATION {
     publishDir "${params.outdir}/svc/f1r2files/", mode: 'copy'
     
     input:
-    val chromosomes
-    path f1r2file
+    val f1r2file
+    val sample_id
 
     output:
     path 'read-orientation-model.tar.gz'
 
     script:
     """
-
-    all_f1r2_input=""
-    for chromosome in ${chromosomes}; do
-        all_f1r2_input+=" -I \${chromosome}.f1r2.tar.gz"
-    done
-
-    LearnReadOrientationModel \$all_f1r2_input -O read-orientation-model.tar.gz
+    gatk LearnReadOrientationModel ${f1r2file.join('-I ')} -O read-orientation-model.tar.gz
     """
 }

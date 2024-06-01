@@ -19,7 +19,7 @@ process MUTECT2 {
 
     output:
     path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
-    path "${sample_id}_${chrom}_f1r2.tar.gz", emit: orientation
+    path "${sample_id}_${chrom}_f1r2.tar.gz", emit: f1r2
     path "${sample_id}_${chrom}_unfiltered.vcf.stats", emit: stats
 
     // MuTect2 command

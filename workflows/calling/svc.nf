@@ -28,6 +28,7 @@ include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contaminatio
 include { MUTECT2 } from '../../tools/gatk/mutect.nf'
 include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
+include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
 
 workflow {
     /*
@@ -49,7 +50,13 @@ workflow {
     PREPAREVCF(vcfs_ch, sample_id_ch)
     
     // Merge stats, map the command line call in MergeMutectStats to each path
-    stats = MUTECT2.out.stats.map { it -> "-stats " + it}
+    stats = MUTECT2.out.stats
     stats_ch = stats.collect()
-    MERGESTATS(stats_ch)
+    MERGESTATS(stats_ch, sample_id_ch)
+
+    // Merge f1r2 files, map the command line call in LearnReadOrientations to each path
+    f1r2files = MUTECT2.out.f1r2
+    f1r2_ch = f1r2files.collect()
+    LEARNORIENTATION(f1r2_ch, sample_id_ch)
+
 }

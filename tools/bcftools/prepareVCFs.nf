@@ -23,7 +23,7 @@ process PREPAREVCF {
     container "${params.container_bcftools}"
 
     input:
-    path split_vcfs
+    val split_vcfs
     val sample_id
 
     output:
