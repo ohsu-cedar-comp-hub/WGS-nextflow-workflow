@@ -1,0 +1,12 @@
+FROM mambaorg/micromamba:1.5.8
+# mount yaml file to build environment
+COPY --chown=$MAMBA_USER:$MAMBA_USER env.yml /tmp/env.yaml
+# build environment
+RUN micromamba install -y -n base -f /tmp/env.yaml && \
+    micromamba clean --all --yes
+# args to run conda environment in dockerfile
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+# self update
+RUN micromamba update snpeff
+# download reference genome
+RUN snpEff download -v GRCh38.86
