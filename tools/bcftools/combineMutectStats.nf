@@ -12,7 +12,7 @@ process MERGESTATS {
     val sample_id
 
     output:
-    path "${stats_file.baseName}_all.stats"
+    path "${sample_id}_unfiltered.vcf.all.stats"
 
     script:
     """

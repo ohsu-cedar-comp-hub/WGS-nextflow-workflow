@@ -2,7 +2,7 @@
 
 process BGZIP {
     
-    container "${params.container_samtools}"
+    container "${params.container_bcftools}"
 
     input:
     path split_vcf
