@@ -16,6 +16,8 @@ process BGZIP {
 }
 
 process PREPAREVCF {
+    debug true
+    
     publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
     
     container "${params.container_bcftools}"
@@ -32,6 +34,7 @@ process PREPAREVCF {
 
     script:
     """
+    echo ${split_vcfs.join(' ')}
     bcftools concat -a ${split_vcfs.join(' ')} -o ${sample_id}_unfiltered.vcf.gz
     bcftools sort -Oz -o ${sample_id}_unfiltered_sorted.vcf.gz
     bcftools index -t ${sample_id}_unfiltered_sorted.vcf.gz

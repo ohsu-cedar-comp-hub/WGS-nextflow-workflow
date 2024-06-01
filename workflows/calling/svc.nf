@@ -10,7 +10,7 @@ normal_ch = Channel.fromPath("${params.bam_files}/*_G_*.bam")
 tumor_val = tumor_ch.first()
 normal_val = normal_ch.first()
 
-// Sample id channel
+// Sample id channel: take full filename and grab the sample id by splitting by _ and taking the first item
 sample_id = tumor_ch.map { filePath -> 
                 def fileName = filePath.baseName
                 def baseName = fileName.split('_')[0]
@@ -27,6 +27,7 @@ include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
 include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
 include { MUTECT2 } from '../../tools/gatk/mutect.nf'
 include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
+include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 
 workflow {
     /*
@@ -39,10 +40,16 @@ workflow {
     segment_table = CALCULATECONTAMINATION.out.segment
      
     */
-
+    // Run mutect2
     MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
+    
+    // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf)
     vcfs_ch = BGZIP.out.vcf.collect()
-    PREPAREVCF(vcfs_ch)
+    PREPAREVCF(vcfs_ch, sample_id_ch)
     
+    // Merge stats, map the command line call in MergeMutectStats to each path
+    stats = MUTECT2.out.stats.map { it -> "-stats " + it}
+    stats_ch = stats.collect()
+    MERGESTATS(stats_ch)
 }
