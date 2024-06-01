@@ -2,7 +2,7 @@
 
 process AnnotateVariants {
     
-    container "/home/groups/CEDAR/lancasru/WGS_COH_NF/config_sif/snpeff.sif"
+    container "/home/groups/CEDAR/lancasru/WGS_COH_NF/config_sif/snpeff_conda.sif"
     conda "/home/groups/CEDAR/lancasru/anaconda3/envs/nextflow_env"
 
     publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
@@ -18,11 +18,7 @@ process AnnotateVariants {
 
     script:
     """
-    snpEff GRCh38.86 ${filtered_vcf} -Xmx8g -cancer > ${filtered_vcf.baseName}_annotated_variants.vcf
+    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -Xmx8g -cancer > ${filtered_vcf.baseName}_annotated_variants.vcf
     """
 
-}
-
-workflow {
-    AnnotateVariants (file(params.filtered_vcf), params.ID)
 }
