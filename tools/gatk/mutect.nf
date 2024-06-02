@@ -21,6 +21,7 @@ process MUTECT2 {
     path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
     path "${sample_id}_${chrom}_f1r2.tar.gz", emit: f1r2
     path "${sample_id}_${chrom}_unfiltered.vcf.stats", emit: stats
+    path "${sample_id}_${chrom}_unfiltered.vcf.idx", emit: index
 
     // MuTect2 command
     script:

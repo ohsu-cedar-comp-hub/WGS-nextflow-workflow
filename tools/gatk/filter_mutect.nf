@@ -15,7 +15,7 @@ process FILTERMUTECT {
     // path mutect_idx_fai
     // path mutect_dict
     path vcf_stats
-    path read_orientation_model
+    // path read_orientation_model
     path segmentation_table
     path contamination_table
     val sample_id
@@ -31,9 +31,9 @@ process FILTERMUTECT {
     --tumor-segmentation ${segmentation_table} \
     --contamination-table ${contamination_table} \
     -O ${sample_id}_filtered.vcf \
-    --ob-priors ${read_orientation_model} \
     --stats ${vcf_stats}
     """
-//     --read-index ${mutect_idx_fai} \
-//     --sequence-dictionary ${mutect_dict} \
+// --ob-priors ${read_orientation_model} \    
+// --read-index ${mutect_idx_fai} \
+// --sequence-dictionary ${mutect_dict} \
 }

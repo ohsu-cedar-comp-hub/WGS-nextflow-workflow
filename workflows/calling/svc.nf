@@ -32,7 +32,7 @@ include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
 include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
 
 workflow {
-    /*
+    
     GETPILEUPSUMMARIES(tumor_ch, normal_ch, params.exac)
     tumor_table = GETPILEUPSUMMARIES.out.tumor
     normal_table = GETPILEUPSUMMARIES.out.normal
@@ -41,14 +41,14 @@ workflow {
     contam_table = CALCULATECONTAMINATION.out.contamination
     segment_table = CALCULATECONTAMINATION.out.segment
      
-    */
     // Run mutect2
     MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
     
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf)
     vcfs_ch = BGZIP.out.vcf.collect()
-    PREPAREVCF(vcfs_ch, sample_id_ch)
+    split_vcf_index = BGZIP.out.index.collect()
+    PREPAREVCF(vcfs_ch, split_vcf_index, sample_id_ch)
     unfiltered_vcf = PREPAREVCF.out.normalized
 
     // Merge stats 
@@ -57,13 +57,15 @@ workflow {
     MERGESTATS(stats_ch, sample_id_ch)
     filter_stats = MERGESTATS.out
 
+    /*
     // Merge f1r2 read orientation files 
     f1r2files = MUTECT2.out.f1r2
     f1r2_ch = f1r2files.collect()
     LEARNORIENTATION(f1r2_ch, sample_id_ch)
     orientationmodel = LEARNORIENTATION.out
+    */
 
     // Filter mutect2 calls
-    FILTERMUTECT(unfiltered_vcf, params.mutect_idx, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
+    FILTERMUTECT(unfiltered_vcf, params.mutect_idx, filter_stats, segment_table, contam_table, sample_id_ch)
     filter_vcf = FILTERMUTECT.out
 }
