@@ -14,25 +14,24 @@ process MUTECT2 {
     input:
     path tumor_bam_sorted 
     path normal_bam_sorted 
-    val chrom 
     val sample_id
 
     output:
-    path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
-    path "${sample_id}_${chrom}_f1r2.tar.gz", emit: f1r2
-    path "${sample_id}_${chrom}_unfiltered.vcf.stats", emit: stats
+    path "${sample_id}_unfiltered.vcf", emit: vcf
+    path "${sample_id}_f1r2.tar.gz", emit: f1r2
+    path "${sample_id}_unfiltered.vcf.stats", emit: stats
 
     // MuTect2 command
     script:
     """
     gatk Mutect2 \
-    -R ${params.mutect_idx} \
+        -R ${params.mutect_idx} \
         -I ${tumor_bam_sorted} \
         -I ${normal_bam_sorted} \
         --panel-of-normals ${params.pon} \
-        -L ${chrom} \
+        -L chr1 \
         --germline-resource ${params.gnomad} \
-        -O ${sample_id}_${chrom}_unfiltered.vcf \
-        --f1r2-tar-gz ${sample_id}_${chrom}_f1r2.tar.gz
+        -O ${sample_id}_unfiltered.vcf \
+        --f1r2-tar-gz ${sample_id}_f1r2.tar.gz
     """
 }

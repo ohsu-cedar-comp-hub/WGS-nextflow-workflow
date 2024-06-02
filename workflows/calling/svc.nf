@@ -25,7 +25,7 @@ chrom_ch = chrom_strings.map { it -> "chr" + it }
 
 include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
 include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
-include { MUTECT2 } from '../../tools/gatk/mutect.nf'
+include { MUTECT2 } from '../../tools/gatk/mutect_copy.nf'
 include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
@@ -42,8 +42,9 @@ workflow {
      
     */
     // Run mutect2
-    MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
+    MUTECT2(tumor_val, normal_val, sample_id_ch)
     
+    /*
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf)
     vcfs_ch = BGZIP.out.vcf.collect()
@@ -58,5 +59,5 @@ workflow {
     f1r2files = MUTECT2.out.f1r2
     f1r2_ch = f1r2files.collect()
     LEARNORIENTATION(f1r2_ch, sample_id_ch)
-
+    */
 }
