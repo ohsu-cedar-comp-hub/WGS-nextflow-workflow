@@ -25,10 +25,11 @@ chrom_ch = chrom_strings.map { it -> "chr" + it }
 
 include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
 include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
-include { MUTECT2 } from '../../tools/gatk/mutect_copy.nf'
+include { MUTECT2 } from '../../tools/gatk/mutect.nf'
 include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
+include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
 
 workflow {
     /*
@@ -42,22 +43,27 @@ workflow {
      
     */
     // Run mutect2
-    MUTECT2(tumor_val, normal_val, sample_id_ch)
+    MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
     
-    /*
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf)
     vcfs_ch = BGZIP.out.vcf.collect()
     PREPAREVCF(vcfs_ch, sample_id_ch)
-    
-    // Merge stats, map the command line call in MergeMutectStats to each path
+    unfiltered_vcf = PREPAREVCF.out.normalized
+
+    // Merge stats 
     stats = MUTECT2.out.stats
     stats_ch = stats.collect()
     MERGESTATS(stats_ch, sample_id_ch)
+    filter_stats = MERGESTATS.out
 
-    // Merge f1r2 files, map the command line call in LearnReadOrientations to each path
+    // Merge f1r2 read orientation files 
     f1r2files = MUTECT2.out.f1r2
     f1r2_ch = f1r2files.collect()
     LEARNORIENTATION(f1r2_ch, sample_id_ch)
-    */
+    orientationmodel = LEARNORIENTATION.out
+
+    // Filter mutect2 calls
+    FILTERMUTECT(unfiltered_vcf, params.mutect_idx, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
+    filter_vcf = FILTERMUTECT.out
 }
