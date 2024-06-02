@@ -26,12 +26,11 @@ process MUTECT2 {
     script:
     """
     gatk Mutect2 \
-        -R ${params.mutect_idx} \
+    -R ${params.mutect_idx} \
         -I ${tumor_bam_sorted} \
         -I ${normal_bam_sorted} \
         --panel-of-normals ${params.pon} \
         -normal ${sample_id}_G \
-        -L ${chrom} \
         --germline-resource ${params.gnomad} \
         -O ${sample_id}_${chrom}_unfiltered.vcf \
         --f1r2-tar-gz ${sample_id}_${chrom}_f1r2.tar.gz

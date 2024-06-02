@@ -12,6 +12,6 @@ process LEARNORIENTATION {
 
     script:
     """
-    gatk LearnReadOrientationModel ${f1r2file.join('-I ')} -O ${sample_id}_read-orientation-model.tar.gz
+    gatk LearnReadOrientationModel -I ${f1r2file.join(' -I ')} -O ${sample_id}_read-orientation-model.tar.gz
     """
 }

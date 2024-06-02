@@ -17,6 +17,6 @@ process MERGESTATS {
     script:
     """
     echo ${stats.join(' ')}
-    gatk MergeMutectStats ${stats.join('-stats ')} -O ${sample_id}_unfiltered.vcf.all.stats
+    gatk MergeMutectStats -stats ${stats.join(' -stats ')} -O ${sample_id}_unfiltered.vcf.all.stats
     """
 }
