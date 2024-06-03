@@ -40,7 +40,7 @@ workflow {
     CALCULATECONTAMINATION(tumor_table, normal_table)
     contam_table = CALCULATECONTAMINATION.out.contamination
     segment_table = CALCULATECONTAMINATION.out.segment
-     
+    
     // Run mutect2
     MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
     
@@ -49,8 +49,9 @@ workflow {
     vcfs_ch = BGZIP.out.vcf.collect()
     split_vcf_index = BGZIP.out.index.collect()
     PREPAREVCF(vcfs_ch, split_vcf_index, sample_id_ch)
-    unfiltered_vcf = PREPAREVCF.out.normalized
-
+    // unfiltered_vcf = PREPAREVCF.out.normalized
+    
+    
     // Merge stats 
     stats = MUTECT2.out.stats
     stats_ch = stats.collect()
@@ -68,4 +69,5 @@ workflow {
     // Filter mutect2 calls
     FILTERMUTECT(unfiltered_vcf, params.mutect_idx, filter_stats, segment_table, contam_table, sample_id_ch)
     filter_vcf = FILTERMUTECT.out
+    
 }
