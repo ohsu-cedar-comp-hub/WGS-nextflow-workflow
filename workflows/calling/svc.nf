@@ -30,6 +30,7 @@ include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
 include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
+include { ANNOTATE } from '../../tools/snpeff/annotate_variants.nf'
 
 workflow {
     
@@ -59,16 +60,15 @@ workflow {
     MERGESTATS(stats_ch, sample_id_ch)
     filter_stats = MERGESTATS.out
 
-    /*
     // Merge f1r2 read orientation files 
     f1r2files = MUTECT2.out.f1r2
     f1r2_ch = f1r2files.collect()
     LEARNORIENTATION(f1r2_ch, sample_id_ch)
     orientationmodel = LEARNORIENTATION.out
-    */
 
     // Filter mutect2 calls
-    FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, filter_stats, segment_table, contam_table, sample_id_ch)
+    FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
     filter_vcf = FILTERMUTECT.out
     
+    ANNOTATE(filter_vcf, sample_id_ch)
 }
