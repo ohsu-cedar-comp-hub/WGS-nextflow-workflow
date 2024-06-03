@@ -11,6 +11,7 @@ process FILTERMUTECT {
 
     input:
     path unfiltered_vcf
+    path unfiltered_vcf_index
     path mutect_idx
     // path mutect_idx_fai
     // path mutect_dict
@@ -26,7 +27,7 @@ process FILTERMUTECT {
     script:
     """
     gatk FilterMutectCalls \
-    -R ${mutect_idx} \
+    -R ${params.mutect_idx} \
     -V ${unfiltered_vcf} \
     --tumor-segmentation ${segmentation_table} \
     --contamination-table ${contamination_table} \

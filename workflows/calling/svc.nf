@@ -49,7 +49,8 @@ workflow {
     vcfs_ch = BGZIP.out.vcf.collect()
     split_vcf_index = BGZIP.out.index.collect()
     PREPAREVCF(vcfs_ch, split_vcf_index, sample_id_ch)
-    // unfiltered_vcf = PREPAREVCF.out.normalized
+    unfiltered_vcf = PREPAREVCF.out.normalized
+    unfiltered_vcf_index = PREPAREVCF.out.index
     
     
     // Merge stats 
@@ -67,7 +68,7 @@ workflow {
     */
 
     // Filter mutect2 calls
-    FILTERMUTECT(unfiltered_vcf, params.mutect_idx, filter_stats, segment_table, contam_table, sample_id_ch)
+    FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, filter_stats, segment_table, contam_table, sample_id_ch)
     filter_vcf = FILTERMUTECT.out
     
 }

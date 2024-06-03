@@ -34,9 +34,8 @@ process PREPAREVCF {
 
     output:
     path("${sample_id}_unfiltered.vcf.gz"), emit: vcf
-    path("${sample_id}_unfiltered_sorted.vcf.gz"), emit: sorted
-    path("${sample_id}_unfiltered_sorted.vcf.gz.tbi"), emit: index
     path("${sample_id}_normalized.vcf.gz"), emit: normalized
+    path("${sample_id}_normalized.vcf.gz.tbi"), emit: index
 
     script:
     """
@@ -44,6 +43,7 @@ process PREPAREVCF {
     bcftools sort -Oz ${sample_id}_unfiltered.vcf.gz -o ${sample_id}_unfiltered_sorted.vcf.gz 
     bcftools index -t ${sample_id}_unfiltered_sorted.vcf.gz
     bcftools norm -m -any ${sample_id}_unfiltered_sorted.vcf.gz -o ${sample_id}_normalized.vcf.gz
+    bcftools index -t ${sample_id}_normalized.vcf.gz
     """
 }
 
