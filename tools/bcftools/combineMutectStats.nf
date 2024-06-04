@@ -1,7 +1,6 @@
 #!/usr/bin/env nextflow
 
 process MERGESTATS {
-    //debug true
     
     container "${params.container_gatk}"
 
