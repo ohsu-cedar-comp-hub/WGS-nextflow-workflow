@@ -4,7 +4,7 @@ process LEARNORIENTATION {
     container "${params.container_gatk}"
 
     input:
-    val f1r2file
+    path f1r2file
     val sample_id
 
     output:
