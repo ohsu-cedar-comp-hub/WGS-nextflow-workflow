@@ -18,7 +18,7 @@ sample_id = tumor_ch.map { filePath ->
 sample_id_ch = sample_id.first()
 
 // Define the list of chromosomes + create a channel emitting each chromosome
-chromosomes = (1..2).collect { it.toString() } + ['X']
+chromosomes = (1..22).collect { it.toString() } + ['X']
 chrom_strings = Channel.from(chromosomes)
 chrom_ch = chrom_strings.map { it -> "chr" + it }
 
