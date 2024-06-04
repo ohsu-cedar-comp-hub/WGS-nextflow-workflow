@@ -4,6 +4,8 @@
 
 process FASTQC {
 
+    container "${params.container_fastqc}"
+
     publishDir "${params.outdir}/fastqc", mode: 'copy'
 
     input:
@@ -25,7 +27,6 @@ process FASTQC {
     fi 
     
     # run fastqc on pair of files
-    /usr/local/FastQC/fastqc ${reads[0]} ${reads[1]}
+    fastqc ${reads[0]} ${reads[1]}
     """
 }
-
