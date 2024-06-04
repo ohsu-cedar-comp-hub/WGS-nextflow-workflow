@@ -3,7 +3,9 @@
 process ANNOTATE {
     publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
     // Set maximum memory
-    // memory '40 GB'
+    memory '40 GB'
+
+    container "${params.container_snpeff}"
 
     input:
     path filtered_vcf
