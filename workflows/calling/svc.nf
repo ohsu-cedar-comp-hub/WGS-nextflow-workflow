@@ -53,7 +53,6 @@ workflow {
     unfiltered_vcf = PREPAREVCF.out.normalized
     unfiltered_vcf_index = PREPAREVCF.out.index
     
-    
     // Merge stats 
     stats = MUTECT2.out.stats
     stats_ch = stats.collect()
@@ -70,5 +69,6 @@ workflow {
     FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
     filter_vcf = FILTERMUTECT.out
     
+    // Annotate with snpEff
     ANNOTATE(filter_vcf, sample_id_ch)
 }
