@@ -3,7 +3,6 @@
 // Define the process for running FastQC
 
 process FASTQC {
-    // debug true
 
     publishDir "${params.outdir}/fastqc", mode: 'copy'
 

@@ -2,7 +2,7 @@
 
 process TRIMMOMATICPE {
     // Set maximum memory
-    // memory '40 GB'
+    memory '40 GB'
 
     publishDir "${params.outdir}/trim_reads", mode: 'copy'
 

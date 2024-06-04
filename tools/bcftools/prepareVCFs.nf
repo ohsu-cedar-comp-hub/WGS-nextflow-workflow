@@ -21,7 +21,6 @@ process BGZIP {
 }
 
 process PREPAREVCF {
-    debug true
     
     publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
     
