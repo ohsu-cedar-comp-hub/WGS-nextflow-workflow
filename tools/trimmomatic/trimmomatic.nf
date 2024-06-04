@@ -4,6 +4,8 @@ process TRIMMOMATICPE {
     // Set maximum memory
     // memory '40 GB'
 
+    container "${params.container_trimmomatic}"
+
     publishDir "${params.outdir}/trim_reads", mode: 'copy'
 
     input:
