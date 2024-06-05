@@ -1,7 +1,20 @@
 {
 "all_read_pairs" : "/path/to/raw/fastq/*_R{1,2}.fastq.gz",
 "outdir" : "/path/to/output/directory",
+"bam_files" : "/path/to/output/directory/aligned/markduplicates/sorted",
 "truseq3pefile" : "path/to/adapters/fasta",
 "idx" : "/path/to/reference/fasta/for/alignment",
-"id" : "UUID-UUID-UUID"
+"id" : "UUID-UUID-UUID",
+"exac" : "/path/to/common/germline/variants/vcf",
+"gnomad" : "/path/to/germline/resource/gnomad",
+"pon" : "/path/to/panel/of/normals",
+"mutect_idx" : "/path/to/indexed/and/dictionaried/reference/fasta",
+"container_fastqc" : "/path/to/image",
+"container_multiqc" : "/path/to/image",
+"container_trimmomatic" : "/path/to/image",
+"container_samtools" : "/path/to/image",
+"container_gatk" : "/path/to/image",
+"container_bwa" : "/path/to/image",
+"container_snpeff" : "/path/to/image",
+"container_bcftools" : "/path/to/image"
 }

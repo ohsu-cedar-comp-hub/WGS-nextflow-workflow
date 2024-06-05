@@ -5,6 +5,8 @@ process LearnReadOrientationModel {
     // Set maximum memory
     memory '40 GB'
 
+    container "${params.container_gatk}"
+
     publishDir "${params.outdir}/tables", mode: 'copy'
 
     input: // if multiple tumor samples are being processed, only a single f1r2_tar_gz output is necessary, which will contain info for all included samples
@@ -16,6 +18,6 @@ process LearnReadOrientationModel {
 
     script:
     """
-    gatk LearnReadOrientationModel -I ${f1r2_tar_gz} -O read_orientation_model.tar.gz
+    gatk LearnReadOrientationModel -I ${f1r2_tar_gz} -O ${sample_id}_read_orientation_model.tar.gz
     """
 }
