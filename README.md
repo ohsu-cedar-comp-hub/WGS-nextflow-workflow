@@ -153,7 +153,7 @@ Description of the [WGS nextflow alignment pipeline](https://github.com/ohsu-ced
 
 Command line call:
 ```
-nextflow run align_wf.nf -c nextflow.config -params-file <your_params_file>
+nextflow run workflows/alignment/align_wf.nf -c nextflow.config -params-file <your_params_file>
 ```
 
 ### 0. Pre-alignment: quality filtering and trimming  
@@ -301,7 +301,7 @@ java -jar picard.jar SortSam \
 
 Command line call:
 ```
-nextflow run svc_wf.nf -c nextflow.config -params-file <your_params_file>
+nextflow run workflows/calling/svc_wf.nf -c nextflow.config -params-file <your_params_file>
 ```
 
 ### 1. GetPileupSummaries
