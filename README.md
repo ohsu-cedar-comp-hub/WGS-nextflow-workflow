@@ -86,7 +86,14 @@ aws {
     }
 }
 ```
+Filename requirements  
 
+Regular expressions expect filenames for raw fastq files to be structured like this:
+```
+SAMPLEID_{G,T}_R{1,2}.fastq.gz
+```
+
+Where {G,T} is either G (germline) or T (tumor), and {1,2} is either read 1 or 2.
 
 ## Workflow design
 
