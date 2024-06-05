@@ -1,55 +1,8 @@
 # WGS Nextflow Workflow
 
-This Nextflow workflow aligns, performs somatic variant calls, and annotates variants on whole genome sequencing matched tumor-normal data. The pipeline can be run with conda or Docker/Singularity, but it is recommended to use the containerized approach with Singularity. Submodules of the workflow are described below and can be run independently assuming the necessary input files exist. A parameter file is passed as input using -params-file <my-params.json>, which can be generated using the templating script.
+This Nextflow workflow aligns, performs somatic variant calls, and annotates variants on whole genome sequencing matched tumor-normal data. The pipeline is intended to run with a container (Docker or Singularity). Submodules of the workflow are described below. A parameter file is passed as input using -params-file <my-params.json>, which can be generated using the templating script.
 
 ## Getting Started
-
-### Running with Anaconda
-
-Requires install of [Anaconda](https://docs.anaconda.com/free/anaconda/install/index.html)
-
-Create conda environment
-```
-conda create -n wgs python=3.11
-```
-
-Activate conda environment
-```
-conda activate wgs
-```
-
-Install dependencies
-```
-conda install -c bioconda nextflow fastqc trimmomatic bwa-mem2 samtools gatk snpEff --yes
-pip install multiqc
-```
-
-Download reference genome file with snpEff download GRCh38.86
-
-Check that Java version is 11 through 21. Nextflow has been checked to run with Java 11-21. Otherwise install Java 17 via SDKMAN shown [here](https://www.nextflow.io/docs/latest/install.html)
-
-```
-java -version
-```
-
-Test Nexflow successfully installed
-
-```
-nextflow info
-```
-
-Invoke workflow  
-
-When running Nextflow, you will need:  
-- the script `(workflows/<step>/<script name>.nf)`  
-- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`) 
-- the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)  
-  
-```
-nextflow run <nextflow script>.nf \
--params-file <parameters>.json \
--c nextflow.config
-```
 
 ### Running with Docker/Singularity
 
@@ -90,7 +43,11 @@ Dockerfiles for building images are provided for each tool in the pipeline in th
 - bcftools
 - snpeff
 
-Add Singularity to your Nextflow config file
+The pipeline is built to expect the names of these images to be the same as above. 
+Singularity images can be pulled from Docker images. [Read more about Singularity here.](https://docs.sylabs.io/guides/3.2/user-guide/cli/singularity_pull.html)
+
+Enable running with your preferred container to your Nextflow config file.
+Here is an example with Singularity. You will need to enable auto mounts. 
 
 ```
 singularity {
@@ -99,20 +56,19 @@ singularity {
     cacheDir = '<your cache dir>'
         }
 ```
-Invoke Workflow   
+
+Invoking Workflow   
 
 When running Nextflow, you will need:
 - the script `(workflows/<step>/<script name>.nf)`
-- the parameters file (an example of the params file and a python script to generate it is available in this repo here: `/config/example_pair_params.json`)
-- the nextflow [config file](https://www.nextflow.io/docs/latest/config.html)
-- the path to your singularity image (.sif file)  
+- the parameters file (an example of the params file is available in this repo here: `/config/example_pair_params.json`)
+- the nextflow [config file](https://www.nextflow.io/docs/latest/config.html) 
 <br>
 
 ```
 nextflow run <nextflow script>.nf \
 -params-file <parameters>.json \
--c nextflow.config \
--with-singularity /path/to/<name>.sif
+-c nextflow.config
 ```
 
 
