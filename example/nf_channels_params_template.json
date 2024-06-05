@@ -1,0 +1,7 @@
+{
+"all_read_pairs" : "/path/to/raw/fastq/*_R{1,2}.fastq.gz",
+"outdir" : "/path/to/output/directory",
+"truseq3pefile" : "path/to/adapters/fasta",
+"idx" : "/path/to/reference/fasta/for/alignment",
+"id" : "UUID-UUID-UUID"
+}

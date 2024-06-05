@@ -1,16 +1,17 @@
 #!/usr/bin/env nextflow
 
-process MarkDuplicates {
+process MARKDUPLICATES {
+    
+    container "${params.container_gatk}"
+    
     publishDir "${params.outdir}/aligned/markduplicates", mode: 'copy'
 
     input:
     path bam_sorted
-    val ID
 
     output: 
-    file "${bam_sorted.baseName}_marked_duplicates.bam"
-    file "${bam_sorted.baseName}_marked_duplicates_metrics.txt"
-
+    path("${bam_sorted.baseName}_marked_duplicates.bam"), emit: bam
+    path("${bam_sorted.baseName}_marked_duplicates_metrics.txt"), emit: metrics
 
     script:
     """

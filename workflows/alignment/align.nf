@@ -1,28 +1,41 @@
 #!/usr/bin/env nextflow
 
-// QC, trimmomatic (optional), alignment with bwa-mem2, and mark duplicates
+// Create Channel 
+// all_pairs_ch is a read pairs channel structured like [id, [r1.fq, r2.fq]]
+all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
 
-// import tool modules
+// import modules 
+include { FASTQC as FASTQCRAW} from '../../tools/qc/fastqc/fastqc.nf'
+include { FASTQC as FASTQCTRIM } from '../../tools/qc/fastqc/fastqc.nf'
+include { TRIMMOMATICPE } from '../../tools/trimmomatic/trimmomatic.nf'
+include { MULTIQC } from '../../tools/qc/multiqc/multiqc.nf'
+include { BWAMEM2 } from '../../tools/bwa/bwamem2.nf'
+include { SORT; SORTANDINDEX } from '../../tools/samtools/sort_and_index.nf'
+include { MARKDUPLICATES } from '../../tools/gatk/mark_duplicates.nf'
 
-include {FastQC as FastQCRaw} from '../../tools/qc/fastqc/fastqc.nf'
-include {FastQC as FastQCTrim} from '../../tools/qc/fastqc/trim_fastqc.nf'
-include {TrimmomaticPE} from '../../tools/trimmomatic/trimmomatic.nf'
-include {MultiQC} from '../../tools/qc/multiqc/multiqc.nf'
-include {BwaMem2Alignment} from '../../tools/bwa/bwamem2.nf'
-include {SortAndIndex} from '../../tools/samtools/sort_and_index.nf'
-include {MarkDuplicates} from '../../tools/gatk/mark_duplicates.nf'
-include {SortMarkedDuplicates} from '../../tools/samtools/sort_marked_duplicates.nf'
-
-// define the workflow
-
+// workflow 
 workflow {
-    FastQCRaw(params.read1, params.read2, params.ID)
-    TrimmomaticPE(params.read1, params.read2, params.truseq3pefile, params.ID)
-    FastQCTrim(file(params.trim_read1), file(params.trim_read2), params.ID)
-    MultiQC(file(params.fastqc_read1), file(params.fastqc_read2), file(params.trim_fastqc_read1), file(params.trim_fastqc_read2), params.ID)
-    BwaMem2Alignment(params.trim_read1, params.trim_read2, params.idx, params.ID)
-    SortAndIndex(params.bam_unsorted, params.ID)
-    MarkDuplicates(params.bam_sorted, params.ID)
-    SortMarkedDuplicates(params.bam_duplicates_unsorted, params.ID)
-}
+    // trimmomatic
+    TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
 
+    // fastqc on raw and trimmed reads 
+    FASTQCRAW(all_pairs_ch, params.outdir)
+    FASTQCTRIM(TRIMMOMATICPE.out.trim_reads, params.outdir)
+
+    // gather all files output from fastqc processes
+    multi_ch = FASTQCRAW.out.zip.mix(FASTQCTRIM.out.zip).collect()
+    // pass to multiqc
+    MULTIQC(multi_ch)
+
+    // align with bwa-mem2
+    BWAMEM2(TRIMMOMATICPE.out.trim_reads, params.idx, params.id)
+
+    // sort with samtools 
+    SORT(BWAMEM2.out)
+
+    // mark duplicates
+    MARKDUPLICATES(SORT.out)
+
+    // sort and index with samtools to prep for gatk somatic variant calling
+    SORTANDINDEX(MARKDUPLICATES.out.bam)
+}

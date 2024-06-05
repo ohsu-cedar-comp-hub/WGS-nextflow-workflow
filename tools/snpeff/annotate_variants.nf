@@ -1,6 +1,10 @@
 #!/usr/bin/env nextflow
 
 process AnnotateVariants {
+    
+    container "/home/groups/CEDAR/lancasru/WGS_COH_NF/config_sif/snpeff_conda.sif"
+    conda "/home/groups/CEDAR/lancasru/anaconda3/envs/nextflow_env"
+
     publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
     // Set maximum memory
     memory '40 GB'
