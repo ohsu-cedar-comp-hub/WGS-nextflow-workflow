@@ -14,9 +14,31 @@ Check that Java version is 11 through 21. Nextflow has been checked to run with 
 java -version
 ```
 
-Install [Nextflow](https://www.nextflow.io/docs/latest/install.html).
+#### Install [Nextflow](https://www.nextflow.io/docs/latest/install.html) 
+
+Option 1: Install with conda/mamba/micromamba (recommended for use on HPC)
 
 ```
+# create a conda environment
+conda create -n my_nextflow_environment -c bioconda nextflow
+
+# activate conda environemnt
+conda activate my_nextflow_environment
+
+# confirm install
+nextflow info
+
+# update
+nextflow self-update
+```
+
+
+Option 2: Install with curl
+
+```
+# Move to a directory you want Nextflow to sit on your system
+cd <your-directory-of-choice>
+
 # Install Nextflow
 curl -s https://get.nextflow.io | bash
 
@@ -32,6 +54,7 @@ nextflow info
 # Update to latest Nextflow version
 nextflow self-update
 ```
+
 
 Dockerfiles for building images are provided for each tool in the pipeline in the tool directory, `tools/<tool name>/Dockerfile`:
 - fastqc 
