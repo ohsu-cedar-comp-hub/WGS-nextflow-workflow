@@ -2,7 +2,7 @@
 
 process BGZIP {
     
-    publishDir "${params.outdir}/svc", mode: 'copy'
+    // publishDir "${params.outdir}/svc", mode: 'copy'
 
     container "${params.container_bcftools}"
 
@@ -22,7 +22,7 @@ process BGZIP {
 
 process PREPAREVCF {
     
-    publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
+    publishDir path: "${params.outdir}/svc/sort_index", mode: 'copy', pattern: "*_unfiltered_normalized.vcf.gz"
     
     container "${params.container_bcftools}"
 
@@ -33,16 +33,16 @@ process PREPAREVCF {
 
     output:
     path("${sample_id}_unfiltered.vcf.gz"), emit: vcf
-    path("${sample_id}_normalized.vcf.gz"), emit: normalized
-    path("${sample_id}_normalized.vcf.gz.tbi"), emit: index
+    path("${sample_id}_unfiltered_normalized.vcf.gz"), emit: normalized
+    path("${sample_id}_unfiltered_normalized.vcf.gz.tbi"), emit: index
 
     script:
     """
     bcftools concat -a ${split_vcfs.join(' ')} -o ${sample_id}_unfiltered.vcf.gz
     bcftools sort -Oz ${sample_id}_unfiltered.vcf.gz -o ${sample_id}_unfiltered_sorted.vcf.gz 
     bcftools index -t ${sample_id}_unfiltered_sorted.vcf.gz
-    bcftools norm -m -any ${sample_id}_unfiltered_sorted.vcf.gz -o ${sample_id}_normalized.vcf.gz
-    bcftools index -t ${sample_id}_normalized.vcf.gz
+    bcftools norm -m -any ${sample_id}_unfiltered_sorted.vcf.gz -o ${sample_id}_unfiltered_normalized.vcf.gz
+    bcftools index -t ${sample_id}_unfiltered_normalized.vcf.gz
     """
 }
 
