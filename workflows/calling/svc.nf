@@ -66,7 +66,7 @@ workflow {
     orientationmodel = LEARNORIENTATION.out
 
     // Filter mutect2 calls
-    FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
+    FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
     filter_vcf = FILTERMUTECT.out
     
     // Annotate with snpEff
