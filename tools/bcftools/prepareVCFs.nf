@@ -41,7 +41,7 @@ process PREPAREVCF {
     bcftools concat -a ${split_vcfs.join(' ')} -o ${sample_id}_unfiltered.vcf.gz
     bcftools sort -Oz ${sample_id}_unfiltered.vcf.gz -o ${sample_id}_unfiltered_sorted.vcf.gz 
     bcftools index -t ${sample_id}_unfiltered_sorted.vcf.gz
-    bcftools norm -m -any ${sample_id}_unfiltered_sorted.vcf.gz -o ${sample_id}_unfiltered_normalized.vcf.gz
+    bcftools norm -Oz -m -any ${sample_id}_unfiltered_sorted.vcf.gz -o ${sample_id}_unfiltered_normalized.vcf.gz
     bcftools index -t ${sample_id}_unfiltered_normalized.vcf.gz
     """
 }
