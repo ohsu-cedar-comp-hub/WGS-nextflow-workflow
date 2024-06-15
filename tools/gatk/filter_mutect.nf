@@ -33,9 +33,10 @@ process FILTERMUTECT {
     --contamination-table ${contamination_table} \
     --read-index ${mutect_idx_fai} \
     --sequence-dictionary ${mutect_dict} \
-    --ob-priors ${read_orientation_model} \
     -O ${sample_id}_filtered.vcf \
     --stats ${vcf_stats} \
+    --ob-priors ${read_orientation_model} \
     --create-output-variant-index false
     """
+    
 }
