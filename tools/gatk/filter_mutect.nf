@@ -35,8 +35,6 @@ process FILTERMUTECT {
     --sequence-dictionary ${mutect_dict} \
     -O ${sample_id}_filtered.vcf \
     --stats ${vcf_stats} \
-    --ob-priors ${read_orientation_model} \
-    --create-output-variant-index false
+    --ob-priors ${read_orientation_model}
     """
-    
 }
