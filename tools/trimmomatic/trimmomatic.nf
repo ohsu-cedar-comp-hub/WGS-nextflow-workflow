@@ -2,7 +2,7 @@
 
 process TRIMMOMATICPE {
     // Set maximum memory
-    memory "${params.trimmomatic_memory}"
+    // memory "${params.trimmomatic_memory}"
 
     container "${params.container_trimmomatic}"
 

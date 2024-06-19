@@ -3,7 +3,7 @@
 // Define the process for running MuTect2
 process MUTECT2 {
     // Set maximum memory
-    memory "${params.mutect_memory}"
+    // memory "${params.mutect_memory}"
     cpus 1 // gatk discourages multithreading
 
     // Set output directory for MuTect2 results
