@@ -3,7 +3,7 @@
 // Process for learning gatk read orientation model
 process LearnReadOrientationModel {
     // Set maximum memory
-    memory '40 GB'
+    // memory '40 GB'
 
     container "${params.container_gatk}"
 
