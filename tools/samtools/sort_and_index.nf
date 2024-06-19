@@ -2,7 +2,7 @@
 
 process SORT {
     // Set maximum memory
-    memory '40 GB'
+    // memory '40 GB'
     
     container "${params.container_samtools}"
 
@@ -22,7 +22,7 @@ process SORT {
 
 process SORTANDINDEX {
     // Set maximum memory
-    memory '40 GB'
+    // memory '40 GB'
     
     container "${params.container_samtools}"
 
