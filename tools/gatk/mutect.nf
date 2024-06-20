@@ -2,18 +2,14 @@
 
 // Define the process for running MuTect2
 process MUTECT2 {
-    // Set maximum memory
-    memory '40 GB'
 
-    // Set output directory for MuTect2 results
-    // publishDir "${params.outdir}/svc", mode: 'copy'  // dont include this only copy the final file to save space. the split vcfs are still available in the work directory.
+    cpus 1 // set cpu to 1: gatk discourages multithreading
 
     container "${params.container_gatk}"
 
-    // Define input and output
     input:
     path tumor_bam_sorted 
-    path normal_bam_sorted 
+    path normal_bam_sorted
     val chrom 
     val sample_id
 
@@ -23,7 +19,6 @@ process MUTECT2 {
     path "${sample_id}_${chrom}_unfiltered.vcf.stats", emit: stats
     path "${sample_id}_${chrom}_unfiltered.vcf.idx", emit: index
 
-    // MuTect2 command
     script:
     """
     gatk Mutect2 \

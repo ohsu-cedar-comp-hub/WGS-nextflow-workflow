@@ -1,12 +1,10 @@
 #!/usr/bin/env nextflow
 
 process SORT {
-    // Set maximum memory
-    memory '40 GB'
     
     container "${params.container_samtools}"
 
-    publishDir "${params.outdir}/aligned/sort_index", mode: 'copy'
+    publishDir "${params.outdir}/aligned/sort", mode: 'copy'
     
     input:
     path bam_unsorted
@@ -22,7 +20,7 @@ process SORT {
 
 process SORTANDINDEX {
     // Set maximum memory
-    memory '40 GB'
+    // memory "${params.memory}"
     
     container "${params.container_samtools}"
 
