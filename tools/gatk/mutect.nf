@@ -2,6 +2,8 @@
 
 // Define the process for running MuTect2
 process MUTECT2 {
+    // Set maximum memory
+    //memory '40 GB'
 
     cpus 1 // set cpu to 1: gatk discourages multithreading
 

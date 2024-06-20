@@ -2,6 +2,8 @@
 
 // filter Mutect2 calls with GATK
 process FILTERMUTECT {
+    // Set maximum memory
+    // memory '40 GB'
 
     container "${params.container_gatk}"
 

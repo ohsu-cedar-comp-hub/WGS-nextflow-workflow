@@ -1,6 +1,8 @@
 #!/usr/bin/env nextflow
 
 process SORT {
+    // Set maximum memory
+    // memory '40 GB'
     
     container "${params.container_samtools}"
 
@@ -20,7 +22,11 @@ process SORT {
 
 process SORTANDINDEX {
     // Set maximum memory
+<<<<<<< HEAD
     // memory "${params.memory}"
+=======
+    // memory '40 GB'
+>>>>>>> remove memory requirements for testing
     
     container "${params.container_samtools}"
 

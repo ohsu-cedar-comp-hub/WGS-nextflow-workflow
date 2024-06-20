@@ -2,6 +2,8 @@
 
 // define process GATK4 CalculateContamination
 process CALCULATECONTAMINATION {
+    // Set maximum memory
+    // memory '40 GB'
 
     container "${params.container_gatk}"
 

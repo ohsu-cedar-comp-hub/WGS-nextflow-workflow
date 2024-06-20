@@ -1,13 +1,15 @@
 #!/usr/bin/env nextflow
 
 process TRIMMOMATICPE {
+    // Set maximum memory
+    // memory '40 GB'
 
     container "${params.container_trimmomatic}"
 
     publishDir "${params.outdir}/trim_reads", mode: 'copy'
 
     input:
-    tuple val(sample_id), val(reads)
+    tuple val(sample_id), path(reads)
     path truseq3pefile
     path outdir
 
@@ -19,7 +21,7 @@ process TRIMMOMATICPE {
     """
     java -jar /bin/trimmomatic.jar \
      PE -phred33 \
-     ${reads[0]} \
+     ${reads[0]}  \
      ${reads[1]} \
      ${reads[0].simpleName}_1P.fastq.gz \
      ${reads[0].simpleName}_1U.fastq.gz \
