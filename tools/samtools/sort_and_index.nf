@@ -21,7 +21,9 @@ process SORT {
 }
 
 process SORTANDINDEX {
-
+    // Set maximum memory
+    // memory '40 GB'
+    
     container "${params.container_samtools}"
 
     publishDir "${params.outdir}/aligned/markduplicates/sorted", mode: 'copy'
