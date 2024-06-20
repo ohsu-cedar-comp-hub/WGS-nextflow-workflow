@@ -10,12 +10,16 @@ normal_ch = Channel.fromPath("${params.bam_files}/*_G_*.bam")
 tumor_val = tumor_ch.first()
 normal_val = normal_ch.first()
 
-// Sample id channel: take full filename and grab the sample id by splitting by _ and taking the first item
+// Sample id channel: take full filename and grab the sample id
 sample_id = tumor_ch.map { filePath -> 
-                def fileName = filePath.baseName
-                def baseName = fileName.split('_')[0]
-                return baseName}
-sample_id_ch = sample_id.first()
+                def fileName = filePath.baseName // get file name without extensions, "metadata1_metadata2_T_sampleID_sorted_marked_duplicates_sorted.bam"
+                def sampleName = fileName.split('_') // split the file name into an array [metadata1, metadata2, T, sampleID, sorted, marked, duplicates, sorted]
+                def listSample = sampleName as List // convert to a list to perform list operations
+                listSample.removeAll(['sorted', 'marked', 'duplicates']) // remove appended elements to get just sample ID
+                listSample as String // convert back to string
+                def newName = listSample.join('_') // join together elements with _ to remake the sample ID, metadata1_metadata2_T_sampleID
+                return newName}
+sample_id_ch = sample_id.first() // convert to a value channel using .first()
 
 // Define the list of chromosomes + create a channel emitting each chromosome
 chromosomes = (1..22).collect { it.toString() } + ['X']
@@ -71,7 +75,8 @@ workflow {
     
     // Annotate with snpEff
     ANNOTATE(filter_vcf, sample_id_ch)
-
+    
     // filter for allelic depth and PASS status with snpSift
     SNPSIFT(ANNOTATE.out, sample_id_ch)
 }
+
