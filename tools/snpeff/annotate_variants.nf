@@ -3,8 +3,6 @@
 process ANNOTATE {
 
     publishDir "${params.outdir}/annotated_variants", mode: 'copy'
-    // Set maximum memory
-    // memory "${params.memory}"
 
     container "${params.container_snpeff}"
 

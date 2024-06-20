@@ -4,8 +4,6 @@ process MARKDUPLICATES {
     
     container "${params.container_gatk}"
     
-    // publishDir "${params.outdir}/aligned/markduplicates", mode: 'copy'
-
     input:
     path bam_sorted
 

@@ -1,8 +1,6 @@
 #!/usr/bin/env nextflow
 
 process SORT {
-    // Set maximum memory
-    // memory "${params.memory}"
     
     container "${params.container_samtools}"
 

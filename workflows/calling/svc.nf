@@ -22,11 +22,9 @@ chromosomes = (1..22).collect { it.toString() } + ['X']
 chrom_strings = Channel.from(chromosomes)
 chrom_ch = chrom_strings.map { it -> "chr" + it }
 
-
 include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
 include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
 include { MUTECT2 } from '../../tools/gatk/mutect.nf'
-// include { CONCAT ; SORT ; COMPRESS ; NORM } from '../../tools/bcftools/prepareVCFs2.nf'
 include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
@@ -35,10 +33,12 @@ include { ANNOTATE } from '../../tools/snpeff/annotate_variants.nf'
 
 workflow {
     
+    // gatk getpileupsummaries
     GETPILEUPSUMMARIES(tumor_ch, normal_ch, params.exac)
     tumor_table = GETPILEUPSUMMARIES.out.tumor
     normal_table = GETPILEUPSUMMARIES.out.normal
     
+    // gatk calculate contamination from pileup summaries
     CALCULATECONTAMINATION(tumor_table, normal_table)
     contam_table = CALCULATECONTAMINATION.out.contamination
     segment_table = CALCULATECONTAMINATION.out.segment
@@ -46,25 +46,16 @@ workflow {
     // Run mutect2
     MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
     
-    // Concatenate and prepare VCFs
-    /*
-    CONCAT(MUTECT2.out.vcf, sample_id_ch)
-    SORT(CONCAT.out, sample_id_ch)
-    COMPRESS(SORT.out, sample_id_ch)
-    NORM(COMPRESS.out.vcf, COMPRESS.out.tbi, sample_id_ch)
-    unfiltered_vcf = NORM.out.normalized
-    unfiltered_vcf_index = NORM.out.index
-    */
-
     // Merge and prepare VCF
-    BGZIP(MUTECT2.out.vcf)
-    vcfs_ch = BGZIP.out.vcf.collect()
-    split_vcf_index = BGZIP.out.index.collect()
+    BGZIP(MUTECT2.out.vcf) // concatenation requires bgzip'd files 
+    vcfs_ch = BGZIP.out.vcf.collect() // collect all bgzip vcf outputs into a channel
+    split_vcf_index = BGZIP.out.index.collect() // collect all bgzip index outputs into a channel
+    // concatenate, normalize, and sort the VCF
     PREPAREVCF(vcfs_ch, split_vcf_index, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
     unfiltered_vcf = PREPAREVCF.out.normalized
     unfiltered_vcf_index = PREPAREVCF.out.index
     
-    // Merge stats 
+    // Merge stats file
     stats = MUTECT2.out.stats
     stats_ch = stats.collect()
     MERGESTATS(stats_ch, sample_id_ch)

@@ -2,8 +2,6 @@
 
 // Process for getting pileup summaries
 process GETPILEUPSUMMARIES {
-    // Set maximum memory
-    // memory "${params.memory}"
 
     container "${params.container_gatk}"
 

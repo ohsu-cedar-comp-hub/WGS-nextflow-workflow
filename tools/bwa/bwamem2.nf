@@ -2,8 +2,6 @@
 
 // Define the process for BWA-MEM2 alignment
 process BWAMEM2 {
-    // Set maximum memory
-    // memory "${params.bwa_memory}"
 
     container "${params.container_bwa}"
 

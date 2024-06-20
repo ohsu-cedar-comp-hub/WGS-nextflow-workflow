@@ -24,6 +24,7 @@ workflow {
 
     // gather all files output from fastqc processes
     multi_ch = FASTQCRAW.out.zip.mix(FASTQCTRIM.out.zip).collect()
+    
     // pass to multiqc
     MULTIQC(multi_ch)
 

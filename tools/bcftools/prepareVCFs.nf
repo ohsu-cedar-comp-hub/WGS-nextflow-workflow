@@ -1,8 +1,6 @@
 #!/usr/bin/env nextflow
 
 process BGZIP {
-    
-    // publishDir "${params.outdir}/svc", mode: 'copy'
 
     container "${params.container_bcftools}"
 
