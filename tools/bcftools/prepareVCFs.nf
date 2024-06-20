@@ -20,7 +20,7 @@ process BGZIP {
 
 process PREPAREVCF {
     
-    publishDir path: "${params.outdir}/svc/sort_index", mode: 'copy', pattern: "*_unfiltered_normalized.vcf.gz"
+    publishDir path: "${params.outdir}/svc/sort_index", mode: 'copy', pattern: "*_unfiltered_normalized_sorted.vcf.gz"
     
     container "${params.container_bcftools}"
 
