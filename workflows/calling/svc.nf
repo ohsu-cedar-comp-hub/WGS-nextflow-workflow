@@ -34,6 +34,7 @@ include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
 include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
 include { ANNOTATE } from '../../tools/snpeff/annotate_variants.nf'
+include { SNPSIFT } from '../../tools/snpeff/sift_variants.nf'
 
 workflow {
     
