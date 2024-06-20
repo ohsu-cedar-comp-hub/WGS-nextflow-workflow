@@ -2,7 +2,7 @@
 
 process SNPSIFT {
     
-    publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
+    publishDir "${s3outdir}/annotated", mode: 'copy'
     container "${params.container_snpeff}"
 
     input:
