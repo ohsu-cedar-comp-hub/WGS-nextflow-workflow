@@ -4,8 +4,7 @@ process MERGESTATS {
     
     container "${params.container_gatk}"
     
-    publishDir "${s3outdir}/svc"
-    // publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
+    publishDir "${params.outdir}/svc"
     
     input:
     path stats

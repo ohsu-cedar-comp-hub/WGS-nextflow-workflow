@@ -20,8 +20,7 @@ process BGZIP {
 
 process PREPAREVCF {
     
-    publishDir "${s3outdir}/annotated", mode: 'copy'
-    publishDir "${params.outdir}/svc/sort_index", mode: 'copy'
+    publishDir "${params.outdir}/svc"
     
     container "${params.container_bcftools}"
 

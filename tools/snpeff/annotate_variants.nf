@@ -2,10 +2,7 @@
 
 process ANNOTATE {
 
-    publishDir "${s3outdir}/annotated", mode: 'copy'
-    // Set maximum memory
-    // memory '40 GB'
-
+    publishDir "${params.outdir}/annotated"
     container "${params.container_snpeff}"
 
     input:

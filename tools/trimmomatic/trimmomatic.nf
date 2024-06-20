@@ -1,12 +1,8 @@
 #!/usr/bin/env nextflow
 
 process TRIMMOMATICPE {
-    // Set maximum memory
-    // memory '40 GB'
 
     container "${params.container_trimmomatic}"
-
-    // publishDir "${params.outdir}/trim_reads", mode: 'copy'
 
     input:
     tuple val(sample_id), path(reads)

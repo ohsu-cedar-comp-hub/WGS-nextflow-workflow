@@ -5,9 +5,7 @@ process SORT {
     // memory '40 GB'
     
     container "${params.container_samtools}"
-
-    // publishDir "${params.outdir}/aligned/sort_index", mode: 'copy'
-    
+  
     input:
     path bam_unsorted
 
@@ -26,7 +24,7 @@ process SORTANDINDEX {
     
     container "${params.container_samtools}"
 
-    publishDir "${params.s3outdir}"
+    publishDir "${params.outdir}/aligned/duplicate_marked"
     
     input:
     path bam_unsorted

@@ -2,12 +2,10 @@
 
 // define process GATK4 CalculateContamination
 process CALCULATECONTAMINATION {
-    // Set maximum memory
-    // memory '40 GB'
 
     container "${params.container_gatk}"
 
-    publishDir "${params.outdir}/tables", mode: 'copy'
+    publishDir "${params.outdir}/tables"
   
     input:
     path tumor_pileups_table

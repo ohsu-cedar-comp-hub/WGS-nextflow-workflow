@@ -1,7 +1,6 @@
 process LEARNORIENTATION {
     
-    publishDir "${s3outdir}/svc"
-    // publishDir "${params.outdir}/svc/f1r2files/", mode: 'copy'
+    publishDir "${params.outdir}/svc"
     
     container "${params.container_gatk}"
 

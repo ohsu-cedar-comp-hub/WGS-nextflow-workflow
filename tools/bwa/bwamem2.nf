@@ -2,13 +2,11 @@
 
 // Define the process for BWA-MEM2 alignment
 process BWAMEM2 {
-    // Set maximum memory
-    // memory '40 GB'
 
     container "${params.container_bwa}"
 
     // Set output directory for alignment results
-    publishDir "${params.outdir}/aligned", mode: 'copy'
+    publishDir "${params.outdir}/aligned/unsorted"
 
     // Define input and output
     input:
