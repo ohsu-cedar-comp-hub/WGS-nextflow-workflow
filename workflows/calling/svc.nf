@@ -2,8 +2,8 @@
 
 // Create queue channels (consumable)
 // will need to split up into tumor channel and normal channel, use regex for this
-tumor_ch = Channel.fromPath("${params.bam_files}/*_T_*.bam")
-normal_ch = Channel.fromPath("${params.bam_files}/*_G_*.bam")
+tumor_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_T_*.bam")
+normal_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_G_*.bam")
 
 
 // Create value channels (use first operator to convert to value from queue)
@@ -34,6 +34,7 @@ include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
 include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
 include { ANNOTATE } from '../../tools/snpeff/annotate_variants.nf'
+include { SNPSIFT } from '../../tools/snpeff/sift_variants.nf'
 
 workflow {
     
