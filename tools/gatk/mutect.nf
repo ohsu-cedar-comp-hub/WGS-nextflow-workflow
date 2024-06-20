@@ -14,6 +14,9 @@ process MUTECT2 {
     path normal_bam_sorted
     val chrom 
     val sample_id
+    path mutect_idx
+    path mutect_idx_fai
+    path mutect_idx_dict
 
     output:
     path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
@@ -24,7 +27,7 @@ process MUTECT2 {
     script:
     """
     gatk Mutect2 \
-    -R ${params.mutect_idx} \
+    -R ${mutect_idx} \
         -I ${tumor_bam_sorted} \
         -I ${normal_bam_sorted} \
         --panel-of-normals ${params.pon} \

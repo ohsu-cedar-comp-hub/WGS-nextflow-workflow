@@ -49,7 +49,7 @@ workflow {
     segment_table = CALCULATECONTAMINATION.out.segment
     
     // Run mutect2
-    MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
+    MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
     
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf) // concatenation requires bgzip'd files 
