@@ -1,5 +1,30 @@
 #!/usr/bin/env nextflow
 
+// compress and index sorted vcf files
+process COMPRESS {
+    
+    publishDir path: "${params.outdir}/svc/compress", mode: 'copy'
+    container "${params.container_bcftools}"
+    
+    input:
+    path vcf
+    val sample_id
+    
+    output:
+    path("${vcf}.gz"), emit: vcf
+    path("${vcf}.gz.tbi"), emit: tbi
+    
+    script:
+    """
+    #!/bin/bash
+    set -e
+    # Compress
+    bgzip -c ${vcf} > ${vcf}.gz
+    # Index
+    bcftools index -t ${vcf}.gz
+    """
+}
+
 // concatenate VCF files
 process CONCAT {
     publishDir path: "${params.outdir}/svc/concat", mode: 'copy'
@@ -7,6 +32,7 @@ process CONCAT {
     
     input:
     path split_vcfs
+    path split_vcfs_index
     val sample_id
     
     output:
@@ -38,31 +64,6 @@ process SORT {
     #!/bin/bash
     set -e
     bcftools sort ${concat_vcf} -Ov -o ${sample_id}_sorted.vcf
-    """
-}
-
-// compress and index sorted vcf files
-process COMPRESS {
-    
-    publishDir path: "${params.outdir}/svc/compress", mode: 'copy'
-    container "${params.container_bcftools}"
-    
-    input:
-    path sorted_vcf
-    val sample_id
-    
-    output:
-    path("${sample_id}.vcf.gz"), emit: vcf
-    path("${sample_id}.vcf.gz.tbi"), emit: tbi
-    
-    script:
-    """
-    #!/bin/bash
-    set -e
-    # Compress
-    bgzip -c ${sorted_vcf} > ${sample_id}.vcf.gz
-    # Index
-    bcftools index -t ${sample_id}.vcf.gz
     """
 }
 

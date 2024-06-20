@@ -30,6 +30,9 @@ process PREPAREVCF {
     path split_vcfs
     path split_vcfs_index
     val sample_id
+    path mutect_idx
+    path mutect_idx_fai
+    path mutect_idx_dict
     
     output:
     path("${sample_id}_unfiltered.vcf.gz"), emit: vcf
@@ -41,7 +44,7 @@ process PREPAREVCF {
     bcftools concat -a ${split_vcfs.join(' ')} -o ${sample_id}_unfiltered.vcf.gz
     bcftools sort -Oz ${sample_id}_unfiltered.vcf.gz -o ${sample_id}_unfiltered_sorted.vcf.gz 
     bcftools index -t ${sample_id}_unfiltered_sorted.vcf.gz
-    bcftools norm -Oz -m -any -f ${params.mutect_idx} ${sample_id}_unfiltered_sorted.vcf.gz -o ${sample_id}_unfiltered_normalized.vcf.gz
+    bcftools norm -Oz -f ${mutect_idx} ${sample_id}_unfiltered_sorted.vcf.gz -o ${sample_id}_unfiltered_normalized.vcf.gz
     bcftools sort -Oz ${sample_id}_unfiltered_normalized.vcf.gz -o ${sample_id}_unfiltered_normalized_sorted.vcf.gz
     bcftools index -t ${sample_id}_unfiltered_normalized_sorted.vcf.gz
     """

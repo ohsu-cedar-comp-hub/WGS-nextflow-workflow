@@ -47,23 +47,14 @@ workflow {
     MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
     
     // Concatenate and prepare VCFs
-    /*
-    CONCAT(MUTECT2.out.vcf, sample_id_ch)
+    COMPRESS(MUTECT2.out.vcf)
+    CONCAT(COMPRESS.out.vcf, COMPRESS.out.tbi, sample_id_ch)
     SORT(CONCAT.out, sample_id_ch)
-    COMPRESS(SORT.out, sample_id_ch)
     NORM(COMPRESS.out.vcf, COMPRESS.out.tbi, sample_id_ch)
+    SORT(NORM.out.normalized)
     unfiltered_vcf = NORM.out.normalized
     unfiltered_vcf_index = NORM.out.index
-    */
 
-    // Merge and prepare VCF
-    BGZIP(MUTECT2.out.vcf)
-    vcfs_ch = BGZIP.out.vcf.collect()
-    split_vcf_index = BGZIP.out.index.collect()
-    PREPAREVCF(vcfs_ch, split_vcf_index, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
-    unfiltered_vcf = PREPAREVCF.out.normalized
-    unfiltered_vcf_index = PREPAREVCF.out.index
-    
     // Merge stats 
     stats = MUTECT2.out.stats
     stats_ch = stats.collect()
