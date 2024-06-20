@@ -19,7 +19,7 @@ process SiftVariants {
     
     script:
     """
-    cat ${filtered_vcf} | java -Xmx8g -jar /usr/src/app/snpEff/SnpSift.jar filter "( ((GEN[0].AD[0] >= 3) | (GEN[0].AD[1] >= 3)) | ((GEN[1].AD[0] >= 3) | (GEN[1].AD[1] >= 3)) ) & ( ( na FILTER ) | (FILTER = 'PASS') )" > ${filtered_vcf.baseName}_passed.vcf
+    cat ${filtered_vcf} | java -Xmx8g -jar /usr/src/app/snpEff/SnpSift.jar filter "( ((GEN[0].AD[0] >= 3) | (GEN[0].AD[1] >= 4)) | ((GEN[1].AD[0] >= 3) | (GEN[1].AD[1] >= 4)) ) & ( ( na FILTER ) | (FILTER = 'PASS') )" > ${filtered_vcf.baseName}_passed.vcf
     """
 
 }
