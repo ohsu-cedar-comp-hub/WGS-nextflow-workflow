@@ -2,7 +2,7 @@
 
 process ANNOTATE {
 
-    publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
+    publishDir "${s3outdir}/annotated", mode: 'copy'
     // Set maximum memory
     // memory '40 GB'
 

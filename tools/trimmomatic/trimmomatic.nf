@@ -6,7 +6,7 @@ process TRIMMOMATICPE {
 
     container "${params.container_trimmomatic}"
 
-    publishDir "${params.outdir}/trim_reads", mode: 'copy'
+    // publishDir "${params.outdir}/trim_reads", mode: 'copy'
 
     input:
     tuple val(sample_id), path(reads)
