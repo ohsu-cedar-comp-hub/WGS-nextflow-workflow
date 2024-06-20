@@ -11,7 +11,9 @@ process MUTECT2 {
 
     input:
     path tumor_bam_sorted 
+    path tumor_bam_sorted_bai
     path normal_bam_sorted
+    path normal_bam_sorted_bai
     val chrom 
     val sample_id
     path mutect_idx
