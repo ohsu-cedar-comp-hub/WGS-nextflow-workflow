@@ -8,8 +8,10 @@ process GETPILEUPSUMMARIES {
     publishDir "${params.outdir}/summaries", mode: 'copy'
 
     input:
-    path tumor_bam_sorted
+    path tumor_bam_sorted 
+    path tumor_bam_sorted_bai
     path normal_bam_sorted
+    path normal_bam_sorted_bai
     path exac
 
     output:
