@@ -3,8 +3,6 @@
 process ANNOTATE {
 
     publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
-    // Set maximum memory
-    memory '40 GB'
 
     container "${params.container_snpeff}"
 
@@ -13,11 +11,11 @@ process ANNOTATE {
     val sample_id
 
     output: 
-    path("${sample_id}_annotated_variants.vcf")
+    path("${sample_id}_annotated.vcf")
 
     script:
     """
-    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${sample_id}_annotated_variants.vcf
+    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${sample_id}_annotated.vcf
     """
 
 }

@@ -71,4 +71,7 @@ workflow {
     
     // Annotate with snpEff
     ANNOTATE(filter_vcf, sample_id_ch)
+
+    // filter for allelic depth and PASS status with snpSift
+    SNPSIFT(ANNOTATE.out, sample_id_ch)
 }

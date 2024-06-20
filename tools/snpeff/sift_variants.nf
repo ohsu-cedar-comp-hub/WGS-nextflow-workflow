@@ -1,16 +1,15 @@
 #!/usr/bin/env nextflow
 
-process SiftVariants {
+process SNPSIFT {
+    
     publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
-    // Set maximum memory
-    memory '40 GB'
 
     input:
     path filtered_vcf
-    val ID
+    val sample_id
 
     output: 
-    file "${filtered_vcf.baseName}_passed.vcf"
+    file "${sample_id}_annotated_PASSED.vcf"
 
     // GEN[0] is the germline
     // GEN[1] is the tumor
@@ -19,7 +18,7 @@ process SiftVariants {
     
     script:
     """
-    cat ${filtered_vcf} | java -Xmx8g -jar /usr/src/app/snpEff/SnpSift.jar filter "( ((GEN[0].AD[0] >= 3) | (GEN[0].AD[1] >= 4)) | ((GEN[1].AD[0] >= 3) | (GEN[1].AD[1] >= 4)) ) & ( ( na FILTER ) | (FILTER = 'PASS') )" > ${filtered_vcf.baseName}_passed.vcf
+    cat ${filtered_vcf} | java -Xmx8g -jar /usr/src/app/snpEff/SnpSift.jar filter "( ((GEN[0].AD[0] >= 3) | (GEN[0].AD[1] >= 4)) | ((GEN[1].AD[0] >= 3) | (GEN[1].AD[1] >= 4)) ) & ( ( na FILTER ) | (FILTER = 'PASS') )" > ${sample_id}_annotated_PASSED.vcf
     """
 
 }
