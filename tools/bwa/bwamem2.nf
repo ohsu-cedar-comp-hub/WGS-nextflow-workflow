@@ -3,7 +3,7 @@
 // Define the process for BWA-MEM2 alignment
 process BWAMEM2 {
     // Set maximum memory
-    memory '40 GB'
+    // memory '40 GB'
 
     container "${params.container_bwa}"
 
