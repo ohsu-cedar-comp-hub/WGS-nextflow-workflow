@@ -4,7 +4,7 @@ process MULTIQC {
 
     container "${params.container_multiqc}"
 
-    publishDir "${params.outdir}/multiqc", mode: 'copy'
+    publishDir "${params.outdir}/multiqc"
 
     input:
     // require all files from fastqc before running multiqc 

@@ -2,6 +2,8 @@
 
 // Define the process for running MuTect2
 process MUTECT2 {
+    // Set maximum memory
+    //memory '40 GB'
 
     cpus 1 // set cpu to 1: gatk discourages multithreading
 
@@ -9,9 +11,14 @@ process MUTECT2 {
 
     input:
     path tumor_bam_sorted 
+    path tumor_bam_sorted_bai
     path normal_bam_sorted
+    path normal_bam_sorted_bai
     val chrom 
     val sample_id
+    path mutect_idx
+    path mutect_idx_fai
+    path mutect_idx_dict
 
     output:
     path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
@@ -22,7 +29,7 @@ process MUTECT2 {
     script:
     """
     gatk Mutect2 \
-    -R ${params.mutect_idx} \
+    -R ${mutect_idx} \
         -I ${tumor_bam_sorted} \
         -I ${normal_bam_sorted} \
         --panel-of-normals ${params.pon} \

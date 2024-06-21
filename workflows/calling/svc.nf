@@ -2,13 +2,17 @@
 
 // Create queue channels (consumable)
 // will need to split up into tumor channel and normal channel, use regex for this
-tumor_ch = Channel.fromPath("${params.bam_files}/*_T_*.bam")
-normal_ch = Channel.fromPath("${params.bam_files}/*_G_*.bam")
+tumor_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_T_*.bam")
+tumor_ch_bai = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_T_*.bam.bai")
+normal_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_G_*.bam")
+normal_ch_bai = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_G_*.bam.bai")
 
 
 // Create value channels (use first operator to convert to value from queue)
 tumor_val = tumor_ch.first()
+tumor_val_bai = tumor_ch_bai.first()
 normal_val = normal_ch.first()
+normal_val_bai = normal_ch_bai.first()
 
 // Sample id channel: take full filename and grab the sample id
 sample_id = tumor_ch.map { filePath -> 
@@ -39,7 +43,7 @@ include { SNPSIFT } from '../../tools/snpeff/sift_variants.nf'
 workflow {
     
     // gatk getpileupsummaries
-    GETPILEUPSUMMARIES(tumor_ch, normal_ch, params.exac)
+    GETPILEUPSUMMARIES(tumor_val, tumor_val_bai, normal_val, normal_val_bai, params.exac)
     tumor_table = GETPILEUPSUMMARIES.out.tumor
     normal_table = GETPILEUPSUMMARIES.out.normal
     
@@ -49,7 +53,7 @@ workflow {
     segment_table = CALCULATECONTAMINATION.out.segment
     
     // Run mutect2
-    MUTECT2(tumor_val, normal_val, chrom_ch, sample_id_ch)
+    MUTECT2(tumor_val, tumor_val_bai, normal_val, normal_val_bai, chrom_ch, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
     
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf) // concatenation requires bgzip'd files 

@@ -6,7 +6,7 @@ process BWAMEM2 {
     container "${params.container_bwa}"
 
     // Set output directory for alignment results
-    publishDir "${params.outdir}/aligned", mode: 'copy'
+    publishDir "${params.outdir}/aligned/unsorted"
 
     // Define input and output
     input:

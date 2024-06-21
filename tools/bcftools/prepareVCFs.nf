@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 process BGZIP {
-
+    
     container "${params.container_bcftools}"
 
     input:
@@ -20,7 +20,7 @@ process BGZIP {
 
 process PREPAREVCF {
     
-    publishDir path: "${params.outdir}/svc/sort_index", mode: 'copy', pattern: "*_unfiltered_normalized_sorted.vcf.gz"
+    publishDir "${params.outdir}/svc"
     
     container "${params.container_bcftools}"
 
