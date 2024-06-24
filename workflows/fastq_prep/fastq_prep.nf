@@ -1,8 +1,9 @@
 #!/usr/bin/env nextflow
 
-// before running, make sure the temp directory is set in the same dir you launch the sbatch from, otherwise samtools collate cannot locate the correct temp dir
+// before running, make sure the tmp directory is set in the same directory you launch the sbatch from, otherwise samtools collate cannot locate the correct temp dir
 // > cd <work directory>
 // > export TMPDIR=`pwd`/tmp
+// > sbatch nextflow.srun
 
 files_ch = Channel.fromPath("${params.bucket_dir}/*.${params.filesuffix}")
 
