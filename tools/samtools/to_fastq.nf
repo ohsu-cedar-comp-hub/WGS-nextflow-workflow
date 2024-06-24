@@ -10,11 +10,11 @@ process TOFASTQSORT {
     path bam_cram
 
     output:
-    path("*.${params.filesuffix}")
+    path("*.fastq.gz")
 
     script:
     """
-    samtools sort ${bam_cram} > ${bam_cram.baseName}_sorted.${params.filesuffix}
+    touch samtools_test.bam
     """
 }
 
