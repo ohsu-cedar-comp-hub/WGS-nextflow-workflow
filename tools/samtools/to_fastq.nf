@@ -1,8 +1,26 @@
 #!/usr/bin/env nextflow
 
-process TOFASTQ {
+process TOFASTQSORT {
     
-    publishDir "${params.outdir}/preptofastq"
+    publishDir "${params.outdir}/tofastq"
+
+    container "${params.container_samtools}"
+
+    input:
+    path bam_cram
+
+    output:
+    path("*.${params.filesuffix}")
+
+    script:
+    """
+    samtools sort ${bam_cram} > ${bam_cram.baseName}_sorted.${params.filesuffix}
+    """
+}
+
+process TOFASTQ {
+        
+    publishDir "${params.outdir}/tofastq"
 
     container "${params.container_samtools}"
 
@@ -12,18 +30,9 @@ process TOFASTQ {
     output:
     path("*.fastq.gz")
 
-/*
     script:
+
     """
-    samtools sort ${bam_cram} > ${bam_cram.baseName}_sorted.bam
-    samtools collate -u -O ${bam_cram.baseName}_sorted.bam | samtools fastq -1 ${bam_cram.baseName}_R1.fastq.gz -2 ${bam_cram.baseName}_R2.fastq.gz
-    """
-*/
-    script:
-    """
-    touch ${bam_cram.baseName}_sorted.bam
-    touch ${bam_cram.baseName}_R1.fastq.gz
-    touch ${bam_cram.baseName}_R2.fastq.gz
+    samtools collate -u -O ${bam_cram} | samtools fastq -1 ${bam_cram.baseName}_R1.fastq.gz -2 ${bam_cram.baseName}_R2.fastq.gz -0 /dev/null -s /dev/null -n
     """
 }
-
