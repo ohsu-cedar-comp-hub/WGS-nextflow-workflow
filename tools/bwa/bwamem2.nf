@@ -3,10 +3,10 @@
 // Define the process for BWA-MEM2 alignment
 process BWAMEM2 {
 
-    container "${params.container_bwa}", mode: 'copy'
+    container "${params.container_bwa}"
 
     // Set output directory for alignment results
-    publishDir "${params.outdir}/aligned/unsorted"
+    publishDir "${params.outdir}/aligned/unsorted", mode: 'copy'
 
     // Define input and output
     input:
