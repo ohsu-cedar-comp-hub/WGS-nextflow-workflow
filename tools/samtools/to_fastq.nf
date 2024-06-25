@@ -20,6 +20,8 @@ process TOFASTQSORT {
 
 process TOFASTQ {
         
+    beforeScript = 'export TMPDIR=/tmp'    
+    
     publishDir "${params.outdir}/tofastq"
 
     container "${params.container_samtools}"
