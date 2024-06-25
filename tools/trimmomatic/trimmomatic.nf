@@ -2,6 +2,7 @@
 
 process TRIMMOMATICPE {
 
+    publishDir "${params.outdir}/trimmed", mode: 'copy'
     container "${params.container_trimmomatic}"
 
     input:

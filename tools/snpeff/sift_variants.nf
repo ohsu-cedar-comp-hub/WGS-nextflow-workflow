@@ -2,7 +2,7 @@
 
 process SNPSIFT {
     
-    publishDir "${params.outdir}/annotated"
+    publishDir "${params.outdir}/annotated", mode: 'copy'
     container "${params.container_snpeff}"
 
     input:

@@ -1,6 +1,6 @@
 process LEARNORIENTATION {
     
-    publishDir "${params.outdir}/svc"
+    publishDir "${params.outdir}/svc", mode: 'copy'
     
     container "${params.container_gatk}"
 

@@ -20,7 +20,7 @@ process BGZIP {
 
 process PREPAREVCF {
     
-    publishDir "${params.outdir}/svc"
+    publishDir "${params.outdir}/svc", mode: 'copy'
     
     container "${params.container_bcftools}"
 
