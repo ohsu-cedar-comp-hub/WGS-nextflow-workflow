@@ -2,7 +2,7 @@
 
 process TOFASTQSORT {
     
-    publishDir "${params.outdir}/tofastq"
+    publishDir "${params.outdir}/tofastq", mode: 'copy'
 
     container "${params.container_samtools}"
 
@@ -20,7 +20,7 @@ process TOFASTQSORT {
 
 process TOFASTQ {
         
-    publishDir "${params.outdir}/tofastq"
+    publishDir "${params.outdir}/tofastq", mode: 'copy'
 
     container "${params.container_samtools}"
 
