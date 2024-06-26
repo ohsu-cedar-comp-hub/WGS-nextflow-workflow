@@ -8,5 +8,5 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: nf-core/gh-actions-lint@main
+      - uses: actions/checkout@v1
+      - uses: ohsu-cedar-comp-hub/WGS-nextflow-workflow@main
