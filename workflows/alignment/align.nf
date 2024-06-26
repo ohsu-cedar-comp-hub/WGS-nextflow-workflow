@@ -15,6 +15,7 @@ include { MARKDUPLICATES } from '../../tools/gatk/mark_duplicates.nf'
 
 // workflow 
 workflow {
+
     // trimmomatic
     TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
 

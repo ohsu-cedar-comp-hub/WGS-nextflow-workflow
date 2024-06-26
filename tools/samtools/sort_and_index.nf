@@ -24,7 +24,7 @@ process SORTANDINDEX {
     
     container "${params.container_samtools}"
 
-    publishDir "${params.outdir}/aligned/duplicate_marked"
+    publishDir "${params.outdir}/aligned/duplicate_marked", mode: 'copy'
     
     input:
     path bam_unsorted

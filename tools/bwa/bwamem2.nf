@@ -3,6 +3,7 @@
 // Define the process for BWA-MEM2 alignment
 process BWAMEM2 {
 
+    cpus 8
     container "${params.container_bwa}"
 
     // Set output directory for alignment results
@@ -20,7 +21,7 @@ process BWAMEM2 {
     // BWA-MEM2 alignment command
     script:
     """
-    bwa-mem2 mem -K 100000000 -t 6 -Y -M -R "@RG\\tID:${params.id}\\tLB:no_library\\tPL:illumina\\tPU:none\\tSM:${sample_id}" ${params.idx} ${reads[0]} ${reads[1]} | samtools view -Sb -@ 4 > ${sample_id}.bam
+    bwa-mem2 mem -K 100000000 -t 8 -Y -M -R "@RG\\tID:${params.id}\\tLB:no_library\\tPL:illumina\\tPU:none\\tSM:${sample_id}" ${params.idx} ${reads[0]} ${reads[1]} | samtools view -Sb -@ 4 > ${sample_id}.bam
     """
 }
 
