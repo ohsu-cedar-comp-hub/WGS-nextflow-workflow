@@ -1,4 +1,4 @@
-name: Nextflow Lint
+name: Nextflow Lint [WIP]
 
 on:
   pull_request:
