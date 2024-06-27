@@ -306,7 +306,7 @@ java -jar picard.jar SortSam \
 ```
 
 ## Variant Calling Workflow and Annotation Workflow
-
+![variantcall_pipeline svg](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/assets/136844363/4e8dc4e1-0073-4206-9371-9b0bec0b885a)
 
 ### Tools
 - Nextflow (DSL2)
