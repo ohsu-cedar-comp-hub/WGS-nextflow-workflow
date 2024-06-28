@@ -2,7 +2,7 @@
 
 process CollectAllelicCounts {
     // Set maximum memory
-    memory '40 GB'
+    // memory '40 GB'
 
     publishDir "${params.outdir}/allelic_counts", mode: 'copy'
 

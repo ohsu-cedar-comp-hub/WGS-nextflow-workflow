@@ -1,20 +1,20 @@
 #!/usr/bin/env nextflow
 
-process AnnotateVariants {
-    publishDir "${params.outdir}/svc/annotated_variants", mode: 'copy'
-    // Set maximum memory
-    memory '40 GB'
+process ANNOTATE {
+
+    publishDir "${params.outdir}/annotated", mode: 'copy'
+    container "${params.container_snpeff}"
 
     input:
     path filtered_vcf
-    val ID
+    val sample_id
 
     output: 
-    file "${filtered_vcf.baseName}_annotated_variants.vcf"
+    path("${sample_id}_annotated.vcf")
 
     script:
     """
-    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${filtered_vcf.baseName}_annotated_variants.vcf
+    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${sample_id}_annotated.vcf
     """
 
 }

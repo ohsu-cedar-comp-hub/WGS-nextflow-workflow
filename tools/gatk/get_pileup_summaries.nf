@@ -1,21 +1,23 @@
 #!/usr/bin/env nextflow
 
 // Process for getting pileup summaries
-process GetPileupSummaries {
-    // Set maximum memory
-    memory '40 GB'
+process GETPILEUPSUMMARIES {
+
+    container "${params.container_gatk}"
 
     publishDir "${params.outdir}/summaries", mode: 'copy'
 
     input:
-    path tumor_bam_sorted
+    path tumor_bam_sorted 
+    path tumor_bam_sorted_bai
     path normal_bam_sorted
+    path normal_bam_sorted_bai
     path exac
-    val ID
 
     output:
-    file("${tumor_bam_sorted.simpleName}.getpileupsummaries.table")
-    file("${normal_bam_sorted.simpleName}.getpileupsummaries.table")
+    path ("${tumor_bam_sorted.simpleName}.getpileupsummaries.table"), emit: tumor
+    path("${normal_bam_sorted.simpleName}.getpileupsummaries.table"), emit: normal
+    
     script:
     """
     gatk GetPileupSummaries \\

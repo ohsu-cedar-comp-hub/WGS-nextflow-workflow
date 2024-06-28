@@ -1,30 +1,26 @@
 #!/usr/bin/env nextflow
 
 // define process GATK4 CalculateContamination
-process CalculateContamination {
-    // Set maximum memory
-    memory '40 GB'
+process CALCULATECONTAMINATION {
 
-    // Set output directory
+    container "${params.container_gatk}"
+
     publishDir "${params.outdir}/tables", mode: 'copy'
   
-  // define input and output
     input:
     path tumor_pileups_table
     path normal_pileups_table
-    val ID
 
     output:
-    path("${tumor_pileups_table.baseName}_contamination_table")
-    path("${tumor_pileups_table.baseName}_segmentation_table")
+    path ("${tumor_pileups_table.simpleName}_contamination_table"), emit: contamination
+    path ("${tumor_pileups_table.simpleName}_segmentation_table"), emit: segment
 
-  // calculatContamination command
     script:
     """
         gatk CalculateContamination \\
         -I ${tumor_pileups_table} \\
         --matched ${normal_pileups_table} \\
-        -O ${tumor_pileups_table.baseName}_contamination_table \\
-        -tumor-segmentation ${tumor_pileups_table.baseName}_segmentation_table
+        -O ${tumor_pileups_table.simpleName}_contamination_table \\
+        -tumor-segmentation ${tumor_pileups_table.simpleName}_segmentation_table
     """
 }
