@@ -19,7 +19,7 @@
 -nb Path to mapped, indexed, duplicate marked/removed normal bam file.
 -c Config ini file to use for flag list and settings
 -f Config::Inifiles style config file containing VCF flag code to flag name conversions
--e Modify the read count threshold used when splitting into mstep/estep jobs
+-e Modify the read count threshold used when splitting into mstep/estep jobs (from ds-cgpwgs.pl: Reads target per caveman split section. Default 350000.)
 -o Directory to write output to. During processing a temp folder will be generated in this area, should the process fail only delete this if you are unable to resume the process.
 Final output files are: muts.vcf.gz, snps.vcf.gz, no_analysis.bed.gz no_analysis.bed.gz.tbi
 -x contig exclude (lacking documentation)
@@ -30,37 +30,43 @@ process CAVEMAN_SETUP {
     container "${params.container_cgpwgs}"
     publishDir "${params.outdir}/cgp-wgs/caveman", mode: 'copy'
 
+    cpu = 4
+
     input:
-    all files (*) in caveman/reference_files directory
+    path caveman_ref_fai
+    path ignore_hi_depth_tsv
+    path tumor_cn
+    path normal_cn
+    path tumor_bam
+    path normal_bam
 
     output:
-    caveman config caveman.cfg.ini
-    alg_bean
-    split list?
+    path ("caveman config caveman.cfg.ini"), emit: config
+    path ("alg_bean something"), emit: alg_bean
 
     // script from analysisWGS.sh at https://github.com/cancerit/dockstore-cgpwgs/blob/develop/scripts/analysisWGS.sh
     script:
     """
     caveman.pl \
-    -r $REF_BASE/genome.fa.fai \
-    -ig $REF_BASE/caveman/HiDepth.tsv \
-    -b $REF_BASE/caveman/flagging \
-    -ab $REF_BASE/vagrent \
-    -u $REF_BASE/caveman \
-    -s '$SPECIES' \
-    -sa $ASSEMBLY \
-    -t $CPU \
-    -st $PROTOCOL \
-    -tc $TMP/tum.cn.bed \
-    -nc $TMP/norm.cn.bed \
-    -td 5 -nd 2 \
-    -tb $BAM_MT_TMP \
-    -nb $BAM_WT_TMP \
-    -c $SNVFLAG \
-    -f $REF_BASE/caveman/flagging/flag.to.vcf.convert.ini \
-    -e $CAVESPLIT \
-    -o $OUTPUT_DIR/${PROTOCOL}_${NAME_MT}_vs_${NAME_WT}/caveman \
-    -x $CONTIG_EXCLUDE \
+    -r ${caveman_ref_fai} \
+    -ig ${ignore_hi_depth_tsv} \
+    -b $REF_BASE/caveman/flagging \ ***?????????***
+    -ab $REF_BASE/vagrent \ ***?????????***
+    -u $REF_BASE/caveman \ ***?????????***
+    -s HUMAN \
+    -sa GRCh38.d1.vd1 \
+    -t 4 \
+    -st WGS \
+    -tc ${tumor_cn} \ 
+    -nc ${normal_cn} \
+    -td 5 -nd 2 \ ***?????????***
+    -tb ${tumor_bam} \
+    -nb ${normal_bam} \
+    -c flag.vcf.config.WGS.ini \ ***?????????***
+    -f flag.to.vcf.convert.ini \ ***?????????***
+    -e 350000 \
+    -o . \
+    -x $CONTIG_EXCLUDE \ ***?????????***
     -p setup
     """
 }
@@ -154,4 +160,11 @@ process CAVEMAN_FLAG {
  -in $GERMLINE_BED.gz \
  -p flag"
     """
+}
+
+workflow {
+    CAVEMAN_SETUP(caveman_ref_fai, ignore_hi_depth_tsv, ASCAT.out.tumor_cn, ASCAT.out.normal_cn, tumor_bam, normal_bam, )
+    CAVEMAN_SPLIT()
+    CAVEMAN_MAIN()
+    CAVEMAN_FLAG()
 }

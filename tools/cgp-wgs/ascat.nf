@@ -37,8 +37,8 @@ process ASCAT {
     path gender_tsv
 
     output:
-    path tumor_cn
-    path normal_cn
+    path ("something tumor cn"), emit: tumor_cn
+    path ("something normal cn"), emit: normal_cn
 
     script:
     """
