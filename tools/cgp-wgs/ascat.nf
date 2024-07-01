@@ -20,37 +20,46 @@
     in '*.samplestatistics.csv' to indicate this has occurred.
 
 OPTIONAL:
-tumor purity and tumor ploidy, not included in cgpwgs_NOORANI_corrected_111-116.sh https://github.com/elisabethgoldman/sanger-evotypes/blob/main/cgpwgs_NOORANI_corrected_111-116.sh
+-pu tumor purity and -pi tumor ploidy, not included in cgpwgs_NOORANI_corrected_111-116.sh https://github.com/elisabethgoldman/sanger-evotypes/blob/main/cgpwgs_NOORANI_corrected_111-116.sh
 */
 
 process ASCAT {
     container "${params.container_cgpwgs}"
     publishDir "${params.outdir}/cgp-wgs/ascat", mode: 'copy'
 
+    cpus = 1
+
     input:
-    tumor bam
-    normal bam
+    path tumor_bam
+    path normal_bam
+    path snpgccorrections_tsv
+    path reference_fa
+    path gender_tsv
 
     output:
-    tumor copy number bed
-    normal copy number bed
+    path tumor_cn
+    path normal_cn
 
     script:
     """
     ascat.pl \
-    -o $OUTPUT_DIR/${PROTOCOL}_${NAME_MT}_vs_${NAME_WT}/ascat \
-    -t $BAM_MT_TMP \
-    -n $BAM_WT_TMP \
-    -sg $REF_BASE/ascat/SnpGcCorrections.tsv \
-    -r $REF_BASE/genome.fa \
+    -o . \
+    -t ${tumor_bam} \
+    -n ${normal_bam} \
+    -sg ${snpgccorrections_tsv} \
+    -r ${reference_fa} \
     -q 20 \
     -g L \
-    -l $REF_BASE/gender.tsv \
-    -rs '$SPECIES' \
-    -ra $ASSEMBLY \
-    -pr $PROTOCOL \
-    -pl ILLUMINA \
-    -c $CPU \
+    -l ${gender_tsv} \
+    -rs HUMAN \
+    -ra GRCh38.d1.vd1 \
+    -pr WGS \
+    -pl illumina \
+    -c 1 \
     -force
     """
+}
+
+workflow {
+    ASCAT(tumor_bam, normal_bam, params.snpgccorrections_tsv, params.reference_fa, params.gender_tsv)
 }
