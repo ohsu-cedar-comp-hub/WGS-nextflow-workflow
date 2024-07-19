@@ -26,7 +26,7 @@ workflow {
     multi_ch = FASTQCRAW.out.zip.mix(FASTQCTRIM.out.zip).collect()
     
     // pass to multiqc
-    MULTIQC(multi_ch)
+    MULTIQC(multi_ch, all_pairs_ch)
 
     // align with bwa-mem2
     BWAMEM2(TRIMMOMATICPE.out.trim_reads, params.idx, params.id)
