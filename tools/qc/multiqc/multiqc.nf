@@ -12,10 +12,10 @@ process MULTIQC {
     tuple val(sampleid), path(reads)    
 
     output:
-    file("${reads[0].basename}_multiqc_report.html")
+    file("${reads[0].simpleName}_multiqc_report.html")
 
     script:
     """
-    multiqc --filename ${reads[0].basename}_multiqc_report.html .
+    multiqc --filename ${reads[0].simpleName}_multiqc_report.html .
     """
 }
