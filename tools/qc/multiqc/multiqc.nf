@@ -8,13 +8,14 @@ process MULTIQC {
 
     input:
     // require all files from fastqc before running multiqc 
-    file("*")    
+    file("*")
+    tuple val(sampleid), path(reads)    
 
     output:
-    file("multiqc_report.html")
+    file("${reads[0]}_multiqc_report.html")
 
     script:
     """
-    multiqc .
+    multiqc --filename ${reads[0]}_multiqc_report.html .
     """
 }
