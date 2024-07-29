@@ -3,6 +3,8 @@
 // Create Channel 
 // all_pairs_ch is a read pairs channel structured like [id, [r1.fq, r2.fq]]
 all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
+sample_id = Channel.value(params.samplename)
+
 
 // import modules 
 include { FASTQC as FASTQCRAW} from '../../tools/qc/fastqc/fastqc.nf'
@@ -13,7 +15,7 @@ include { BWAMEM2 } from '../../tools/bwa/bwamem2.nf'
 include { SORT; SORTANDINDEX } from '../../tools/samtools/sort_and_index.nf'
 include { MARKDUPLICATES } from '../../tools/gatk/mark_duplicates.nf'
 
-// workflow 
+workflow 
 workflow {
     // trimmomatic
     TRIMMOMATICPE(all_pairs_ch, params.truseq3pefile, params.outdir)
@@ -26,7 +28,7 @@ workflow {
     multi_ch = FASTQCRAW.out.zip.mix(FASTQCTRIM.out.zip).collect()
     
     // pass to multiqc
-    MULTIQC(multi_ch, all_pairs_ch)
+    MULTIQC(multi_ch, sample_id)
 
     // align with bwa-mem2
     BWAMEM2(TRIMMOMATICPE.out.trim_reads, params.idx, params.id)
