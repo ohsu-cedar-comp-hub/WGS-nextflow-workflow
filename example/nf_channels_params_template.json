@@ -12,7 +12,6 @@
 "all_read_pairs" : "/path/to/fastq/files/*_R{1,2}*.fastq.gz",
 "samplename" : "55555",
 "outdir" : "/path/to/fastq/files/",
-"id" : "UUID-UUID-UUID",
 "truseq3pefile" : "path/to/adapters/fasta",
 "idx" : "/path/to/reference/fasta/for/alignment",
 "exac" : "/path/to/common/germline/variants/vcf",

@@ -31,7 +31,7 @@ workflow {
     MULTIQC(multi_ch, sample_id)
 
     // align with bwa-mem2
-    BWAMEM2(TRIMMOMATICPE.out.trim_reads, params.idx, params.id)
+    BWAMEM2(TRIMMOMATICPE.out.trim_reads, params.idx)
 
     // sort with samtools 
     SORT(BWAMEM2.out)
