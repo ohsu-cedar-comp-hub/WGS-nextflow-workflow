@@ -3,8 +3,6 @@
 // Create Channel 
 // all_pairs_ch is a read pairs channel structured like [id, [r1.fq, r2.fq]]
 all_pairs_ch = Channel.fromFilePairs(params.all_read_pairs)
-sample_id = Channel.value(params.samplename)
-
 
 // import modules 
 include { FASTQC as FASTQCRAW} from '../../tools/qc/fastqc/fastqc.nf'
@@ -28,7 +26,7 @@ workflow {
     multi_ch = FASTQCRAW.out.zip.mix(FASTQCTRIM.out.zip).collect()
     
     // pass to multiqc
-    MULTIQC(multi_ch, sample_id)
+    MULTIQC(multi_ch, all_pairs_ch)
 
     // align with bwa-mem2
     BWAMEM2(TRIMMOMATICPE.out.trim_reads, params.idx)

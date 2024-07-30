@@ -9,13 +9,15 @@ process MULTIQC {
     input:
     // require all files from fastqc before running multiqc 
     file("*")
-    val sampleid  
+    tuple val(sample_id), path(reads)
+
+    samplename = sample_id.first()
 
     output:
-    file("${sampleid}_multiqc_report.html")
+    file("${samplename}_multiqc_report.html")
 
     script:
     """
-    multiqc --filename ${sampleid}_multiqc_report.html .
+    multiqc --filename ${samplename}_multiqc_report.html .
     """
 }

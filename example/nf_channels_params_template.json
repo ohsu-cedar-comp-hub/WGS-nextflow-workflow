@@ -10,7 +10,6 @@
 "filesuffix" : "bam or cram",
 "bucket_dir" : "/path/to/bam or cram/files",
 "all_read_pairs" : "/path/to/fastq/files/*_R{1,2}*.fastq.gz",
-"samplename" : "55555",
 "outdir" : "/path/to/fastq/files/",
 "truseq3pefile" : "path/to/adapters/fasta",
 "idx" : "/path/to/reference/fasta/for/alignment",
