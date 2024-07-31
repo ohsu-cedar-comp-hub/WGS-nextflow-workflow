@@ -1,12 +1,8 @@
 # WGS Nextflow Workflow
 
-This Nextflow workflow aligns, performs somatic variant calls, and annotates variants on whole genome sequencing matched tumor-normal data. The pipeline is intended to run with a container (Docker or Singularity). Submodules of the workflow are described below. A parameter file is passed as input using `-params-file <my-params.json>`.
+This Nextflow workflow aligns, performs somatic variant calls, and annotates variants on whole genome sequencing matched tumor-normal data. The pipeline is intended to run with a container using Singularity. Submodules of the workflow are described below.
 
 ## Getting Started
-
-### Running with Docker/Singularity
-
-Requires install of [Singularity](https://sylabs.io/docs/) or [Docker](https://www.docker.com/get-started/).
 
 Check that Java version is 11 through 21. Nextflow has been checked to run with Java 11-21. Otherwise install Java 17 via SDKMAN shown [here](https://www.nextflow.io/docs/latest/install.html).  
 
@@ -14,9 +10,9 @@ Check that Java version is 11 through 21. Nextflow has been checked to run with 
 java -version
 ```
 
-#### Install [Nextflow](https://www.nextflow.io/docs/latest/install.html) 
+### Install [Nextflow](https://www.nextflow.io/docs/latest/install.html) 
 
-Option 1: Install with conda/mamba/micromamba (recommended for use on HPC)
+Option 1: Install with conda/mamba/micromamba (recommended)
 
 ```
 # create a conda environment
@@ -32,8 +28,7 @@ nextflow info
 nextflow self-update
 ```
 
-
-Option 2: Install with curl
+Option 2: Install with curl (not for use on Exacloud)
 
 ```
 # Move to a directory you want Nextflow to sit on your system
@@ -55,68 +50,285 @@ nextflow info
 nextflow self-update
 ```
 
+### Pull Singularity images
+[Read more about Singularity here.](https://docs.sylabs.io/guides/3.2/user-guide/cli/singularity_pull.html)
+ 
+Dockerfiles for building images are provided for each tool in the pipeline in the tool directory, `tools/<tool name>/Dockerfile`. Docker images have been pre-built and are hosted on quay.io at the following links:
 
-Dockerfiles for building images are provided for each tool in the pipeline in the tool directory, `tools/<tool name>/Dockerfile`:
-- fastqc 
-- multiqc
-- trimmomatic
-- bwa
-- samtools
-- gatk
-- bcftools
-- snpeff
+- fastqc https://quay.io/repository/ohsu-comp-bio/fastqc
+- multiqc https://quay.io/repository/ohsu-comp-bio/multiqc
+- trimmomatic https://quay.io/repository/ohsu-comp-bio/trimmomatic
+- bwa https://quay.io/repository/ohsu-comp-bio/bwa 
+- samtools https://quay.io/repository/ohsu-comp-bio/samtools
+- gatk https://quay.io/repository/ohsu-comp-bio/gatk
+- bcftools https://quay.io/repository/ohsu-comp-bio/bcftools
+- snpeff https://quay.io/repository/ohsu-comp-bio/snpeff
 
-Specify paths to your containers in the [params file](example/nf_channels_params_template.json).  
-
-Singularity images can be pulled from Docker images. [Read more about Singularity here.](https://docs.sylabs.io/guides/3.2/user-guide/cli/singularity_pull.html)
-
-Enable running with your preferred container in your Nextflow [config file](https://www.nextflow.io/docs/latest/config.html).  
-Here is an example with Singularity. You will need to enable auto mounts. 
+Because Docker cannot be easily used on Exacloud, images can be pulled using Singularity, which converts them to .sif images. To pull images:
 
 ```
-singularity {
-    enabled = true
-    autoMounts = true
-    cacheDir = '<your cache dir>'
-        }
+## Load singularity module 
+module load /etc/modulefiles/singularity/current
+
+## set singularity cache directory variable; can live anywhere but gscratch is recommended.
+export SINGULARITY_CACHEDIR=/home/exacloud/gscratch/CEDAR/<user>/singularity/cache
+
+## set temporary directory variable
+export TMPDIR=<your current working directory>/tmp
+
+## Navigate to the directory you would like your .sif images to be
+cd <sif file dir>
+
+## Pull your images
+singularity pull <name_of_singularity_image>.sif docker://quay.io/ohsu-comp-bio/<name of tool>
 ```
 
-Invoking the workflow   
+Alternatively, images for this pipeline are temporarily hosted at `/home/groups/CEDAR/lancasru/WGS_COH_NF/config_sif`.
 
-When running Nextflow, you will need:
-- the script `(workflows/<step>/<script name>.nf)`
-- the parameters file (an example of the params file is available in this repo [here](example/nf_channels_params_template.json).
-- the nextflow config file
+#### Set up parameters file
 
+See an example template here: [params](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/blob/2d5bca446ab3619a481a9f3c24115f708cd249cc/example/nf_channels_params_template.json).
 
-```
-nextflow run <nextflow script>.nf \
--params-file <parameters>.json \
--c nextflow.config
-```
+The contents of the params file are shown below; add your customized paths to the following variables:
+```Json
+{
+"container_fastqc" : "/path/to/singularity/image/fastqc.sif",
+"container_multiqc" : "/path/to/singularity/image/multiqc.sif",
+"container_trimmomatic" : "/path/to/singularity/image/trimmomatic.sif",
+"container_samtools" : "/path/to/singularity/image/samtools.sif",
+"container_gatk" : "/path/to/singularity/image/gatk.sif",
+"container_bwa" : "/path/to/singularity/image/bwa.sif",
+"container_snpeff" : "/path/to/singularity/image/snpeff.sif",
+"container_bcftools" : "/path/to/singularity/image/bcftools.sif",
 
-### Data setup
+"all_read_pairs" : "/path/to/raw/fastq/*_R{1,2}*.fastq.gz",
+"id" : "UUID-UUID-UUID",
+"outdir" : "/path/to/output/directory",
 
-Example Ceph Bucket Config
-
-```
-aws {
-    accessKey='<KEY>'
-    secretKey='<SECRET>'
-    client {
-        endpoint = 'https://rgw.ohsu.edu'
-        s3PathStyleAccess = true
-    }
+"truseq3pefile" : "path/to/adapters/fasta",
+"idx" : "/path/to/reference/index/for/alignment",
+"exac" : "/path/to/common/germline/variants/vcf",
+"gnomad" : "/path/to/germline/resource/gnomad",
+"pon" : "/path/to/panel/of/normals",
+"mutect_idx" : "/path/to/indexed/and/dictionaried/reference/fasta",
 }
 ```
-Filename requirements  
+
+**all_read_pairs**  
+The `all_read_pairs` variable points to your raw fastq files for a single patient. The pipeline expects an input of 4 files with the sample ID separated from the rest of the file name by an underscore `_`, as below:
+
+```
+├── my_fastq_files
+    ├── YOURSAMPLEID_G_R1.fastq.gz
+    ├── YOURSAMPLEID_G_R2.fastq.gz
+    ├── YOURSAMPLEID_T_R1.fastq.gz
+    ├── YOURSAMPLEID_T_R2.fastq.gz
+```
+_Filename requirements_
 
 Regular expressions expect filenames for raw fastq files to be structured like this:
 ```
-SAMPLEID_{G,T}_R{1,2}.fastq.gz
+SAMPLEID_{G,T}_R{1,2}_additionalmetainfo.fastq.gz
 ```
 
-Where {G,T} is either G (germline) or T (tumor), and {1,2} is either read 1 or 2.
+Where {G,T} is either G (germline) or T (tumor), and {1,2} is either read 1 or 2. This naming scheme works with the suggested regular expression in the `all_read_pairs` variable; for other file names, edit the `*_R{1,2}.fastq.gz` regular expression in the params file to encompass your naming scheme. This stringent naming requirement will be updated in future releases. Currently, multiple tumors per patient are not supported. 
+
+**id**  
+A unique identifier to be included in your read group header
+
+**outdir**  
+This is your output directory. Make this empty directory before running the pipeline.
+
+**truseq3pefile**  
+A FASTA file of adapters used in sequencing. This is the file referenced by trimmomatic when trimming adapters.
+
+**idx**  
+The path to your reference genome index; eg, when using GRCh38.d1.vd1.fa, the path will be `path/to/reference/GRCh38.d1.vd1`. The index is generated by running `bwa index <reference genome>.fa`. The output includes index files with suffixes like .amb, .ann, .bwt, .pac, etc. Read more about indexing the reference genome [here](https://bio-bwa.sourceforge.net/bwa.shtml). 
+
+**exac**  
+Path to common germline variants VCF file. GATK best practices recommends using either gs://gatk-best-practices/somatic-b37/small_exac_common_3.vcf or gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz, depending on your reference, from their [resource bundle](https://gatk.broadinstitute.org/hc/en-us/articles/360035890811-Resource-bundle), available [on Google Cloud](https://console.cloud.google.com/storage/browser/gatk-best-practices/). 
+
+**gnomad**  
+Path to germline resource; when working with human data this is almost guarunteed to be from gnomad. GATK best practices recommends using af-only-gnomad.hg38.vcf.gz, which is [a copy of the gnomAD VCF stripped of all unnecessary INFO fields](https://gatk.broadinstitute.org/hc/en-us/articles/360050722212-FAQ-for-Mutect2). It is also available [on Google Cloud](https://console.cloud.google.com/storage/browser/gatk-best-practices/). 
+
+**pon**  
+Path to panel of normals. GATK best pratices recommends using gatk4_mutect2_4136_pon.vcf, available [on Google Cloud](https://console.cloud.google.com/storage/browser/gatk-best-practices/).  
+
+**mutect_idx**  
+Path to reference genome for running Mutect2 (includes the reference.fa, reference.dict, and reference.fa.fai). This is different from your reference genome specified for bwa-mem2 alignment, because the indices differ. This is available from [Google Cloud](https://console.cloud.google.com/storage/browser/gatk-best-practices/) or by running `samtools faidx reference.fa`
+
+
+### Set up config file
+
+User specifications can be referenced in config files, and Nextflow will pull information from them in order of preference described [here](https://www.nextflow.io/docs/latest/config.html). For specificity, we suggest running Nextflow with the command `-c path/to/nextflow.config` to ensure you are referencing the correct config file. 
+
+Below is an example of a config file that is set up to run in Singularity containers and use the slurm executor. Memory and time should be adjusted as necessary. 
+
+```Nextflow
+singularity {
+    enabled = true
+    autoMounts = true
+    cacheDir = '/home/exacloud/gscratch/CEDAR/lancasru/singularity'
+    }
+
+// specify executor args for each process
+
+process {
+    executor = 'slurm'
+    queue = 'exacloud'
+
+    withName: 'MARKDUPLICATES' {
+        memory = '40 GB'
+        time = '01:00:00'
+    }
+    withName: 'TRIMMOMATICPE' {
+        memory = '20 GB'
+        time = '00:30:00'
+    }
+    withName: 'FASTQCRAW' {
+        memory = '2 GB'
+        time = '00:10:00'
+    }
+    withName: 'FASTQCTRIM' {
+        memory = '2 GB'
+        time = '00:10:00'
+    }
+    withName: 'BWAMEM2' {
+        memory = '42 GB'
+        time = '01:00:00'
+        cpus = 2
+    }
+    withName: 'MULTIQC' {
+        memory = '2 GB'
+        time = '00:10:00'
+    }
+    withName: 'SORT' {
+        memory = '8 GB'
+        time = '00:15:00'
+    }
+    withName: 'SORTANDINDEX' {
+        memory = '8 GB'
+        time = '00:15:00'
+    }
+    withName: 'GETPILEUPSUMMARIES' {
+        memory = '2 GB'
+        time = '00:15:00'
+    }
+    withName: 'CALCULATECONTAMINATION' {
+        memory = '2 GB'
+        time = '00:15:00'
+    }
+    withName: 'MUTECT2' {
+        memory = '40 GB'
+        time = '00:45:00'
+    }
+    withName: 'BGZIP' { 
+        memory = '2 GB'
+        time = '00:15:00'
+    }
+    withName: 'PREPAREVCF' {
+        memory = '2 GB'
+        time = '00:15:00'
+    }
+    withName: 'MERGESTATS' {
+        memory = '2 GB'
+        time = '00:15:00'
+    }
+    withName: 'LEARNORIENTATION' {
+        memory = '2 GB'
+        time = '00:15:00'
+    }
+    withName: 'FILTERMUTECT' {
+        memory = '40 GB'
+        time = '00:45:00'
+    }
+    withName: 'ANNOTATE' {
+        memory = '20 GB'
+        time = '00:45:00'
+    }
+}
+```
+
+Ensure that you have specified all the individual memory/time requirements in your config file for each process. These will vary based on size of the fastq file. 
+
+### Set up slurm job script
+
+Nextflow can use the slurm executor to submit jobs; one job per process. To run jobs on Exacloud, submit a job script (sbatch). 
+
+When running Nextflow, you will need:
+- the nextflow script `(workflows/<step>/<script name>.nf)`
+- the parameters file
+- the nextflow config file 
+
+Make sure all of these args are defined in your job script.  
+As long as memory has been specified for each process, the sbatch directive in the job script only requires the memory needed for Nextflow run to submit your jobs to slurm. In this example, it is 1G; however, it could be lower. Some documentation suggests allocating at least 128MB. Make sure your allocated time is sufficient as this job needs to be running the whole time in order for Nextflow to submit all of the processes in the workflow. Depending on the size of your files, this will easily be upwards of 12 hours. For jobs that exceed 36 hours, add the `##SBATCH qos=long_jobs` directive.
+
+```Shell
+#!/bin/bash
+
+#SBATCH --mem=1G
+#SBATCH --time=08:30:00    ## time=<dd:hh:mm:ss> 
+#SBATCH --job-name="my_nextflow_job"
+#SBATCH --partition "exacloud"
+
+nextflow run path/to/WGS-nextflow-workflow/workflows/alignment/align.nf -c path/to/nextflow.config -params-file path/to/params-file.json
+```
+
+There are 15 jobs spawned by the alignment workflow for one sample:
+```
+FASTQCRAW (2)
+TRIMMOMATICPE (2)
+FASTQCTRIM (2)
+MULTIQC
+BWAMEM2 (2)
+SORT (2)
+MARKDUPLICATES (2)
+SORTANDINDEX (2)
+```
+
+There are 53 jobs spawned by the somatic variant calling workflow for one sample: 
+```
+MUTECT2 (23)
+BGZIP (23)
+GETPILEUPSUMMARIES
+CALCULATECONTAMINATION
+MERGESTATS
+LEARNORIENTATION
+PREPAREVCF
+FILTERMUTECT
+ANNOTATE
+```
+
+Given the number of jobs spawned, it may be in your interest to limit the amount of jobs submitted in parallel by Nextflow by setting `executor.queueSize` in the config file. There are several more options you can set detailed [here](https://www.nextflow.io/docs/latest/config.html#scope-executor).
+
+If your job is killed, it is easy to resume your job from where you left off by adding the `resume <session ID>` argument to the command, eg., 
+
+```
+nextflow run path/to/WGS-nextflow-workflow/workflows/alignment/align.nf -c path/to/nextflow.config -params-file path/to/params-file.json -resume 4dc656d2-c410-44c8-bc32-7dd0ea87bebf
+```
+
+The session ID is a unique string of hyphenated numbers and characters that can be found in your nextflow.log file. 
+
+
+## Running the workflow
+
+Activate your Nextflow conda environment, load the singularity module, and submit your slurm job script. It is expected that warnings will be produced for processes that are specified in your config file but not actively used in the workflow (ie, when running alignment, processes for variant calling will generate warnings and vice versa). These warnings can safely be ignored. 
+
+```
+# Activate nextflow conda env
+conda activate my_nextflow_environment
+
+# move to directory where you want your nextflow work directory and logs to be created
+cd <my nextflow run>
+
+# Load singularity module
+module load /etc/modulefiles/singularity/current
+
+# submit your slurm job script
+sbatch my_nextflow_script.srun
+```
+
+---
 
 ## Workflow design
 
@@ -306,7 +518,8 @@ java -jar picard.jar SortSam \
 ```
 
 ## Variant Calling Workflow and Annotation Workflow
-![variantcall_pipeline svg](https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/assets/136844363/4e8dc4e1-0073-4206-9371-9b0bec0b885a)
+
+![variantcall_pipeline](https://source.ohsu.edu/storage/user/478/files/60f79880-9bb4-4543-960c-87bcd13ce1a6)
 
 ### Tools
 - Nextflow (DSL2)
@@ -392,126 +605,57 @@ gatk FilterMutectCalls \
     --stats ${vcf_stats}
 ```
 
-### 7. SNPEff Annotation
+### 7. snpEff Annotation
 _Annotate variants using SNPEff_  
 **File input**: Filtered VCF and genome version GRCh38.86 from snpEff pre-built database  
 **File output**: Annotated variants VCF
 
+Script in nextflow:
+
+```
+java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${sample_id}_annotated.vcf
+```
+
+### 8. SnpSift filtering
+_Filter out variants not marked as "PASS" by FilterMutectCalls and under the specified allelic depth_
+**File input**: Annotated variants VCF
+**File output**: Filtered, annotated VCF file
+
+Script in nextflow:
+
+```
+cat ${filtered_vcf} | java -Xmx8g -jar /usr/src/app/snpEff/SnpSift.jar filter "( ((GEN[0].AD[0] >= 3) | (GEN[0].AD[1] >= 4)) | ((GEN[1].AD[0] >= 3) | (GEN[1].AD[1] >= 4)) ) & ( ( na FILTER ) | (FILTER = 'PASS') )" > ${sample_id}_annotated_PASSED.vcf
+```
+
 ### Output directory structure 
 
-Running the pipeline generates a total of 97 files in 14 directories, structured like this:
+Running the pipeline generates a total of 19 files, structured like this:
 ```
-├── aligned
-│   ├── YOURSAMPLEID_G.bam
-│   ├── YOURSAMPLEID_T.bam
-│   ├── markduplicates
-│   │   ├── YOURSAMPLEID_G_sorted_marked_duplicates.bam
-│   │   ├── YOURSAMPLEID_G_sorted_marked_duplicates_metrics.txt
-│   │   ├── YOURSAMPLEID_T_sorted_marked_duplicates.bam
-│   │   ├── YOURSAMPLEID_T_sorted_marked_duplicates_metrics.txt
-│   │   └── sorted
-│   │       ├── YOURSAMPLEID_G_sorted_marked_duplicates_sorted.bam
-│   │       ├── YOURSAMPLEID_G_sorted_marked_duplicates_sorted.bam.bai
-│   │       ├── YOURSAMPLEID_T_sorted_marked_duplicates_sorted.bam
-│   │       └── YOURSAMPLEID_T_sorted_marked_duplicates_sorted.bam.bai
-│   └── sort_index
-│       ├── YOURSAMPLEID_G_sorted.bam
-│       └── YOURSAMPLEID_T_sorted.bam
-├── fastqc
-│   ├── YOURSAMPLEID_G_R1_1P_fastqc.html
-│   ├── YOURSAMPLEID_G_R1_1P_fastqc.zip
-│   ├── YOURSAMPLEID_G_R1_fastqc.html
-│   ├── YOURSAMPLEID_G_R1_fastqc.zip
-│   ├── YOURSAMPLEID_G_R2_2P_fastqc.html
-│   ├── YOURSAMPLEID_G_R2_2P_fastqc.zip
-│   ├── YOURSAMPLEID_G_R2_fastqc.html
-│   ├── YOURSAMPLEID_G_R2_fastqc.zip
-│   ├── YOURSAMPLEID_T_R1_1P_fastqc.html
-│   ├── YOURSAMPLEID_T_R1_1P_fastqc.zip
-│   ├── YOURSAMPLEID_T_R1_fastqc.html
-│   ├── YOURSAMPLEID_T_R1_fastqc.zip
-│   ├── YOURSAMPLEID_T_R2_2P_fastqc.html
-│   ├── YOURSAMPLEID_T_R2_2P_fastqc.zip
-│   ├── YOURSAMPLEID_T_R2_fastqc.html
-│   └── YOURSAMPLEID_T_R2_fastqc.zip
-├── filtered
-│   └── YOURSAMPLEID_filtered.vcf
-├── multiqc
-│   └── multiqc_report.html
-├── summaries
-│   ├── YOURSAMPLEID_G_sorted_marked_duplicates_sorted.getpileupsummaries.table
-│   └── YOURSAMPLEID_T_sorted_marked_duplicates_sorted.getpileupsummaries.table
-├── svc
-│   ├── annotated_variants
-│   │   └── YOURSAMPLEID_annotated_variants.vcf
-│   ├── YOURSAMPLEID_chr10_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr10_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr11_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr11_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr12_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr12_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr13_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr13_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr14_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr14_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr15_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr15_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr16_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr16_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr17_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr17_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr18_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr18_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr19_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr19_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr1_unfiltered.vcf
-│   ├── YOURSAMPLEID_chr1_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr1_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr20_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr20_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr21_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr21_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr22_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr22_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr2_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr2_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr3_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr3_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr4_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr4_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr5_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr5_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr6_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr6_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr7_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr7_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr8_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr8_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chr9_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chr9_unfiltered.vcf.gz.tbi
-│   ├── YOURSAMPLEID_chrX_unfiltered.vcf.gz
-│   ├── YOURSAMPLEID_chrX_unfiltered.vcf.gz.tbi
-│   ├── f1r2files
-│   │   └── YOURSAMPLEID_read-orientation-model.tar.gz
-│   └── sort_index
-│       ├── YOURSAMPLEID_normalized.vcf.gz
-│       ├── YOURSAMPLEID_normalized.vcf.gz.tbi
-│       ├── YOURSAMPLEID_unfiltered_sorted.vcf.gz
-│       ├── YOURSAMPLEID_unfiltered_sorted.vcf.gz.tbi
-│       ├── YOURSAMPLEID_unfiltered.vcf.all.stats
-│       └── YOURSAMPLEID_unfiltered.vcf.gz
-├── tables
-│   ├── YOURSAMPLEID_T_sorted_marked_duplicates_sorted_contamination_table
-│   └── YOURSAMPLEID_T_sorted_marked_duplicates_sorted_segmentation_table
-└── trim_reads
-    ├── YOURSAMPLEID_G_R1_1P.fastq.gz
-    ├── YOURSAMPLEID_G_R1_1U.fastq.gz
-    ├── YOURSAMPLEID_G_R2_2P.fastq.gz
-    ├── YOURSAMPLEID_G_R2_2U.fastq.gz
-    ├── YOURSAMPLEID_T_R1_1P.fastq.gz
-    ├── YOURSAMPLEID_T_R1_1U.fastq.gz
-    ├── YOURSAMPLEID_T_R2_2P.fastq.gz
-    └── YOURSAMPLEID_T_R2_2U.fastq.gz
+aligned/
+	|- unsorted
+			|- SAMPLE_G.bam
+			|- SAMPLE_T.bam
+	|- duplicate_marked
+			|- SAMPLE_G_sorted_marked_duplicates_sorted.bam
+			|- SAMPLE_G_sorted_marked_duplicates_sorted.bam.bai
+			|- SAMPLE_T_sorted_marked_duplicates_sorted.bam
+			|- SAMPLE_T_sorted_marked_duplicates_sorted.bam.bai
+annotated/
+	|- SAMPLE_T_annotated.vcf
+	|- SAMPLE_T_annotated_PASSED.vcf
+multiqc/
+	|- multiqc_report.html
+summaries/
+	|- SAMPLE_G_sorted_marked_duplicates_sorted.getpileupsummaries.table
+	|- SAMPLE_T_sorted_marked_duplicates_sorted.getpileupsummaries.table
+svc/
+	|- SAMPLE_T_filtered.vcf
+	|- SAMPLE_T_read-orientation-model.tar.gz
+	|- SAMPLE_T_unfiltered.vcf.all.stats
+	|- SAMPLE_T_unfiltered.vcf.gz
+	|- SAMPLE_T_unfiltered_normalized_sorted.vcf.gz
+	|- SAMPLE_T_unfiltered_normalized_sorted.vcf.gz.tbi
+tables/
+	|- SAMPLE_T_sorted_marked_duplicates_sorted_contamination_table
+	|- SAMPLE_T_sorted_marked_duplicates_sorted_segmentation_table
 ```
-
-*Note: future development will reduce the number of files in intermediary steps that are automatically output by the pipeline*
