@@ -1,22 +1,41 @@
 #!/usr/bin/env nextflow
 
-process SortAndIndex {
+process SORT {
     // Set maximum memory
-    memory '40 GB'
-
-    publishDir "${params.outdir}/aligned/sort_index", mode: 'copy'
-
+    // memory '40 GB'
+    
+    container "${params.container_samtools}"
+  
     input:
     path bam_unsorted
-    val ID
 
     output: 
-    file("${bam_unsorted.baseName}_sorted_indexed.bam")
-    file("${bam_unsorted.baseName}_sorted_indexed.bam.bai")
-
+    file("${bam_unsorted.baseName}_sorted.bam")
+    
     script:
     """
-    samtools sort ${bam_unsorted} > ${bam_unsorted.baseName}_sorted_indexed.bam
-    samtools index ${bam_unsorted.baseName}_sorted_indexed.bam > ${bam_unsorted.baseName}_sorted_indexed.bam.bai
+    samtools sort ${bam_unsorted} > ${bam_unsorted.baseName}_sorted.bam
+    """
+}
+
+process SORTANDINDEX {
+    // Set maximum memory
+    // memory '40 GB'
+    
+    container "${params.container_samtools}"
+
+    publishDir "${params.outdir}/aligned/duplicate_marked", mode: 'copy'
+    
+    input:
+    path bam_unsorted
+
+    output: 
+    path("${bam_unsorted.baseName}_sorted.bam"), emit: bam
+    path("${bam_unsorted.baseName}_sorted.bam.bai"), emit: bai
+    
+    script:
+    """
+    samtools sort ${bam_unsorted} > ${bam_unsorted.baseName}_sorted.bam
+    samtools index ${bam_unsorted.baseName}_sorted.bam > ${bam_unsorted.baseName}_sorted.bam.bai
     """
 }
