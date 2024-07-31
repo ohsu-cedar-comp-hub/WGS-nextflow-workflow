@@ -8,28 +8,19 @@ process GETPILEUPSUMMARIES {
     publishDir "${params.outdir}/summaries", mode: 'copy'
 
     input:
-    path tumor_bam_sorted 
-    path tumor_bam_sorted_bai
-    path normal_bam_sorted
-    path normal_bam_sorted_bai
+    path bam_file
     path exac
 
     output:
-    path ("${tumor_bam_sorted.simpleName}.getpileupsummaries.table"), emit: tumor
-    path("${normal_bam_sorted.simpleName}.getpileupsummaries.table"), emit: normal
+    path ("*${params.tumor}*.getpileupsummaries.table"), emit: tumor, optional: true
+    path("*${params.normal}*.getpileupsummaries.table"), emit: normal, optional: true
     
     script:
     """
     gatk GetPileupSummaries \\
-    -I ${tumor_bam_sorted} \\
+    -I ${bam_file} \\
     -V ${params.exac} \\
     -L ${params.exac} \\
-    -O ${tumor_bam_sorted.simpleName}.getpileupsummaries.table
-
-    gatk GetPileupSummaries \\
-    -I ${normal_bam_sorted} \\
-    -V ${params.exac} \\
-    -L ${params.exac} \\
-    -O ${normal_bam_sorted.simpleName}.getpileupsummaries.table
+    -O ${bam_file.baseName}.getpileupsummaries.table
     """
 }

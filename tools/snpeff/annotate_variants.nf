@@ -10,11 +10,11 @@ process ANNOTATE {
     val sample_id
 
     output: 
-    path("${sample_id}_annotated.vcf")
+    path("${sample_id}_PASSED_annotated.vcf")
 
     script:
     """
-    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${sample_id}_annotated.vcf
+    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${sample_id}_PASSED_annotated.vcf
     """
 
 }

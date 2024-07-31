@@ -27,8 +27,8 @@ process FILTERMUTECT {
     gatk FilterMutectCalls \
     -R ${params.mutect_idx} \
     -V ${unfiltered_vcf} \
-    --tumor-segmentation ${segmentation_table} \
-    --contamination-table ${contamination_table} \
+    --tumor-segmentation ${segmentation_table.join(' --tumor-segmentation ')} \
+    --contamination-table ${contamination_table.join(' --contamination-table ')} \
     --read-index ${mutect_idx_fai} \
     --sequence-dictionary ${mutect_dict} \
     -O ${sample_id}_filtered.vcf \
