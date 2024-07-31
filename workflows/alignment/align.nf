@@ -10,8 +10,8 @@ include { FASTQC as FASTQCTRIM } from '../../tools/qc/fastqc/fastqc.nf'
 include { TRIMMOMATICPE } from '../../tools/trimmomatic/trimmomatic.nf'
 include { MULTIQC } from '../../tools/qc/multiqc/multiqc.nf'
 include { BWAMEM2 } from '../../tools/bwa/bwamem2.nf'
-include { SORT; SORTANDINDEX } from '../../tools/samtools/sort_and_index.nf'
-include { MARKDUPLICATES } from '../../tools/gatk/mark_duplicates.nf'
+// include { SORT; SORTANDINDEX } from '../../tools/samtools/sort_and_index.nf'
+// include { MARKDUPLICATES } from '../../tools/gatk/mark_duplicates.nf'
 
 // workflow 
 workflow {
@@ -31,12 +31,12 @@ workflow {
     // align with bwa-mem2
     BWAMEM2(TRIMMOMATICPE.out.trim_reads, params.idx, params.id)
 
-    // sort with samtools 
-    SORT(BWAMEM2.out)
+    // // sort with samtools 
+    // SORT(BWAMEM2.out)
 
-    // mark duplicates
-    MARKDUPLICATES(SORT.out)
+    // // mark duplicates
+    // MARKDUPLICATES(SORT.out)
 
-    // sort and index with samtools to prep for gatk somatic variant calling
-    SORTANDINDEX(MARKDUPLICATES.out.bam)
+    // // sort and index with samtools to prep for gatk somatic variant calling
+    // SORTANDINDEX(MARKDUPLICATES.out.bam)
 }

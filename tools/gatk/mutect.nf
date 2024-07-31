@@ -27,11 +27,15 @@ process MUTECT2 {
     path "${sample_id}_${chrom}_unfiltered.vcf.idx", emit: index
 
     script:
+
+    // normal name is whatever the SM: label in your @RG is
+
     """
     gatk Mutect2 \
     -R ${mutect_idx} \
-        -I ${tumor_bam_sorted} \
+        -I ${tumor_bam_sorted.join(' -I ')} \
         -I ${normal_bam_sorted} \
+        -normal ${sample_id} \
         --panel-of-normals ${params.pon} \
         -L ${chrom} \
         --germline-resource ${params.gnomad} \

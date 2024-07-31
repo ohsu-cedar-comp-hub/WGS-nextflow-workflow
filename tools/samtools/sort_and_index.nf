@@ -6,6 +6,8 @@ process SORT {
     
     container "${params.container_samtools}"
   
+    publishDir "${params.outdir}/aligned/sorted", mode: 'copy'
+    
     input:
     path bam_unsorted
 
