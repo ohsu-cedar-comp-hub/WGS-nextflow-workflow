@@ -110,7 +110,7 @@ The contents of the params file are shown below; add your customized paths to th
 "exac" : "/path/to/common/germline/variants/vcf",
 "gnomad" : "/path/to/germline/resource/gnomad",
 "pon" : "/path/to/panel/of/normals",
-"mutect_idx" : "/path/to/indexed/and/dictionaried/reference/fasta",
+"mutect_idx" : "/path/to/indexed/and/dictionaried/reference",
 }
 ```
 
