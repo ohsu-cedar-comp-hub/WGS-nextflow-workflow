@@ -1,0 +1,89 @@
+#!/usr/bin/env nextflow
+
+// Create queue channels (consumable)
+// will need to split up into tumor channel and normal channel, use regex for this
+tumor_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_T_*.bam")
+tumor_ch_bai = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_T_*.bam.bai")
+normal_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_G_*.bam")
+normal_ch_bai = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_G_*.bam.bai")
+
+
+// Create value channels (use first operator to convert to value from queue)
+tumor_val = tumor_ch.first()
+tumor_val_bai = tumor_ch_bai.first()
+normal_val = normal_ch.first()
+normal_val_bai = normal_ch_bai.first()
+
+// Sample id channel: take full filename and grab the sample id
+sample_id = tumor_ch.map { filePath -> 
+                def fileName = filePath.baseName // get file name without extensions, "metadata1_metadata2_T_sampleID_sorted_marked_duplicates_sorted.bam"
+                def sampleName = fileName.split('_') // split the file name into an array [metadata1, metadata2, T, sampleID, sorted, marked, duplicates, sorted]
+                def listSample = sampleName as List // convert to a list to perform list operations
+                listSample.removeAll(['sorted', 'marked', 'duplicates']) // remove appended elements to get just sample ID
+                listSample as String // convert back to string
+                def newName = listSample.join('_') // join together elements with _ to remake the sample ID, metadata1_metadata2_T_sampleID
+                return newName}
+sample_id_ch = sample_id.first() // convert to a value channel using .first()
+
+// Define the list of chromosomes + create a channel emitting each chromosome
+chromosomes = (1..22).collect { it.toString() } + ['X']
+chrom_strings = Channel.from(chromosomes)
+chrom_ch = chrom_strings.map { it -> "chr" + it }
+
+include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
+include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
+include { MUTECT2 } from '../../tools/gatk/mutect.nf'
+include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
+include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
+include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
+include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
+include { ANNOTATE } from '../../tools/snpeff/annotate_variants.nf'
+include { SNPSIFT } from '../../tools/snpeff/sift_variants.nf'
+
+workflow {
+    
+    // gatk getpileupsummaries
+    GETPILEUPSUMMARIES(tumor_val, tumor_val_bai, normal_val, normal_val_bai, params.exac)
+    tumor_table = GETPILEUPSUMMARIES.out.tumor
+    normal_table = GETPILEUPSUMMARIES.out.normal
+    
+    // gatk calculate contamination from pileup summaries
+    CALCULATECONTAMINATION(tumor_table, normal_table)
+    contam_table = CALCULATECONTAMINATION.out.contamination
+    segment_table = CALCULATECONTAMINATION.out.segment
+    
+    // Run mutect2
+    MUTECT2(tumor_val, tumor_val_bai, normal_val, normal_val_bai, chrom_ch, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
+    
+    // Merge and prepare VCF
+    BGZIP(MUTECT2.out.vcf) // concatenation requires bgzip'd files 
+    vcfs_ch = BGZIP.out.vcf.collect() // collect all bgzip vcf outputs into a channel
+    split_vcf_index = BGZIP.out.index.collect() // collect all bgzip index outputs into a channel
+    // concatenate, normalize, and sort the VCF
+    PREPAREVCF(vcfs_ch, split_vcf_index, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
+    unfiltered_vcf = PREPAREVCF.out.normalized
+    unfiltered_vcf_index = PREPAREVCF.out.index
+    
+    // Merge stats file
+    stats = MUTECT2.out.stats
+    stats_ch = stats.collect()
+    MERGESTATS(stats_ch, sample_id_ch)
+    filter_stats = MERGESTATS.out
+
+    // Merge f1r2 read orientation files 
+    f1r2files = MUTECT2.out.f1r2
+    f1r2_ch = f1r2files.collect()
+    LEARNORIENTATION(f1r2_ch, sample_id_ch)
+    orientationmodel = LEARNORIENTATION.out
+
+    // Filter mutect2 calls
+    FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
+    filter_vcf = FILTERMUTECT.out
+    
+    // Annotate with snpEff
+    ANNOTATE(filter_vcf, sample_id_ch)
+    
+    // filter for allelic depth and PASS status with snpSift
+    SNPSIFT(ANNOTATE.out, sample_id_ch)
+}
+

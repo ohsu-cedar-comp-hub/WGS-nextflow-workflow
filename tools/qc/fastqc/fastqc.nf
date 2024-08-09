@@ -1,17 +1,23 @@
 #!/usr/bin/env nextflow
 
 // Define the process for running FastQC
-process FastQC {
-    publishDir "${params.outdir}/fastqc", mode: 'copy'
+
+process FASTQC {
+
+    container "${params.container_fastqc}"
 
     input:
-    path read1
-    path read2
-    val ID
+    tuple val(sample_id), path(reads)
+    path outdir
+
+    output:
+    path("${sample_id}*_fastqc.zip"), emit: zip
+    path("${sample_id}*_fastqc.html"), emit: html
     
+
     script:
     """
-     /usr/local/FastQC/fastqc -o ${params.outdir}/fastqc ${read1}  
-     /usr/local/FastQC/fastqc -o ${params.outdir}/fastqc ${read2} 
+    # run fastqc on pair of files
+    fastqc ${reads[0]} ${reads[1]}
     """
 }

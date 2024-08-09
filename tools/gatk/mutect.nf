@@ -1,37 +1,41 @@
 #!/usr/bin/env nextflow
 
 // Define the process for running MuTect2
-process Mutect2 {
+process MUTECT2 {
     // Set maximum memory
-    memory '40 GB'
+    //memory '40 GB'
 
-    // Set output directory for MuTect2 results
-    publishDir "${params.outdir}/svc", mode: 'copy'
+    cpus 1 // set cpu to 1: gatk discourages multithreading
 
-    // Define input and output
+    container "${params.container_gatk}"
+
     input:
-    path tumor_bam_sorted
+    path tumor_bam_sorted 
+    path tumor_bam_sorted_bai
     path normal_bam_sorted
+    path normal_bam_sorted_bai
+    val chrom 
+    val sample_id
     path mutect_idx
-    path pon
-    path gnomad
-    val ID
+    path mutect_idx_fai
+    path mutect_idx_dict
 
     output:
-    path "${tumor_bam_sorted.simpleName}_unfiltered.vcf"
-    path "${tumor_bam_sorted.simpleName}_unfiltered.vcf.stats"
-    path "${tumor_bam_sorted.simpleName}_f1r2.tar.gz"
+    path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
+    path "${sample_id}_${chrom}_f1r2.tar.gz", emit: f1r2
+    path "${sample_id}_${chrom}_unfiltered.vcf.stats", emit: stats
+    path "${sample_id}_${chrom}_unfiltered.vcf.idx", emit: index
 
-    // MuTect2 command
     script:
     """
     gatk Mutect2 \
-        -R ${params.mutect_idx} \
+    -R ${mutect_idx} \
         -I ${tumor_bam_sorted} \
         -I ${normal_bam_sorted} \
         --panel-of-normals ${params.pon} \
+        -L ${chrom} \
         --germline-resource ${params.gnomad} \
-        -O ${tumor_bam_sorted.simpleName}_unfiltered.vcf \
-        --f1r2-tar-gz ${tumor_bam_sorted.simpleName}_f1r2.tar.gz
+        -O ${sample_id}_${chrom}_unfiltered.vcf \
+        --f1r2-tar-gz ${sample_id}_${chrom}_f1r2.tar.gz
     """
 }

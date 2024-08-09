@@ -1,27 +1,27 @@
 #!/usr/bin/env nextflow
 
 // Define the process for BWA-MEM2 alignment
-process BwaMem2Alignment {
-    // Set maximum memory
-    memory '40 GB'
+process BWAMEM2 {
+
+    cpus 8
+    container "${params.container_bwa}"
 
     // Set output directory for alignment results
-    publishDir "${params.outdir}/aligned", mode: 'copy'
+    publishDir "${params.outdir}/aligned/unsorted", mode: 'copy'
 
     // Define input and output
     input:
-    path trim_read1
-    path trim_read2
+    tuple val(sample_id), path(reads)
     path idx
-    val ID
+    val id
 
     output:
-    file("${trim_read1.simpleName}.bam")
+    file("${sample_id}.bam")
 
     // BWA-MEM2 alignment command
     script:
     """
-    bwa-mem2 mem -K 100000000 -t 6 -Y -M -R "@RG\\tID:${params.ID}\\tLB:no_library\\tPL:illumina\\tPU:none\\tSM:${trim_read1.simpleName}" ${params.idx} ${trim_read1} ${trim_read2} | samtools view -Sb -@ 4 > ${trim_read1.simpleName}.bam
+    bwa-mem2 mem -K 100000000 -t ${task.cpus} -Y -M -R "@RG\\tID:${params.id}\\tLB:no_library\\tPL:illumina\\tPU:none\\tSM:${sample_id}" ${params.idx} ${reads[0]} ${reads[1]} | samtools view -Sb -@ ${task.cpus} > ${sample_id}.bam
     """
 }
 
