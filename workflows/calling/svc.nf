@@ -4,9 +4,6 @@
 // will need to split up into tumor channel and normal channel, use regex for this
 
 all_bams = Channel.fromPath("${params.bam_files}/*.bam")
-example_bam = all_bams.first()
-
-
 
 // Define the list of chromosomes + create a channel emitting each chromosome
 chromosomes = (1..22).collect { it.toString() } + ['X']
