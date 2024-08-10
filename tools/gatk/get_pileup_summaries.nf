@@ -13,7 +13,7 @@ process GETPILEUPSUMMARIES {
 
     output:
     path ("*${params.tumor}*.getpileupsummaries.table"), emit: tumor, optional: true
-    path("*${params.normal}*.getpileupsummaries.table"), emit: normal, optional: true
+    path ("*${params.normal}*.getpileupsummaries.table"), emit: normal, optional: true
     
     script:
     """

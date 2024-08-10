@@ -10,7 +10,6 @@ chromosomes = (1..22).collect { it.toString() } + ['X']
 chrom_strings = Channel.from(chromosomes)
 chrom_ch = chrom_strings.map { it -> "chr" + it }
 
-include { RENAME } from '../../tools/samtools/get_samplename.nf'
 include { SORT; SORTANDINDEX } from '../../tools/samtools/sort_and_index.nf'
 include { MARKDUPLICATES } from '../../tools/gatk/mark_duplicates.nf'
 include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
@@ -24,25 +23,24 @@ include { PASS } from '../../tools/snpeff/sift_variants.nf'
 include { ANNOTATE } from '../../tools/snpeff/annotate_variants.nf'
 
 workflow {
-    RENAME(all_bams)
-
+  
     // sort with samtools 
-    SORT(RENAME.out)
+    SORT(all_bams) 
 
-    // mark duplicates
-    MARKDUPLICATES(SORT.out)
+    // mark duplicates; TCGA already has duplicate marking checked
+    MARKDUPLICATES(SORT.out) 
 
     // sort and index with samtools to prep for gatk somatic variant calling
     SORTANDINDEX(MARKDUPLICATES.out.bam)
     
     bam_dir = SORTANDINDEX.out.bam
     bai_dir = SORTANDINDEX.out.bai
-
+  
     // gatk getpileupsummaries
     GETPILEUPSUMMARIES(bam_dir, params.exac)
     tumor_table = GETPILEUPSUMMARIES.out.tumor
-    normal_table = GETPILEUPSUMMARIES.out.normal.first()
-    
+    normal_table = GETPILEUPSUMMARIES.out.normal.first() // assuming only one normal is used
+
     // gatk calculate contamination from pileup summaries
     CALCULATECONTAMINATION(tumor_table, normal_table)
     contam_table = CALCULATECONTAMINATION.out.contamination.collect()
@@ -58,10 +56,10 @@ workflow {
 
     // Normal sample id channel: take full filename and grab the sample id. Need this for the -normal arg in mutect2
     sample_id = normal_ch.map { filePath -> 
-        def fileName = filePath.baseName // get file name without extensions, "TCGA-00-0000-00-00-000-0000-00_tumor_otherinfo_otherinfo.bam"
-        def sampleName = fileName.split('_') // split the file name into an array by underscores [TCGA-00-0000-00-00-000-0000-00, tumor, otherinfo, otherinfo.bam]
+        def fileName = filePath.baseName // get file name without extensions, "TCGA-00-0000-00-etc_tumor_otherinfo_otherinfo.bam"
+        def sampleName = fileName.split('_') // split the file name into an array by underscores [TCGA-00-0000-00-etc, tumor, otherinfo, otherinfo.bam]
         def listSample = sampleName as List // convert to a list to perform list operations
-        def samplename = listSample[0]// grab the first element which is always the sample ID based on the RENAME process
+        def samplename = listSample[1]// grab the first element which is always the sample ID based on how the files are named
         return samplename}
     sample_id_ch = sample_id.first() // convert to a value channel using .first()
 
@@ -94,11 +92,10 @@ workflow {
     filter_vcf = FILTERMUTECT.out
     
     // filter for passing variants
-    PASS(filter_vcf, sample_id_ch)
+    // PASS(filter_vcf, sample_id_ch)
 
     // filter for variants above specific thresholds 
 
     // Annotate with snpEff
-    ANNOTATE(PASS.out, sample_id_ch)
-    
+    // ANNOTATE(PASS.out, sample_id_ch)
 }
