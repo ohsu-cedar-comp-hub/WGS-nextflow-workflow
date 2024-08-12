@@ -19,19 +19,14 @@ include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
 include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
-include { PASS } from '../../tools/snpeff/sift_variants.nf'
-include { ANNOTATE } from '../../tools/snpeff/annotate_variants.nf'
 
 workflow {
   
-    // sort with samtools 
-    SORT(all_bams) 
-
-    // mark duplicates; TCGA already has duplicate marking checked
-    MARKDUPLICATES(SORT.out) 
+    // mark duplicates again (won't work if you leave this out?)
+    MARKDUPLICATES(all_bams) 
 
     // sort and index with samtools to prep for gatk somatic variant calling
-    SORTANDINDEX(MARKDUPLICATES.out.bam)
+    SORTANDINDEX(all_bams)
     
     bam_dir = SORTANDINDEX.out.bam
     bai_dir = SORTANDINDEX.out.bai
@@ -94,8 +89,4 @@ workflow {
     // filter for passing variants
     // PASS(filter_vcf, sample_id_ch)
 
-    // filter for variants above specific thresholds 
-
-    // Annotate with snpEff
-    // ANNOTATE(PASS.out, sample_id_ch)
 }

@@ -6,7 +6,7 @@ process SORT {
     
     container "${params.container_samtools}"
   
-    publishDir "${params.outdir}/aligned/sorted", mode: 'copy'
+    // publishDir "${params.outdir}/aligned/sorted", mode: 'copy'
     
     input:
     path bam_unsorted
@@ -26,7 +26,7 @@ process SORTANDINDEX {
     
     container "${params.container_samtools}"
 
-    publishDir "${params.outdir}/aligned/duplicate_marked", mode: 'copy'
+    // publishDir "${params.outdir}/aligned/duplicate_marked", mode: 'copy'
     
     input:
     path bam_unsorted
