@@ -22,7 +22,7 @@ include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
 
 workflow {
   
-    // mark duplicates again (won't work if you leave this out?)
+    // mark duplicates again
     MARKDUPLICATES(all_bams) 
 
     // sort and index with samtools to prep for gatk somatic variant calling
@@ -59,7 +59,12 @@ workflow {
     sample_id_ch = sample_id.first() // convert to a value channel using .first()
 
     // Run mutect2
-    MUTECT2(tumor_ch, tumor_ch_bai, normal_ch, normal_ch_bai, chrom_ch, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
+    MUTECT2(tumor_ch, tumor_ch_bai, 
+            normal_ch, normal_ch_bai, 
+            chrom_ch, 
+            sample_id_ch, 
+            params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, 
+            params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
     
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf) // concatenation requires bgzip'd files 

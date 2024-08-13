@@ -19,6 +19,10 @@ process MUTECT2 {
     path mutect_idx
     path mutect_idx_fai
     path mutect_idx_dict
+    path pon_vcf
+    path pon_tbi
+    path pon_idx
+    path pon_tar
 
     output:
     path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
@@ -36,7 +40,7 @@ process MUTECT2 {
         -I ${tumor_bam_sorted.join(' -I ')} \
         -I ${normal_bam_sorted} \
         -normal ${sample_id} \
-        --panel-of-normals ${params.pon} \
+        --panel-of-normals ${pon_vcf} \
         -L ${chrom} \
         --germline-resource ${params.gnomad} \
         -O ${sample_id}_${chrom}_unfiltered.vcf \
