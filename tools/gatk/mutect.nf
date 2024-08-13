@@ -10,7 +10,7 @@ process MUTECT2 {
     container "${params.container_gatk}"
 
     input:
-    path tumor_bam_sorted 
+    path tumor_input 
     path tumor_bam_sorted_bai
     path normal_bam_sorted
     path normal_bam_sorted_bai
@@ -32,12 +32,12 @@ process MUTECT2 {
 
     script:
 
-    // normal name is whatever the SM: label in your @RG is
+    // normal name is whatever the SM: label in your @RG is in the bam file
 
     """
     gatk Mutect2 \
     -R ${mutect_idx} \
-        -I ${tumor_bam_sorted.join(' -I ')} \
+        -I ${tumor_input} \
         -I ${normal_bam_sorted} \
         -normal ${sample_id} \
         --panel-of-normals ${pon_vcf} \

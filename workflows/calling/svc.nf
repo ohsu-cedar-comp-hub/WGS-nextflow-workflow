@@ -26,21 +26,12 @@ workflow {
     MARKDUPLICATES(all_bams) 
 
     // sort and index with samtools to prep for gatk somatic variant calling
-    SORTANDINDEX(all_bams)
+    SORTANDINDEX(MARKDUPLICATES.out)
     
     bam_dir = SORTANDINDEX.out.bam
     bai_dir = SORTANDINDEX.out.bai
   
-    // gatk getpileupsummaries
-    GETPILEUPSUMMARIES(bam_dir, params.exac)
-    tumor_table = GETPILEUPSUMMARIES.out.tumor
-    normal_table = GETPILEUPSUMMARIES.out.normal.first() // assuming only one normal is used
-
-    // gatk calculate contamination from pileup summaries
-    CALCULATECONTAMINATION(tumor_table, normal_table)
-    contam_table = CALCULATECONTAMINATION.out.contamination.collect()
-    segment_table = CALCULATECONTAMINATION.out.segment.collect()
-    
+   
     // separate out tumor and normal samples into two different channels
     def tumorpattern = params.tumor
     def normalpattern = params.normal
@@ -58,8 +49,23 @@ workflow {
         return samplename}
     sample_id_ch = sample_id.first() // convert to a value channel using .first()
 
+    // prepare tumor input channel for mutect2
+    tumor_input = tumor_ch.join(' -I ')
+    tumor_input.view()
+
+    /*
+    // gatk getpileupsummaries
+    GETPILEUPSUMMARIES(bam_dir, params.exac)
+    tumor_table = GETPILEUPSUMMARIES.out.tumor
+    normal_table = GETPILEUPSUMMARIES.out.normal.first() // assuming only one normal is used
+
+    // gatk calculate contamination from pileup summaries
+    CALCULATECONTAMINATION(tumor_table, normal_table)
+    contam_table = CALCULATECONTAMINATION.out.contamination.collect()
+    segment_table = CALCULATECONTAMINATION.out.segment.collect()
     // Run mutect2
-    MUTECT2(tumor_ch, tumor_ch_bai, 
+
+    MUTECT2(tumor_input, tumor_ch_bai, 
             normal_ch, normal_ch_bai, 
             chrom_ch, 
             sample_id_ch, 
@@ -93,5 +99,5 @@ workflow {
     
     // filter for passing variants
     // PASS(filter_vcf, sample_id_ch)
-
+*/
 }
