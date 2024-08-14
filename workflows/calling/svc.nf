@@ -22,20 +22,19 @@ include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
 
 workflow {
   
-    // mark duplicates again
+    // mark duplicates
     MARKDUPLICATES(all_bams) 
 
     // sort and index with samtools to prep for gatk somatic variant calling
-    SORTANDINDEX(MARKDUPLICATES.out)
+    SORTANDINDEX(MARKDUPLICATES.out.bam)
     
     bam_dir = SORTANDINDEX.out.bam
     bai_dir = SORTANDINDEX.out.bai
-  
-   
+     
     // separate out tumor and normal samples into two different channels
     def tumorpattern = params.tumor
     def normalpattern = params.normal
-    tumor_ch = bam_dir.filter( ~/.*${tumorpattern}.*\.bam$/ ).collect() // collect these into a list format so you can use the .join operator to string together for -I input
+    tumor_ch = bam_dir.filter( ~/.*${tumorpattern}.*\.bam$/ )
     tumor_ch_bai = bai_dir.filter( ~/.*${tumorpattern}.*\.bai$/ )
     normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ )
     normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ )
@@ -49,11 +48,14 @@ workflow {
         return samplename}
     sample_id_ch = sample_id.first() // convert to a value channel using .first()
 
-    // prepare tumor input channel for mutect2
-    tumor_input = tumor_ch.join(' -I ')
-    tumor_input.view()
+    // prepare tumor input channel for mutect2 by creating a string of tumor samples paths with the "-I" argument
+    Channel
+        tumor_ch.map { fileName -> "-I ${fileName}" }
+        .toList() // make into a list
+        .map { list -> list.join(' ') } // separate the items in the list with spaces
+        .set { tumor_input } // set channel
+    normal_input = normal_ch.first() // convert the normal channel containing single normal to a value channel
 
-    /*
     // gatk getpileupsummaries
     GETPILEUPSUMMARIES(bam_dir, params.exac)
     tumor_table = GETPILEUPSUMMARIES.out.tumor
@@ -65,12 +67,12 @@ workflow {
     segment_table = CALCULATECONTAMINATION.out.segment.collect()
     // Run mutect2
 
-    MUTECT2(tumor_input, tumor_ch_bai, 
-            normal_ch, normal_ch_bai, 
-            chrom_ch, 
-            sample_id_ch, 
-            params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, 
-            params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
+    MUTECT2(tumor_input, 
+        normal_ch, 
+        chrom_ch, 
+        sample_id_ch, 
+        params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
+        //params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
     
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf) // concatenation requires bgzip'd files 
@@ -99,5 +101,5 @@ workflow {
     
     // filter for passing variants
     // PASS(filter_vcf, sample_id_ch)
-*/
+
 }

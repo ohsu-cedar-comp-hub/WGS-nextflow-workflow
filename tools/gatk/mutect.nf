@@ -10,19 +10,19 @@ process MUTECT2 {
     container "${params.container_gatk}"
 
     input:
-    path tumor_input 
-    path tumor_bam_sorted_bai
+    val tumor_input 
+    // path tumor_bam_sorted_bai
     path normal_bam_sorted
-    path normal_bam_sorted_bai
+    // path normal_bam_sorted_bai
     val chrom 
     val sample_id
     path mutect_idx
     path mutect_idx_fai
     path mutect_idx_dict
-    path pon_vcf
-    path pon_tbi
-    path pon_idx
-    path pon_tar
+    // path pon_vcf
+    // path pon_tbi
+    // path pon_idx
+    // path pon_tar
 
     output:
     path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
@@ -37,10 +37,10 @@ process MUTECT2 {
     """
     gatk Mutect2 \
     -R ${mutect_idx} \
-        -I ${tumor_input} \
+        ${tumor_input} \
         -I ${normal_bam_sorted} \
         -normal ${sample_id} \
-        --panel-of-normals ${pon_vcf} \
+        --panel-of-normals ${params.pon_vcf} \
         -L ${chrom} \
         --germline-resource ${params.gnomad} \
         -O ${sample_id}_${chrom}_unfiltered.vcf \
