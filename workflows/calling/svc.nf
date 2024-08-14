@@ -68,11 +68,11 @@ workflow {
     // Run mutect2
 
     MUTECT2(tumor_input, 
-        normal_ch, 
+        normal_input, 
         chrom_ch, 
         sample_id_ch, 
-        params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
-        //params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
+        params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict,
+        params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
     
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf) // concatenation requires bgzip'd files 

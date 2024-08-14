@@ -19,10 +19,10 @@ process MUTECT2 {
     path mutect_idx
     path mutect_idx_fai
     path mutect_idx_dict
-    // path pon_vcf
-    // path pon_tbi
-    // path pon_idx
-    // path pon_tar
+    path pon_vcf
+    path pon_tbi
+    path pon_idx
+    path pon_tar
 
     output:
     path "${sample_id}_${chrom}_unfiltered.vcf", emit: vcf
