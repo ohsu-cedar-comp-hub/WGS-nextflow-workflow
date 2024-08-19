@@ -2,7 +2,7 @@
 
 // Process for getting pileup summaries
 process GETPILEUPSUMMARIES {
-
+    maxForks 3
     container "${params.container_gatk}"
 
     publishDir "${params.outdir}/summaries", mode: 'copy'

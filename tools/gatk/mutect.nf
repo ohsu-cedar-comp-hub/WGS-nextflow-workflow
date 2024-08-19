@@ -4,7 +4,7 @@
 process MUTECT2 {
     // Set maximum memory
     // memory '40 GB'
-
+    maxForks 8
     cpus 1 // set cpu to 1: gatk discourages multithreading
 
     container "${params.container_gatk}"
