@@ -4,9 +4,8 @@
 process MUTECT2 {
     // Set maximum memory
     // memory '40 GB'
-    maxForks 8
+    maxForks 8 // set this when running on local scratch to parallelize
     cpus 1 // set cpu to 1: gatk discourages multithreading
-
     container "${params.container_gatk}"
 
     input:

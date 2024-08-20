@@ -3,7 +3,8 @@
 // Create queue channels (consumable)
 // will need to split up into tumor channel and normal channel, use regex for this
 
-all_bams = Channel.fromPath("${params.bam_files}/*.bam")
+bam_dir = Channel.fromPath("${params.bam_files}/*.bam")
+bai_dir = Channel.fromPath("${params.bam_files}/*.bai")
 
 // Define the list of chromosomes + create a channel emitting each chromosome
 chromosomes = (1..22).collect { it.toString() } + ['X']
@@ -22,15 +23,6 @@ include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
 
 workflow {
   
-    // mark duplicates
-    MARKDUPLICATES(all_bams) 
-
-    // sort and index with samtools to prep for gatk somatic variant calling
-    SORTANDINDEX(MARKDUPLICATES.out.bam)
-    
-    bam_dir = SORTANDINDEX.out.bam
-    bai_dir = SORTANDINDEX.out.bai
-     
     // separate out tumor and normal samples into two different channels
     def tumorpattern = params.tumor
     def normalpattern = params.normal
