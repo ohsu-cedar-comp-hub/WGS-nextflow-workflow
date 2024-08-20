@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-process ANNOTATE {
+process SNPEFF {
 
     publishDir "${params.outdir}/annotated", mode: 'copy'
     container "${params.container_snpeff}"

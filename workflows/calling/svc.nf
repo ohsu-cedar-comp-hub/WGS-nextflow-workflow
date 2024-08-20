@@ -20,6 +20,10 @@ include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
 include { FILTERMUTECT } from '../../tools/gatk/filter_mutect.nf'
+include { FUNCOTATOR } from '../../tools/gatk/funcotator.nf'
+include { SNPEFF } from '../../tools/snpeff/annotate_variants.nf'
+include { PASS } from '../../tools/snpeff/sift_variants.nf'
+include { ADDFILTER } from '../../tools/bcftools/filterVCF.nf'
 
 workflow {
   
@@ -57,8 +61,8 @@ workflow {
     CALCULATECONTAMINATION(tumor_table, normal_table)
     contam_table = CALCULATECONTAMINATION.out.contamination.collect()
     segment_table = CALCULATECONTAMINATION.out.segment.collect()
+    
     // Run mutect2
-
     MUTECT2(tumor_input, 
         normal_input, 
         chrom_ch, 
@@ -89,9 +93,17 @@ workflow {
 
     // Filter mutect2 calls
     FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
-    filter_vcf = FILTERMUTECT.out
     
     // filter for passing variants
-    // PASS(filter_vcf, sample_id_ch)
+    // PASS(FILTERMUTECT.out, sample_id_ch)
 
+    // filter for variants above certain allelic depth, VAF, etc using bcftools
+    // ADDFILTER(PASS.out)
+    // vcf = ADDFILTER.out
+    
+    // Annotate with funcotator
+    // FUNCOTATOR(vcf, sample_id_ch)
+
+    // Annotate with snpEff
+    // SNPEFF(vcf, sample_id_ch)
 }
