@@ -102,7 +102,10 @@ workflow {
     // vcf = ADDFILTER.out
     
     // Annotate with funcotator
-    // FUNCOTATOR(vcf, sample_id_ch)
+    FUNCOTATOR(vcf, 
+        params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict,
+        params.funcotator_data,
+        sample_id_ch)
 
     // Annotate with snpEff
     // SNPEFF(vcf, sample_id_ch)
