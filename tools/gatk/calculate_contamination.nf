@@ -5,7 +5,7 @@ process CALCULATECONTAMINATION {
 
     container "${params.container_gatk}"
 
-    publishDir "${params.outdir}/tables", mode: 'copy'
+    publishDir "${params.outdir}/intermediates", mode: 'copy'
   
     input:
     path tumor_pileups_table

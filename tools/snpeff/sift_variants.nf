@@ -10,7 +10,7 @@ process PASS {
     val sample_id
 
     output: 
-    file "${sample_id}_PASSED.vcf"
+    path("${sample_id}_PASSED.vcf")
     
     script:
     """

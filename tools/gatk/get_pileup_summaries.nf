@@ -5,7 +5,7 @@ process GETPILEUPSUMMARIES {
     maxForks 3
     container "${params.container_gatk}"
 
-    publishDir "${params.outdir}/summaries", mode: 'copy'
+    publishDir "${params.outdir}/intermediates", mode: 'copy'
 
     input:
     path bam_file
