@@ -95,11 +95,11 @@ workflow {
     FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
     
     // filter for passing variants
-    // PASS(FILTERMUTECT.out, sample_id_ch)
+    PASS(FILTERMUTECT.out, sample_id_ch)
 
     // filter for variants above certain allelic depth, VAF, etc using bcftools
-    // ADDFILTER(PASS.out)
-    // vcf = ADDFILTER.out
+    ADDFILTER(PASS.out)
+    vcf = ADDFILTER.out
     
     // Annotate with funcotator
     FUNCOTATOR(vcf, 
@@ -108,5 +108,5 @@ workflow {
         sample_id_ch)
 
     // Annotate with snpEff
-    // SNPEFF(vcf, sample_id_ch)
+    SNPEFF(vcf, sample_id_ch)
 }

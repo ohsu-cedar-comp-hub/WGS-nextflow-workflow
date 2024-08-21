@@ -2,7 +2,7 @@
 
 process PASS {
     
-    publishDir "${params.outdir}/annotated", mode: 'copy'
+    publishDir "${params.outdir}/vcfs", mode: 'copy'
     container "${params.container_snpeff}"
 
     input:
