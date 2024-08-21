@@ -1,11 +1,18 @@
-FROM openjdk:17-jdk-slim
+FROM ubuntu:20.04 AS builder
+ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /usr/src/app
 
-RUN apt-get update && \
-    apt-get install -y wget unzip && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+        && apt-get install -y \
+                build-essential \
+                openjdk-17-jre-headless \
+                r-base \
+                unzip \
+                wget \
+                python \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
 
 RUN wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip && \
     unzip snpEff_latest_core.zip && \
