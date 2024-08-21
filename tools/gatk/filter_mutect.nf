@@ -5,7 +5,7 @@ process FILTERMUTECT {
 
     container "${params.container_gatk}"
 
-    publishDir "${params.outdir}/vcfs", mode: 'copy'
+    publishDir "${params.outdir}/intermediates", mode: 'copy'
 
     input:
     path unfiltered_vcf

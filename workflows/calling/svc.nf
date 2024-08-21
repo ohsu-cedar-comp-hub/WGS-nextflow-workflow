@@ -98,7 +98,7 @@ workflow {
     PASS(FILTERMUTECT.out, sample_id_ch)
 
     // filter for variants above certain allelic depth, VAF, etc using bcftools
-    ADDFILTER(PASS.out)
+    ADDFILTER(PASS.out, sample_id_ch)
     vcf = ADDFILTER.out
     
     // Annotate with funcotator

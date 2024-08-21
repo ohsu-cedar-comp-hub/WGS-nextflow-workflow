@@ -10,19 +10,11 @@ process ADDFILTER {
     val sample_id
 
     output: 
-    file "${filtered_vcf.basename}_bcffilter.vcf"
+    file "${filtered_vcf.baseName}_bcffilter.vcf"
     
     script:
+    // the command has to be in one long line otherwise it isn't recorded in its entirety in the VCF header.
     """
-    bcftools filter -i "(FORMAT/DP[0] > 10) 
-                && (FORMAT/DP[1] > 6) 
-                && (FORMAT/AD[0:0] > 5) 
-                && (FORMAT/AD[1:0] > 5) 
-                && (FORMAT/AD[1:1] > 5)
-                && (FORMAT/AF[1:0] > 0.05)
-                && (INFO/MMQ[0] > 40)
-                && (INFO/MMQ[1] > 40) " \
-            -o ${filtered_vcf.basename}_bcffilter.vcf \
-            ${filtered_vcf}
+    bcftools filter -i "(FORMAT/DP[0] > 10) && (FORMAT/DP[1] > 6) && (FORMAT/AD[0:0] > 5) && (FORMAT/AD[1:0] > 5) && (FORMAT/AD[1:1] > 5) && (FORMAT/AF[1:0] > 0.05) && (INFO/MMQ[0] > 40) && (INFO/MMQ[1] > 40) " -o ${filtered_vcf.baseName}_bcffilter.vcf ${filtered_vcf}
     """
 }

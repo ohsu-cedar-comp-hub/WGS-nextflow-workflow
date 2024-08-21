@@ -15,7 +15,7 @@ process FUNCOTATOR {
     val sample_id
 
     output:
-    path("${vcf.basename}_FUNCOTATED.vcf")
+    path("${vcf.baseName}_FUNCOTATED.vcf")
 
     script:
     """
@@ -24,7 +24,7 @@ process FUNCOTATOR {
     --reference ${mutect_idx} \
     --ref-version hg38 \
     --data-sources-path ${funcotator_data} \
-    --output ${vcf.basename}_FUNCOTATED.vcf \
+    --output ${vcf.baseName}_FUNCOTATED.vcf \
     --output-file-format VCF
     """
 }
