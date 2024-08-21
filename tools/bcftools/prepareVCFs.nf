@@ -33,9 +33,8 @@ process PREPAREVCF {
     path mutect_idx_dict
     
     output:
-    path("${sample_id}_unfiltered.vcf.gz"), emit: vcf
-    path("${sample_id}_unfiltered_normalized_sorted.vcf.gz"), emit: normalized
-    path("${sample_id}_unfiltered_normalized_sorted.vcf.gz.tbi"), emit: index
+    path("${sample_id}_unfiltered_sorted.vcf.gz"), emit: vcf
+    path("${sample_id}_unfiltered_sorted.vcf.gz.tbi"), emit: index
 
     script:
     """

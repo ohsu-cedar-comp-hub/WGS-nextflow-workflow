@@ -76,7 +76,7 @@ workflow {
     split_vcf_index = BGZIP.out.index.collect() // collect all bgzip index outputs into a channel
     // concatenate, normalize, and sort the VCF
     PREPAREVCF(vcfs_ch, split_vcf_index, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
-    unfiltered_vcf = PREPAREVCF.out.normalized
+    unfiltered_vcf = PREPAREVCF.out.vcf
     unfiltered_vcf_index = PREPAREVCF.out.index
     
     // Merge stats file
