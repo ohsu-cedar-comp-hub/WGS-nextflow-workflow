@@ -2,7 +2,7 @@
 
 process SNPEFF {
 
-    publishDir "${params.outdir}/vcfs", mode: 'copy'
+    publishDir "${params.outdir}/vcfs", mode: 'copy', pattern: '*.vcf'
     container "${params.container_snpeff}"
 
     input:
@@ -10,7 +10,7 @@ process SNPEFF {
     val sample_id
 
     output: 
-    path("${sample_id}_PASSED_annotated.vcf")
+    path("${sample_id}_PASSED_bcffilter_annotated.vcf"), emit: vcf
 
     script:
     """
