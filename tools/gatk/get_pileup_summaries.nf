@@ -9,6 +9,7 @@ process GETPILEUPSUMMARIES {
 
     input:
     path bam_file
+    path bai_file
     path exac
 
     output:

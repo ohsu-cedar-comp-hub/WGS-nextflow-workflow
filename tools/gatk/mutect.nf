@@ -8,16 +8,16 @@ process MUTECT2 {
     container "${params.container_gatk}"
 
     input:
-    val tumor_input 
-    // path tumor_bam_sorted_bai
-    path normal_bam_sorted
-    // path normal_bam_sorted_bai
-    val chrom 
-    val sample_id
-    path mutect_idx
+    path tumor_bam
+    path tumor_bam_sorted_bai // only necessary when nextflow can't resolve path from symlink
+    path normal_bam
+    path normal_bam_sorted_bai // only necessary when nextflow can't resolve path from symlink
+    each chrom // repeat this process for each item in the chrom channel
+    val sample_id 
+    path mutect_idx // nextflow can't resolve the rest of these files from symlink to mutect_idx, input paths to each
     path mutect_idx_fai
     path mutect_idx_dict
-    path pon_vcf
+    path pon_vcf // nextflow can't resolve the rest of these files from symlink to pon_vcf, input paths to each
     path pon_tbi
     path pon_idx
     path pon_tar
@@ -30,13 +30,13 @@ process MUTECT2 {
 
     script:
 
-    // normal name is whatever the SM: label in your @RG is in the bam file
+    // normal name (sample_id) is whatever the SM: label in your @RG is in the bam file
 
     """
     gatk Mutect2 \
     -R ${mutect_idx} \
-        ${tumor_input} \
-        -I ${normal_bam_sorted} \
+        -I ${tumor_bam.join(' -I ')}  \
+        -I ${normal_bam} \
         -normal ${sample_id} \
         --panel-of-normals ${params.pon_vcf} \
         -L ${chrom} \

@@ -10,11 +10,11 @@ process SNPEFF {
     val sample_id
 
     output: 
-    path("${sample_id}_PASSED_bcffilter_annotated.vcf"), emit: vcf
+    path("${filtered_vcf.baseName}_SNPANNOTATED.vcf"), emit: vcf
 
     script:
     """
-    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${sample_id}_PASSED_annotated.vcf
+    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${filtered_vcf.baseName}_SNPANNOTATED.vcf
     """
 
 }

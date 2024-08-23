@@ -11,8 +11,6 @@ chromosomes = (1..22).collect { it.toString() } + ['X']
 chrom_strings = Channel.from(chromosomes)
 chrom_ch = chrom_strings.map { it -> "chr" + it }
 
-include { SORT; SORTANDINDEX } from '../../tools/samtools/sort_and_index.nf'
-include { MARKDUPLICATES } from '../../tools/gatk/mark_duplicates.nf'
 include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
 include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
 include { MUTECT2 } from '../../tools/gatk/mutect.nf'
@@ -44,16 +42,24 @@ workflow {
         return samplename}
     sample_id_ch = sample_id.first() // convert to a value channel using .first()
 
-    // prepare tumor input channel for mutect2 by creating a string of tumor samples paths with the "-I" argument
-    Channel
-        tumor_ch.map { fileName -> "-I ${fileName}" }
-        .toList() // make into a list
-        .map { list -> list.join(' ') } // separate the items in the list with spaces
-        .set { tumor_input } // set channel
-    normal_input = normal_ch.first() // convert the normal channel containing single normal to a value channel
-
+    // // prepare tumor input channel for mutect2 by creating a string of tumor samples paths with the "-I" argument
+    // Channel
+    //     tumor_ch.map { fileName -> "-I ${fileName}" }
+    //     .toList() // make into a list
+    //     .map { list -> list.join(' ') } // separate the items in the list with spaces
+    //     .set { tumor_input } // set channel
+    // normal_input = normal_ch.first() // convert the normal channel containing single normal to a value channel
+   
+    // Run mutect2
+    MUTECT2(tumor_ch, tumor_ch_bai,
+        normal_ch, normal_ch_bai,
+        chrom_ch, 
+        sample_id_ch, 
+        params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict,
+        params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
+    
     // gatk getpileupsummaries
-    GETPILEUPSUMMARIES(bam_dir, params.exac)
+    GETPILEUPSUMMARIES(bam_dir, bai_dir, params.exac)
     tumor_table = GETPILEUPSUMMARIES.out.tumor
     normal_table = GETPILEUPSUMMARIES.out.normal.first() // assuming only one normal is used
 
@@ -61,15 +67,7 @@ workflow {
     CALCULATECONTAMINATION(tumor_table, normal_table)
     contam_table = CALCULATECONTAMINATION.out.contamination.collect()
     segment_table = CALCULATECONTAMINATION.out.segment.collect()
-    
-    // Run mutect2
-    MUTECT2(tumor_input, 
-        normal_input, 
-        chrom_ch, 
-        sample_id_ch, 
-        params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict,
-        params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
-    
+
     // Merge and prepare VCF
     BGZIP(MUTECT2.out.vcf) // concatenation requires bgzip'd files 
     vcfs_ch = BGZIP.out.vcf.collect() // collect all bgzip vcf outputs into a channel
