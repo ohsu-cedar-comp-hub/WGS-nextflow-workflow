@@ -28,7 +28,7 @@ workflow {
     // separate out tumor and normal samples into two different channels
     def tumorpattern = params.tumor
     def normalpattern = params.normal
-    tumor_ch = bam_dir.filter( ~/.*${tumorpattern}.*\.bam$/ )
+    tumor_ch = bam_dir.filter( ~/.*${tumorpattern}.*\.bam$/ )  
     tumor_ch_bai = bai_dir.filter( ~/.*${tumorpattern}.*\.bai$/ )
     normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ )
     normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ )
@@ -42,14 +42,6 @@ workflow {
         return samplename}
     sample_id_ch = sample_id.first() // convert to a value channel using .first()
 
-    // // prepare tumor input channel for mutect2 by creating a string of tumor samples paths with the "-I" argument
-    // Channel
-    //     tumor_ch.map { fileName -> "-I ${fileName}" }
-    //     .toList() // make into a list
-    //     .map { list -> list.join(' ') } // separate the items in the list with spaces
-    //     .set { tumor_input } // set channel
-    // normal_input = normal_ch.first() // convert the normal channel containing single normal to a value channel
-   
     // Run mutect2
     MUTECT2(tumor_ch, tumor_ch_bai,
         normal_ch, normal_ch_bai,
