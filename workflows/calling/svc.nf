@@ -84,8 +84,11 @@ workflow {
     // Filter mutect2 calls
     FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
     
+    // Add nextflow workflow versioning to VCF header
+    REHEADER(FILTERMUTECT.out)
+
     // filter for passing variants
-    PASS(FILTERMUTECT.out, sample_id_ch)
+    PASS(REHEADER.out, sample_id_ch)
 
     // filter for variants above certain allelic depth, VAF, etc using bcftools
     ADDFILTER(PASS.out, sample_id_ch)
