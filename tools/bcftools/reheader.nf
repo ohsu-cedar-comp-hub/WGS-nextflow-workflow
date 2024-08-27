@@ -17,6 +17,6 @@ process REHEADER {
     awk '/^##/ {print; next} {exit}' ${filtered_vcf} > temp_vcf_header.txt
     echo '##NextflowWGSPipelineVersion="v0.1.1 (2024-08-26) at https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.1.1\"' >> temp_vcf_header.txt
     awk '/^#CHROM/ {print; exit}' ${filtered_vcf} >> temp_vcf_header.txt
-    bcftools reheader --header temp_vcf_header_vers.txt ${filtered_vcf} > ${filtered_vcf.baseName}_reheader.vcf
+    bcftools reheader --header temp_vcf_header.txt ${filtered_vcf} > ${filtered_vcf.baseName}_reheader.vcf
     """
 }
