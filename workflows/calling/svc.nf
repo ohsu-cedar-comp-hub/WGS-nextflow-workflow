@@ -26,8 +26,8 @@ include { ADDFILTER } from '../../tools/bcftools/filterVCF.nf'
 workflow {
   
     // separate out tumor and normal samples into two different channels
-    def tumorpattern = params.tumor
-    def normalpattern = params.normal
+    def tumorpattern = params.tumor_namepattern
+    def normalpattern = params.normal_namepattern
     tumor_ch = bam_dir.filter( ~/.*${tumorpattern}.*\.bam$/ )  
     tumor_ch_bai = bai_dir.filter( ~/.*${tumorpattern}.*\.bai$/ )
     normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ )
