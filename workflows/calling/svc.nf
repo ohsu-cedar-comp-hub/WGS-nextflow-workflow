@@ -2,10 +2,10 @@
 
 // Create queue channels (consumable)
 // will need to split up into tumor channel and normal channel, use regex for this
-tumor_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_T_*.bam")
-tumor_ch_bai = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_T_*.bam.bai")
-normal_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_G_*.bam")
-normal_ch_bai = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_G_*.bam.bai")
+tumor_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*${params.tumor_namepattern}*.bam")
+tumor_ch_bai = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_${params.tumor_namepattern}_*.bam.bai")
+normal_ch = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_${params.normal_namepattern}_*.bam")
+normal_ch_bai = Channel.fromPath("${params.outdir}/aligned/duplicate_marked/*_${params.normal_namepattern}_*.bam.bai")
 
 
 // Create value channels (use first operator to convert to value from queue)
