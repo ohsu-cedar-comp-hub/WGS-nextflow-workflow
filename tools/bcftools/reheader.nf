@@ -7,7 +7,6 @@ process REHEADER {
 
     input:
     path filtered_vcf
-    val sample_id
 
     output: 
     file "${filtered_vcf.baseName}_reheader.vcf"
@@ -15,8 +14,9 @@ process REHEADER {
     script:
 
     """
-    awk '/^#/ {print; next} {exit}' ${filtered_vcf} > temp_vcf_header.txt
-    awk '/^##/ { last = NR; print; next } { if (last) { print "##NextflowWGSPipelineVersion=\"v0.1.1 (2024-08-26) at https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.1.1\""; last = 0 } print }' temp_vcf_header.txt > temp_vcf_header_vers.txt
+    awk '/^##/ {print; next} {exit}' ${filtered_vcf} > temp_vcf_header.txt
+    echo '##NextflowWGSPipelineVersion="v0.1.1 (2024-08-26) at https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.1.1\"' >> temp_vcf_header.txt
+    awk '/^#CHROM/ {print; exit}' ${filtered_vcf} >> temp_vcf_header.txt
     bcftools reheader --header temp_vcf_header_vers.txt ${filtered_vcf} > ${filtered_vcf.baseName}_reheader.vcf
     """
 }

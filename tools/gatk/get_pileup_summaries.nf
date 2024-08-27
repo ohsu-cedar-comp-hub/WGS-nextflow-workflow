@@ -13,8 +13,8 @@ process GETPILEUPSUMMARIES {
     path exac
 
     output:
-    path ("*${params.tumor}*.getpileupsummaries.table"), emit: tumor, optional: true
-    path ("*${params.normal}*.getpileupsummaries.table"), emit: normal, optional: true
+    path ("*${params.tumor_namepattern}*.getpileupsummaries.table"), emit: tumor, optional: true
+    path ("*${params.normal_namepattern}*.getpileupsummaries.table"), emit: normal, optional: true
     
     script:
     """
