@@ -13,7 +13,7 @@ chrom_ch = chrom_strings.map { it -> "chr" + it }
 
 include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
 include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
-include { MUTECT2 } from '../../tools/gatk/mutect.nf'
+include { MUTECT2 } from '../../tools/gatk/mutect2.nf'
 include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
 include { LEARNORIENTATION } from '../../tools/bcftools/combineF1R2files.nf'
