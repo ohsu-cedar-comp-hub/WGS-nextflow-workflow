@@ -34,20 +34,20 @@ workflow {
     normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ )
     normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ )
 
-    // Normal sample id channel: take full filename and grab the sample id. Need this for the -normal arg in mutect2
-    sample_id = normal_ch.map { filePath -> 
-        def fileName = filePath.baseName // get file name without extensions, "TCGA-00-0000-00-etc_tumor_otherinfo_otherinfo.bam"
-        def sampleName = fileName.split('_') // split the file name into an array by underscores [TCGA-00-0000-00-etc, tumor, otherinfo, otherinfo.bam]
-        def listSample = sampleName as List // convert to a list to perform list operations
-        def samplename = listSample[1]// grab the first element which is always the sample ID based on how the files are named
-        return samplename}
-    sample_id_ch = sample_id.first() // convert to a value channel using .first()
+    // // Normal sample id channel: take full filename and grab the sample id. Need this for the -normal arg in mutect2
+    // sample_id = normal_ch.map { filePath -> 
+    //     def fileName = filePath.baseName // get file name without extensions, "TCGA-00-0000-00-etc_tumor_otherinfo_otherinfo.bam"
+    //     def sampleName = fileName.split('_') // split the file name into an array by underscores [TCGA-00-0000-00-etc, tumor, otherinfo, otherinfo.bam]
+    //     def listSample = sampleName as List // convert to a list to perform list operations
+    //     def samplename = listSample[1]// grab the first element which is always the sample ID based on how the files are named
+    //     return samplename}
+    // sample_id_ch = sample_id.first() // convert to a value channel using .first()
 
     // Run mutect2
     MUTECT2(tumor_ch, tumor_ch_bai,
         normal_ch, normal_ch_bai,
         chrom_ch, 
-        sample_id_ch, 
+        params.normalsample_id, 
         params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict,
         params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
     
@@ -66,41 +66,41 @@ workflow {
     vcfs_ch = BGZIP.out.vcf.collect() // collect all bgzip vcf outputs into a channel
     split_vcf_index = BGZIP.out.index.collect() // collect all bgzip index outputs into a channel
     // concatenate, normalize, and sort the VCF
-    PREPAREVCF(vcfs_ch, split_vcf_index, sample_id_ch, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
+    PREPAREVCF(vcfs_ch, split_vcf_index, params.normalsample_id, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict)
     unfiltered_vcf = PREPAREVCF.out.vcf
     unfiltered_vcf_index = PREPAREVCF.out.index
     
     // Merge stats file
     stats = MUTECT2.out.stats
     stats_ch = stats.collect()
-    MERGESTATS(stats_ch, sample_id_ch)
+    MERGESTATS(stats_ch, params.normalsample_id)
     filter_stats = MERGESTATS.out
 
     // Merge f1r2 read orientation files 
     f1r2files = MUTECT2.out.f1r2
     f1r2_ch = f1r2files.collect()
-    LEARNORIENTATION(f1r2_ch, sample_id_ch)
+    LEARNORIENTATION(f1r2_ch, params.normalsample_id)
     orientationmodel = LEARNORIENTATION.out
 
     // Filter mutect2 calls
-    FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, sample_id_ch)
+    FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, params.normalsample_id)
     
     // Add nextflow workflow versioning to VCF header
     REHEADER(FILTERMUTECT.out)
 
     // filter for passing variants
-    PASS(REHEADER.out, sample_id_ch)
+    PASS(REHEADER.out, params.normalsample_id)
 
     // filter for variants above certain allelic depth, VAF, etc using bcftools
-    ADDFILTER(PASS.out, sample_id_ch)
+    ADDFILTER(PASS.out, params.normalsample_id)
     vcf = ADDFILTER.out
     
     // Annotate with funcotator
     FUNCOTATOR(vcf, 
         params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict,
         params.funcotator_data,
-        sample_id_ch)
+        params.normalsample_id)
 
     // Annotate with snpEff
-    SNPEFF(vcf, sample_id_ch)
+    SNPEFF(vcf, params.normalsample_id)
 }

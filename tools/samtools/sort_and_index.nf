@@ -26,7 +26,7 @@ process SORTANDINDEX {
     maxForks 3
     container "${params.container_samtools}"
 
-    // publishDir "${params.outdir}/aligned/duplicate_marked", mode: 'copy'
+    publishDir "${params.outdir}/aligned/duplicate_marked", mode: 'copy'
     
     input:
     path bam_unsorted
