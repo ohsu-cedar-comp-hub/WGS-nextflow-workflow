@@ -1,5 +1,9 @@
 #!/usr/bin/env nextflow
 
+params.release = "v0.2.0"
+params.releasedate = "8-28-2024"
+params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.0"
+
 // Create queue channels (consumable)
 // will need to split up into tumor channel and normal channel, use regex for this
 
@@ -86,7 +90,7 @@ workflow {
     FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, params.normalsample_id)
     
     // Add nextflow workflow versioning to VCF header
-    REHEADER(FILTERMUTECT.out)
+    REHEADER(FILTERMUTECT.out, params.release)
 
     // filter for passing variants
     PASS(REHEADER.out, params.normalsample_id)
