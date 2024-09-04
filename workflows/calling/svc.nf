@@ -38,15 +38,6 @@ workflow {
     normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ )
     normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ )
 
-    // // Normal sample id channel: take full filename and grab the sample id. Need this for the -normal arg in mutect2
-    // sample_id = normal_ch.map { filePath -> 
-    //     def fileName = filePath.baseName // get file name without extensions, "TCGA-00-0000-00-etc_tumor_otherinfo_otherinfo.bam"
-    //     def sampleName = fileName.split('_') // split the file name into an array by underscores [TCGA-00-0000-00-etc, tumor, otherinfo, otherinfo.bam]
-    //     def listSample = sampleName as List // convert to a list to perform list operations
-    //     def samplename = listSample[1]// grab the first element which is always the sample ID based on how the files are named
-    //     return samplename}
-    // sample_id_ch = sample_id.first() // convert to a value channel using .first()
-
     // Run mutect2
     MUTECT2(tumor_ch, tumor_ch_bai,
         normal_ch, normal_ch_bai,
