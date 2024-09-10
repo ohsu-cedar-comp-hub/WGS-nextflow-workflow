@@ -33,8 +33,8 @@ workflow {
     // separate out tumor and normal samples into two different channels
     def tumorpattern = params.tumor_namepattern
     def normalpattern = params.normal_namepattern
-    tumor_ch = bam_dir.filter( ~/.*${tumorpattern}.*\.bam$/ )  
-    tumor_ch_bai = bai_dir.filter( ~/.*${tumorpattern}.*\.bai$/ )
+    tumor_ch = bam_dir.filter( ~/.*${tumorpattern}.*\.bam$/ ).collect()
+    tumor_ch_bai = bai_dir.filter( ~/.*${tumorpattern}.*\.bai$/ ).collect()
     normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ )
     normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ )
 
