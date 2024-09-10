@@ -6,6 +6,8 @@ process SORT {
     
     container "${params.container_samtools}"
   
+    // publishDir "${params.outdir}/aligned/sorted", mode: 'copy'
+    
     input:
     path bam_unsorted
 
@@ -21,7 +23,7 @@ process SORT {
 process SORTANDINDEX {
     // Set maximum memory
     // memory '40 GB'
-    
+    maxForks 3
     container "${params.container_samtools}"
 
     publishDir "${params.outdir}/aligned/duplicate_marked", mode: 'copy'

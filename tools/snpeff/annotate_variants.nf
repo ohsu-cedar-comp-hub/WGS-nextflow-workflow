@@ -1,8 +1,8 @@
 #!/usr/bin/env nextflow
 
-process ANNOTATE {
+process SNPEFF {
 
-    publishDir "${params.outdir}/annotated", mode: 'copy'
+    publishDir "${params.outdir}/vcfs", mode: 'copy'
     container "${params.container_snpeff}"
 
     input:
@@ -10,11 +10,13 @@ process ANNOTATE {
     val sample_id
 
     output: 
-    path("${sample_id}_annotated.vcf")
+    path("${filtered_vcf.baseName}_SNPANNOTATED.vcf"), emit: vcf
+    path("*.html")
+    path("*.txt")
 
     script:
     """
-    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${sample_id}_annotated.vcf
+    java -Xmx8g -jar /usr/src/app/snpEff/snpEff.jar GRCh38.86 ${filtered_vcf} -cancer > ${filtered_vcf.baseName}_SNPANNOTATED.vcf
     """
 
 }

@@ -1,8 +1,10 @@
 #!/usr/bin/env nextflow
 
 process MARKDUPLICATES {
-    
+    maxForks 3
     container "${params.container_gatk}"
+
+    publishDir "${params.outdir}/metrics", mode: 'copy', pattern: "*_metrics.txt"
     
     input:
     path bam_sorted

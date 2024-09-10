@@ -1,4 +1,4 @@
- FROM ubuntu:20.04 AS builder
+FROM ubuntu:20.04 AS builder
 
 ENV VERSION=4.4.0.0
 

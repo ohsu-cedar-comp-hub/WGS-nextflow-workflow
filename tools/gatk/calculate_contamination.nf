@@ -5,7 +5,7 @@ process CALCULATECONTAMINATION {
 
     container "${params.container_gatk}"
 
-    publishDir "${params.outdir}/tables", mode: 'copy'
+    publishDir "${params.outdir}/vcfs", mode: 'copy'
   
     input:
     path tumor_pileups_table
@@ -19,7 +19,7 @@ process CALCULATECONTAMINATION {
     """
         gatk CalculateContamination \\
         -I ${tumor_pileups_table} \\
-        --matched ${normal_pileups_table} \\
+        --matched-normal ${normal_pileups_table} \\
         -O ${tumor_pileups_table.simpleName}_contamination_table \\
         -tumor-segmentation ${tumor_pileups_table.simpleName}_segmentation_table
     """
