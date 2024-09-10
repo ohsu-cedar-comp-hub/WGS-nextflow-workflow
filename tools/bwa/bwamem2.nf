@@ -3,7 +3,6 @@
 // Define the process for BWA-MEM2 alignment
 process BWAMEM2 {
 
-    // cpus 8
     container "${params.container_bwa}"
 
     // Set output directory for alignment results

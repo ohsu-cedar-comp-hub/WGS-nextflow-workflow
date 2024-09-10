@@ -5,7 +5,6 @@ params.releasedate = "8-29-2024"
 params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.0"
 
 // Create queue channels (consumable)
-// will need to split up into tumor channel and normal channel, use regex for this
 
 bam_dir = Channel.fromPath("${params.bam_files}/*.bam")
 bai_dir = Channel.fromPath("${params.bam_files}/*.bai")
