@@ -67,11 +67,11 @@ Dockerfiles for building images are provided for each tool in the pipeline in th
 Because Docker cannot be easily used on Exacloud, images can be pulled using Singularity, which converts them to .sif images. To pull images:
 
 ```
-## Load singularity module 
+## Load singularity module (if already available as a module)
 module load /etc/modulefiles/singularity/current
 
 ## set singularity cache directory variable; can live anywhere but gscratch is recommended.
-export SINGULARITY_CACHEDIR=/home/exacloud/gscratch/CEDAR/<user>/singularity/cache
+export SINGULARITY_CACHEDIR=/path/to/singularity/cache
 
 ## set temporary directory variable
 export TMPDIR=<your current working directory>/tmp
@@ -82,8 +82,6 @@ cd <sif file dir>
 ## Pull your images
 singularity pull <name_of_singularity_image>.sif docker://quay.io/ohsu-comp-bio/<name of tool>
 ```
-
-Alternatively, images for this pipeline are temporarily hosted at `/home/groups/CEDAR/lancasru/WGS_COH_NF/config_sif`.
 
 #### Set up parameters file
 
