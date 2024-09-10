@@ -2,7 +2,7 @@
 
 process SNPEFF {
 
-    publishDir "${params.outdir}/vcfs", mode: 'copy', pattern: '*.vcf'
+    publishDir "${params.outdir}/vcfs", mode: 'copy'
     container "${params.container_snpeff}"
 
     input:
@@ -11,6 +11,8 @@ process SNPEFF {
 
     output: 
     path("${filtered_vcf.baseName}_SNPANNOTATED.vcf"), emit: vcf
+    path("*.html")
+    path("*.txt")
 
     script:
     """
