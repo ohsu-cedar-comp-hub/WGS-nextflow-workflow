@@ -34,14 +34,15 @@ workflow {
     def normalpattern = params.normal_namepattern
     tumor_ch = bam_dir.filter( ~/.*${tumorpattern}.*\.bam$/ ).collect()
     tumor_ch_bai = bai_dir.filter( ~/.*${tumorpattern}.*\.bai$/ ).collect()
-    normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ )
-    normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ )
+    normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ ).collect()
+    normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ ).collect()
 
     // Run mutect2
     MUTECT2(tumor_ch, tumor_ch_bai,
         normal_ch, normal_ch_bai,
         chrom_ch, 
         params.normalsample_id, 
+        params.normal_command,
         params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict,
         params.pon_vcf, params.pon_tbi, params.pon_idx, params.pon_tar)
     
