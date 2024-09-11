@@ -1,8 +1,8 @@
 #!/usr/bin/env nextflow
 
-params.release = "v0.2.2"
-params.releasedate = "9-10-2024"
-params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.2"
+params.release = "v0.2.3"
+params.releasedate = "9-11-2024"
+params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.3"
 
 // Create queue channels (consumable)
 
