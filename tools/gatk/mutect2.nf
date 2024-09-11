@@ -14,6 +14,7 @@ process MUTECT2 {
     path normal_bam_sorted_bai // only necessary when nextflow can't resolve path from symlink
     each chrom // repeat this process for each item in the chrom channel
     val sample_id 
+    val normal_command
     path mutect_idx // nextflow can't resolve the rest of these files from symlink to mutect_idx, input paths to each
     path mutect_idx_fai
     path mutect_idx_dict
@@ -36,8 +37,8 @@ process MUTECT2 {
     gatk Mutect2 \
     -R ${mutect_idx} \
         -I ${tumor_bam.join(' -I ')}  \
-        -I ${normal_bam} \
-        -normal ${sample_id} \
+        -I ${normal_bam.join(' -I ')} \
+        ${normal_command} \
         --panel-of-normals ${params.pon_vcf} \
         -L ${chrom} \
         --germline-resource ${params.gnomad} \
