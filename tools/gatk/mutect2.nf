@@ -3,7 +3,7 @@
 // Define the process for running MuTect2
 process MUTECT2 {
 
-    // maxForks 8 // set this when running on local scratch to parallelize; up to the max number of cpus available minus 1
+    maxForks 12 // set this when running on local scratch to parallelize; up to the max number of cpus available minus 1
     cpus 1 // set cpu to 1: gatk discourages multithreading
     container "${params.container_gatk}"
 
