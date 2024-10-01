@@ -90,7 +90,7 @@ workflow {
     FILTERMUTECT(unfiltered_vcf, unfiltered_vcf_index, params.mutect_idx, params.mutect_idx_fai, params.mutect_idx_dict, filter_stats, orientationmodel, segment_table, contam_table, params.normalsample_id)
     
     // Add nextflow workflow versioning to VCF header
-    REHEADER(FILTERMUTECT.out, params.release)
+    REHEADER(FILTERMUTECT.out)
 
     // filter for passing variants
     PASS(REHEADER.out, params.normalsample_id)
