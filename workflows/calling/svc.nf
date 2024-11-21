@@ -40,7 +40,7 @@ workflow {
 
     GETINTERVALS(first_tumor, first_tumor_bai)
     chrom_ch = GETINTERVALS.out.map { it.toString().split('\n') }.flatten().collect()
-    
+    chrom_ch.view()
     // Run Mutect2 as matched tumor(s)-normal(s)
     MUTECT2(tumor_ch, tumor_ch_bai,
         normal_ch, normal_ch_bai,
