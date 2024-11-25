@@ -35,8 +35,8 @@ workflow {
     tumor_ch_bai = bai_dir.filter( ~/.*${tumorpattern}.*\.bai$/ ).collect()
     normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ ).collect()
     normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ ).collect()
-    first_tumor = tumor_ch.first()
-    first_tumor_bai = tumor_ch_bai.first()
+    first_tumor = tumor_ch.flatten().first()
+    first_tumor_bai = tumor_ch_bai.flatten().first()
 
     GETINTERVALS(first_tumor, first_tumor_bai)
     chrom_ch = GETINTERVALS.out.map { it.toString().split('\n') }.flatten().collect()
