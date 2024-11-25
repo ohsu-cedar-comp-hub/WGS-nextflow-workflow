@@ -1,22 +1,20 @@
 #!/usr/bin/env nextflow
 
 // Nextflow Pipeline Version
-params.release = "v0.2.3"
-params.releasedate = "9-11-2024"
-params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.3"
+params.release = "v0.2.4"
+params.releasedate = "11-25-2024"
+params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.4"
 
 // Create queue channels for BAM and BAI files (consumable) from the BAM file directory
 bam_dir = Channel.fromPath("${params.bam_files}/*.bam")
 bai_dir = Channel.fromPath("${params.bam_files}/*.bai")
 
 // Define the list of chromosomes + create a channel emitting each chromosome. Pass this channel instead of an intervals file for splitting Mutect2 jobs
-chromosomes = (1..22).collect { it.toString() } + ['X']
-chrom_strings = Channel.from(chromosomes)
-chrom_ch = chrom_strings.map { it -> "chr" + it }
 
 // Import tools
 include { GETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
 include { CALCULATECONTAMINATION } from '../../tools/gatk/calculate_contamination.nf'
+include { GETINTERVALS } from '../../tools/samtools/get_intervals.nf'
 include { MUTECT2 } from '../../tools/gatk/mutect2.nf'
 include { BGZIP; PREPAREVCF } from '../../tools/bcftools/prepareVCFs.nf'
 include { MERGESTATS } from '../../tools/bcftools/combineMutectStats.nf'
@@ -30,7 +28,6 @@ include { ADDFILTER } from '../../tools/bcftools/filterVCF.nf'
 
 // Begin main workflow
 workflow {
-  
     // separate out tumor and normal samples into two different channels and collect into a list, so multiple files can be passed to Mutect2 in the case of several tumors/normals
     def tumorpattern = params.tumor_namepattern
     def normalpattern = params.normal_namepattern
@@ -38,7 +35,12 @@ workflow {
     tumor_ch_bai = bai_dir.filter( ~/.*${tumorpattern}.*\.bai$/ ).collect()
     normal_ch = bam_dir.filter( ~/.*${normalpattern}.*\.bam$/ ).collect()
     normal_ch_bai = bai_dir.filter( ~/.*${normalpattern}.*\.bai$/ ).collect()
+    first_tumor = tumor_ch.flatten().first()
+    first_tumor_bai = tumor_ch_bai.flatten().first()
 
+    GETINTERVALS(first_tumor, first_tumor_bai)
+    chrom_ch = GETINTERVALS.out.map { it.toString().split('\n') }.flatten().collect()
+    chrom_ch.view()
     // Run Mutect2 as matched tumor(s)-normal(s)
     MUTECT2(tumor_ch, tumor_ch_bai,
         normal_ch, normal_ch_bai,
