@@ -2,7 +2,7 @@
 
 // Nextflow Pipeline Version
 params.release = "v0.2.4"
-params.releasedate = ""
+params.releasedate = "11-25-2024"
 params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.4"
 
 // Create queue channels for BAM and BAI files (consumable) from the BAM file directory
