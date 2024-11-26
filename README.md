@@ -98,17 +98,25 @@ The contents of the params file are shown below; add your customized paths to th
 "container_bwa" : "/path/to/singularity/image/bwa.sif",
 "container_snpeff" : "/path/to/singularity/image/snpeff.sif",
 "container_bcftools" : "/path/to/singularity/image/bcftools.sif",
-
 "all_read_pairs" : "/path/to/raw/fastq/*_R{1,2}*.fastq.gz",
 "id" : "UUID-UUID-UUID",
 "outdir" : "/path/to/output/directory",
-
+"bam_files" : "/path/to/processed/bams",
 "truseq3pefile" : "path/to/adapters/fasta",
-"idx" : "/path/to/reference/index/for/alignment",
+"idx" : "/path/to/reference/index/for/bwamem/alignment",
 "exac" : "/path/to/common/germline/variants/vcf",
 "gnomad" : "/path/to/germline/resource/gnomad",
-"pon" : "/path/to/panel/of/normals",
-"mutect_idx" : "/path/to/indexed/and/dictionaried/reference",
+"pon_vcf" : "/path/to/panel/of/normals/vcf",
+"pon_tbi" : "/path/to/panel/of/normals/vcf.gz.tbi",
+"pon_idx" : "/path/to/panel/of/normals/vcf.idx",
+"pon_tar" : "/path/to/panel/of/normals/vcf.tar",
+"mutect_idx" : "/path/to/indexed/and/dictionaried/reference.fa",
+"mutect_idx_fai" : "/path/to/indexed/and/dictionaried/reference.fai",
+"mutect_idx_dict" : "/path/to/indexed/and/dictionaried/reference.dict",
+"normalsample_id" : "NORMAL-SAMPLE-ID",
+"tumor_namepattern" : "tumor",
+"normal_namepattern" : "normal",
+"funcotator_data" : "/path/to/funcotator/funcotator_dataSources"
 }
 ```
 
