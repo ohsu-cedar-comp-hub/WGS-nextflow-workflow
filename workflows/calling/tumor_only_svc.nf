@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 
 // Nextflow Pipeline Version
-params.release = ""
-params.releasedate = ""
-params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/"
+params.release = "v0.2.5"
+params.releasedate = "12-2-2024"
+params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.5"
 
 // Import tools
 include { TUMORONLYGETPILEUPSUMMARIES } from '../../tools/gatk/get_pileup_summaries.nf'
