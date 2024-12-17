@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-params.release = "v0.2.0.1"
+params.release = "v0.2.0.2"
 params.releasedate = "10-02-2024"
 params.githublink = "https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow/releases/tag/v0.2.0"
 
